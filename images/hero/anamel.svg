@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" fill="none">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="600" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E1B4B"/>
+      <stop offset="0.5" stop-color="#312E81"/>
+      <stop offset="1" stop-color="#4C1D95"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="800" y1="100" x2="1150" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C4B5FD"/>
+      <stop offset="1" stop-color="#7C3AED" stop-opacity="0.25"/>
+    </linearGradient>
+    <filter id="blur2"><feGaussianBlur stdDeviation="36"/></filter>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg2)"/>
+  <circle cx="960" cy="220" r="180" fill="url(#acc2)" filter="url(#blur2)"/>
+  <!-- craft geometry -->
+  <g transform="translate(760,130)" fill="none" stroke="#E9D5FF" stroke-width="6" stroke-linecap="round" opacity="0.95">
+    <path d="M40 220 C40 120 120 40 200 40 C280 40 360 120 360 220"/>
+    <path d="M100 220 C100 150 150 90 200 90 C250 90 300 150 300 220"/>
+    <circle cx="200" cy="200" r="36" fill="#C4B5FD" fill-opacity="0.25" stroke="#DDD6FE"/>
+    <path d="M200 164 L200 236 M164 200 L236 200"/>
+  </g>
+  <g fill="#F5F3FF">
+    <rect x="820" y="470" width="200" height="6" rx="3"/>
+    <rect x="850" y="490" width="140" height="4" rx="2" opacity="0.45"/>
+  </g>
+  <text x="72" y="520" fill="#DDD6FE" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="4">ANAMEL</text>
+</svg>

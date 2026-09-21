@@ -1,0 +1,1288 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <title>Doddz — متجر الإبداع والتصميم</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- ===== CSS — كل ملف مسؤول عن جزء واحد فقط ===== -->
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/header.css"/>
+  <link rel="stylesheet" href="css/hero.css"/>
+  <link rel="stylesheet" href="css/promo.css"/>
+  <link rel="stylesheet" href="css/products.css"/>
+  <link rel="stylesheet" href="css/courses.css"/>
+  <link rel="stylesheet" href="css/banners.css"/>
+  <link rel="stylesheet" href="css/footer.css"/>
+  <link rel="stylesheet" href="css/cart.css"/>
+  <link rel="stylesheet" href="css/checkout.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <link rel="stylesheet" href="css/responsive.css"/>
+  <link rel="stylesheet" href="css/barber.css"/>
+  <style>.phase-later { display: none !important; }</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span>توصيل مجاني داخل المعادي</span>
+  <span><a href="#" id="top-register-visitor">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+  <span class="top-bar-support">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+    خدمة عملاء 24/7
+  </span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-main">
+    <a href="index.html" class="logo-link" style="display:flex;align-items:center;text-decoration:none;">
+      <div class="logo">
+        <span class="logo-doddz">Doddz</span><span class="logo-go">Go</span>
+      </div>
+    </a>
+    <button type="button" class="lang-toggle" id="lang-toggle" title="Language">
+      <span data-lang-label>EN</span>
+    </button>
+    <div class="search-bar">
+      <input type="text" id="site-search-input" placeholder="ابحث عن منتجات، كورسات، ماركات..."/>
+      <select class="search-cat" id="site-search-cat">
+        <option value="">كل الأقسام</option>
+        <option value="electronics">إلكترونيات</option>
+        <option value="mobiles">موبايلات</option>
+        <option value="laptops">لاب توب</option>
+        <option value="fashion">أزياء</option>
+        <option value="shoes">أحذية</option>
+        <option value="watches">ساعات وإكسسوارات</option>
+        <option value="home">المنزل</option>
+        <option value="pets">مستلزمات الحيوانات</option>
+        <option value="toys">الألعاب</option>
+        <option value="sports">الرياضة</option>
+        <option value="beauty">الجمال والعناية</option>
+        <option value="kids">الأطفال</option>
+        <option value="books">الكتب</option>
+        <option value="barber_supplies">مستلزمات حلاقة للمحلات بالجملة</option>
+        <option value="services">خدمات</option>
+        <option value="barbers">قصها</option>
+        <option value="carwash">لمعها</option>
+        <option value="handmade">انامل</option>
+        <option value="merchants">كسبني</option>
+        <option value="bestsellers">الأكثر مبيعاً</option>
+        <option value="new">وصل حديثاً</option>
+      </select>
+      <button id="site-search-btn" aria-label="بحث">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="hdr-btn" id="account-btn" title="حسابي">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </span>
+        <span class="label">حسابي</span>
+        <span class="sub">تسجيل دخول</span>
+      </button>
+      <button class="hdr-btn" id="fav-btn" onclick="openWishlist()">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </span>
+        <span class="label">المفضلة</span>
+        <span class="sub" id="fav-count">0 عناصر</span>
+      </button>
+      <button class="hdr-btn" id="cart-btn">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cart-count" hidden>0</span>
+        </span>
+        <span class="label">العربة</span>
+        <span class="sub" id="cart-total">0 جنيه</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <div class="nav-inner" id="site-nav">
+    <div class="nav-item active" data-section="">الرئيسية</div>
+    <div class="nav-item" data-section="electronics">إلكترونيات</div>
+    <div class="nav-item" data-section="mobiles">موبايلات</div>
+    <div class="nav-item" data-section="laptops">لاب توب</div>
+    <div class="nav-item" data-section="fashion">أزياء</div>
+    <div class="nav-item" data-section="shoes">أحذية</div>
+    <div class="nav-item" data-section="watches">ساعات وإكسسوارات</div>
+    <div class="nav-item" data-section="home">المنزل</div>
+    <div class="nav-item" data-section="pets">مستلزمات الحيوانات</div>
+    <div class="nav-item" data-section="toys">الألعاب</div>
+    <div class="nav-item" data-section="sports">الرياضة</div>
+    <div class="nav-item" data-section="beauty">الجمال والعناية</div>
+    <div class="nav-item" data-section="kids">الأطفال</div>
+    <div class="nav-item" data-section="books">الكتب</div>
+    <div class="nav-item" data-section="barber_supplies">مستلزمات حلاقة</div>
+    <div class="nav-item" data-section="services">خدمات</div>
+    <div class="nav-item" data-section="barbers">قصها</div>
+    <div class="nav-item" data-section="carwash">لمعها</div>
+    <div class="nav-item" data-section="handmade">انامل</div>
+    <div class="nav-item" data-section="merchants">كسبني</div>
+    <div class="nav-item" data-section="bestsellers">الأكثر مبيعاً</div>
+    <div class="nav-item" data-section="new">جديد</div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- HERO LAYOUT -->
+  <div class="hero-layout">
+
+    <!-- Right Side Banners -->
+    <div class="side-banners">
+      <div class="side-banner sb-art" data-section="sell">
+        <span class="sb-icon"></span>
+        <span class="sb-title">إلكترونيات</span>
+        <span class="sb-sub">خصومات اليوم</span>
+      </div>
+      <div class="side-banner sb-design" data-section="pets">
+        <span class="sb-icon"></span>
+        <span class="sb-title">حيوانات</span>
+        <span class="sb-sub">+180 منتج</span>
+      </div>
+    </div>
+
+    <!-- Slider -->
+    <div class="hero-slider" id="slider">
+
+      <!-- قصها -->
+      <div class="slide active slide-qasaha">
+        <div class="slide-media">
+          <img src="images/hero/qasaha.svg" alt="قصها" width="1200" height="600"/>
+        </div>
+        <div class="slide-text">
+          <span class="slide-tag">قصها</span>
+          <h2>حلاقة باحتراف… موعدك في مكانك</h2>
+          <p>اكتشف حلاقين معتمدين، احجز في الصالون أو اطلب خدمة منزلية بأسعار واضحة.</p>
+          <button class="slide-btn" data-section="barbers">استكشف قصها</button>
+        </div>
+      </div>
+
+      <!-- انامل -->
+      <div class="slide slide-anamel">
+        <div class="slide-media">
+          <img src="images/hero/anamel.svg" alt="انامل" width="1200" height="600"/>
+        </div>
+        <div class="slide-text">
+          <span class="slide-tag">انامل</span>
+          <h2>شغل يدوي أصيل من صنّاع موهوبين</h2>
+          <p>منتجات هند ميد فريدة — دعم للصنّاع المحليين وتجربة شراء موثوقة.</p>
+          <button class="slide-btn" data-section="handmade">تصفح انامل</button>
+        </div>
+      </div>
+
+      <!-- كسبني -->
+      <div class="slide slide-kasabni">
+        <div class="slide-media">
+          <img src="images/hero/kasabni.svg" alt="كسبني" width="1200" height="600"/>
+        </div>
+        <div class="slide-text">
+          <span class="slide-tag">كسبني</span>
+          <h2>بيع أكثر… وصل لعملاء جاهزين للشراء</h2>
+          <p>منصة التجار لعرض المنتجات والوصول لجمهور أوسع داخل Doddz Go.</p>
+          <button class="slide-btn" data-section="merchants">دخول كسبني</button>
+        </div>
+      </div>
+
+      <div class="slider-dots">
+        <button type="button" class="dot active" onclick="goToSlide(0)" aria-label="قصها"></button>
+        <button type="button" class="dot" onclick="goToSlide(1)" aria-label="انامل"></button>
+        <button type="button" class="dot" onclick="goToSlide(2)" aria-label="كسبني"></button>
+      </div>
+      <div class="hero-slider-nav">
+        <button class="slider-arrow" onclick="prevSlide()" aria-label="السابق">‹</button>
+        <button class="slider-arrow" onclick="nextSlide()" aria-label="التالي">›</button>
+      </div>
+    </div>
+
+    <!-- Left Side Banners -->
+    <div class="side-banners">
+      <div class="side-banner sb-tech" data-section="tech">
+        <span class="sb-icon"></span>
+        <span class="sb-title">تكنولوجيا</span>
+        <span class="sb-sub">+210 منتج</span>
+      </div>
+      <div class="side-banner sb-dog" data-section="home">
+        <span class="sb-icon"></span>
+        <span class="sb-title">المنزل</span>
+        <span class="sb-sub">+320 منتج</span>
+      </div>
+    </div>
+
+  </div><!-- /hero-layout -->
+
+  <!-- PROMO BAR -->
+  <div class="promo-bar">
+    <div class="promo-item">
+      <span class="promo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </span>
+      <div><div class="promo-title">شحن مجاني</div><div class="promo-sub">على طلبات +500 جنيه</div></div>
+    </div>
+    <div class="promo-item">
+      <span class="promo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+      </span>
+      <div><div class="promo-title">إرجاع مجاني</div><div class="promo-sub">خلال 14 يوم</div></div>
+    </div>
+    <div class="promo-item">
+      <span class="promo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </span>
+      <div><div class="promo-title">دفع آمن 100%</div><div class="promo-sub">كارت، فيزا، كاش</div></div>
+    </div>
+    <div class="promo-item">
+      <span class="promo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+      </span>
+      <div><div class="promo-title">توصيل سريع</div><div class="promo-sub">داخل القاهرة والمحافظات</div></div>
+    </div>
+  </div>
+
+  <!-- نتائج البحث / عرض الكل — مخفية افتراضياً وبتظهر بدل الأقسام العادية -->
+  <div class="section-row" id="search-results-row" style="display:none;">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> <span id="search-results-title">نتائج البحث</span></div>
+      <button class="row-see-all" id="search-clear-btn">✕ مسح البحث</button>
+    </div>
+    <div class="search-results-grid" id="search-results-grid"></div>
+  </div>
+
+  <!-- SECTION: عروض مميزة -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> إلكترونيات وعروض</div>
+      <button class="row-see-all" data-section="sell">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-sell"></div>
+  </div>
+
+
+  <!-- SECTION: الحلاقين (Barber Marketplace P0) -->
+  <div class="section-row" id="section-barbers">
+    <div class="barber-hero">
+      <div>
+        <h2>قصها</h2>
+        <p>احجز مع حلاق معتمد في قسم قصها — خدمات، أسعار، ومواعيد واضحة.</p>
+      </div>
+      <div class="barber-hero-icon" aria-hidden="true"></div>
+    </div>
+    <div class="barber-filters" id="barber-filters">
+      <button type="button" class="barber-filter-chip active" data-filter="all">الكل</button>
+      <button type="button" class="barber-filter-chip" data-filter="featured">مميز</button>
+      <button type="button" class="barber-filter-chip" data-filter="home">خدمة منزلية</button>
+      <button type="button" class="barber-filter-chip" data-filter="المعادي">المعادي</button>
+      <button type="button" class="barber-filter-chip" data-filter="مدينة نصر">مدينة نصر</button>
+      <button type="button" class="barber-filter-chip" data-filter="التجمع">التجمع</button>
+      <button type="button" class="barber-filter-chip" data-filter="الزمالك">الزمالك</button>
+    </div>
+    <div class="barbers-grid" id="barbers-grid"></div>
+  </div>
+
+  <!-- SECTION: مستلزمات حيوانات -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> مستلزمات حيوانات</div>
+      <button class="row-see-all" data-section="pets">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-pets"></div>
+  </div>
+
+  <!-- BIG BANNERS -->
+  <div class="big-banners">
+    <div class="big-banner bb-yellow">
+      <div class="bb-text">
+        <div class="bb-tag">🆕 وصل حديثاً</div>
+        <div class="bb-title">اختيارات جديدة كل أسبوع</div>
+        <div class="bb-sub">منتجات مضافة بعناية لجودة أوضح وتجربة أسهل</div>
+        <button class="bb-btn" data-section="new">شوف الجديد ←</button>
+      </div>
+      <div class="bb-icon"></div>
+    </div>
+    <div class="big-banner bb-dark">
+      <div class="bb-text">
+        <div class="bb-tag">المنزل</div>
+        <div class="bb-title">كل اللي بيتك محتاجه</div>
+        <div class="bb-sub">أثاث، ديكور، مطبخ وأكتر بأسعار مناسبة</div>
+        <button class="bb-btn" style="background:var(--coral);color:#fff;" data-section="home">تسوق دلوقتي</button>
+      </div>
+      <div class="bb-icon"></div>
+    </div>
+  </div>
+
+  <!-- SECTION: المنزل -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> المنزل</div>
+      <button class="row-see-all" data-section="home">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-home"></div>
+  </div>
+
+  <!-- SECTION: ملابس -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> أزياء</div>
+      <button class="row-see-all" data-section="fashion">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-fashion"></div>
+  </div>
+
+  <!-- SECTION: تكنولوجيا -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> موبايلات ولاب توب</div>
+      <button class="row-see-all" data-section="tech">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-tech"></div>
+  </div>
+
+  <!-- SECTION: قسم التجار — مرحلة لاحقة -->
+  <div class="section-row" style="background:linear-gradient(135deg,#1c1c2e,#2a2a3d); border:none;">
+    <div class="row-header">
+      <div class="row-title" style="color:#fff;"><span class="rt-icon"></span> كسبني</div>
+      <button class="row-see-all" data-section="merchants">كل التجار ←</button>
+    </div>
+    <div class="products-scroll" id="section-merchants"></div>
+  </div>
+
+  <!-- SECTION: الخدمات — مرحلة لاحقة -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> خدمات</div>
+      <button class="row-see-all" data-section="services">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-services"></div>
+  </div>
+
+  <!-- SECTION: لمعها -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> لمعها — مغاسل السيارات</div>
+      <button class="row-see-all" data-section="carwash">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-carwash"></div>
+  </div>
+
+  <!-- SECTION: انامل -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> انامل — هند ميد</div>
+      <button class="row-see-all" data-section="handmade">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-handmade"></div>
+  </div>
+
+  <!-- SECTION: الأطفال -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الأطفال</div>
+      <button class="row-see-all" data-section="kids">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-kids"></div>
+  </div>
+
+  <!-- SECTION: إلكترونيات -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> إلكترونيات</div>
+      <button class="row-see-all" data-section="electronics">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-electronics"></div>
+  </div>
+
+  <!-- SECTION: موبايلات -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> موبايلات</div>
+      <button class="row-see-all" data-section="mobiles">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-mobiles"></div>
+  </div>
+
+  <!-- SECTION: لاب توب -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> لاب توب</div>
+      <button class="row-see-all" data-section="laptops">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-laptops"></div>
+  </div>
+
+  <!-- SECTION: الأكثر مبيعاً -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الأكثر مبيعاً</div>
+      <button class="row-see-all" data-section="bestsellers">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-bestsellers"></div>
+  </div>
+
+  <!-- SECTION: جديد -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> وصل حديثاً</div>
+      <button class="row-see-all" data-section="new">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-new"></div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">
+        <span class="logo-doddz">Doddz</span><span class="logo-go">Go</span>
+      </a>
+      <p>سوقك الذكي للتسوق والبيع — منتجات متنوعة، عروض مميزة، وتجربة تسوق سهلة وموثوقة.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link" aria-label="فيسبوك">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="إنستجرام">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="تيك توك">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.16 8.16 0 0 0 4.77 1.52V6.76a4.85 4.85 0 0 1-1-.07z"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="يوتيوب">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="#fff" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </a>
+        <a href="https://wa.me/201000000000" class="footer-social-link" aria-label="واتساب">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>الأقسام</h4>
+      <ul>
+        <li><a href="#" data-section="sell">عروض مميزة</a></li>
+        <li><a href="#" data-section="pets">مستلزمات حيوانات</a></li>
+        <li><a href="#" data-section="home">المنزل والديكور</a></li>
+        <li><a href="#" data-section="fashion">ملابس وأزياء</a></li>
+        <li><a href="#" data-section="tech">تكنولوجيا</a></li>
+        <li><a href="#" data-section="new">وصل حديثاً</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>خدمة العملاء</h4>
+      <ul>
+        <li><a href="#">تتبع طلبك</a></li>
+        <li><a href="#">سياسة الإرجاع</a></li>
+        <li><a href="#">الشحن والتوصيل</a></li>
+        <li><a href="#">الأسئلة الشائعة</a></li>
+        <li><a href="#">البيع على Doddz</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>تواصل معنا</h4>
+      <ul class="footer-contact">
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.12 6.12l1.11-1.11a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:+201000000000">01000000000</a>
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:support@doddzgo.com">support@doddzgo.com</a>
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>السبت — الخميس، 9ص — 9م</span>
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>القاهرة، مصر</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Doddz Go. جميع الحقوق محفوظة</span>
+    <span class="footer-bottom-links">
+      <a href="#">سياسة الخصوصية</a>
+      <a href="#">الشروط والأحكام</a>
+    </span>
+  </div>
+</footer>
+
+<div class="support-chat" id="support-chat-panel" hidden>
+  <div class="support-chat-head">
+    <strong>خدمة العملاء</strong>
+    <button type="button" id="support-chat-close" aria-label="إغلاق">✕</button>
+  </div>
+  <div class="support-chat-body">
+    <p>الشات بوت هيشتغل قريبًا.</p>
+    <p class="support-chat-hint">تقدر تتواصل مؤقتًا عبر واتساب أو البريد من تذييل الموقع.</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     DODDZ CART DRAWER
+============================================================= -->
+<div id="cart-overlay" class="cart-overlay" onclick="closeCart()"></div>
+
+<aside id="cart-drawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <div>
+      <div class="cart-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        عربتي
+      </div>
+      <div class="cart-subtitle">منتجاتك المختارة</div>
+    </div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div id="cart-items" class="cart-items"></div>
+  <div id="cart-drawer-footer" class="cart-drawer-footer"></div>
+</aside>
+
+<!-- ============================================================
+     DODDZ WISHLIST DRAWER
+============================================================= -->
+<div id="wishlist-overlay" class="cart-overlay" onclick="closeWishlist()"></div>
+
+<aside id="wishlist-drawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <div>
+      <div class="cart-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        مفضلتي
+      </div>
+      <div class="cart-subtitle" id="wishlist-drawer-count">0 منتجات محفوظة</div>
+    </div>
+    <button class="cart-close" onclick="closeWishlist()">✕</button>
+  </div>
+  <div id="wishlist-items" class="cart-items"></div>
+</aside>
+
+<!-- ============================================================
+     CHECKOUT MODAL — إتمام الطلب وربطه بجدول orders في Supabase
+============================================================= -->
+<div class="checkout-overlay" id="checkout-overlay">
+  <div class="checkout-panel">
+    <div class="checkout-head">
+      <h3>إتمام الطلب</h3>
+      <button class="checkout-close" id="checkout-close">✕</button>
+    </div>
+
+    <div class="checkout-body">
+      <div class="checkout-summary" id="checkout-summary"></div>
+
+      <form id="checkout-form" class="checkout-form">
+        <div class="checkout-field">
+          <label>الاسم بالكامل *</label>
+          <input type="text" id="co-name" required/>
+        </div>
+        <div class="checkout-field">
+          <label>رقم الموبايل *</label>
+          <input type="tel" id="co-phone" required placeholder="01xxxxxxxxx"/>
+        </div>
+        <div class="checkout-field">
+          <label>العنوان بالتفصيل *</label>
+          <textarea id="co-address" required></textarea>
+        </div>
+        <div class="checkout-field">
+          <label>المنطقة</label>
+          <input type="text" id="co-area" placeholder="مثال: المعادي"/>
+        </div>
+        <div class="checkout-field">
+          <label>ملاحظات (اختياري)</label>
+          <textarea id="co-notes"></textarea>
+        </div>
+        <div class="checkout-field">
+          <label>طريقة الدفع</label>
+          <div class="checkout-payment-options">
+            <label class="checkout-radio"><input type="radio" name="co-payment" value="cash" checked/> الدفع عند الاستلام</label>
+            <label class="checkout-radio checkout-radio-disabled"><input type="radio" name="co-payment" value="card" disabled/> بطاقة (قريباً)</label>
+          </div>
+        </div>
+
+        <div class="checkout-errors" id="checkout-errors"></div>
+
+        <button type="submit" class="checkout-submit-btn" id="checkout-submit-btn">تأكيد الطلب ←</button>
+      </form>
+
+      <div class="checkout-success" id="checkout-success" hidden>
+        <div class="checkout-success-icon" aria-hidden="true"></div>
+        <h3>تم استلام طلبك بنجاح!</h3>
+        <p>هنتواصل معاك على رقم الموبايل لتأكيد الطلب.</p>
+        <p class="checkout-order-ref" id="checkout-order-ref"></p>
+        <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     PRODUCT MANAGER (Admin) — يقرأ ويكتب عن طريق ProductStore فقط.
+     لا يلمس Cart System ولا renderCard() ولا تصميم المتجر.
+     ================================================================ -->
+<button class="seller-fab" id="seller-fab" title="تسجيل / دخول تاجر أو مقدّم خدمة" aria-label="تاجر">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-4h16l1 4"/><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M12 13v4"/><path d="M8 13v4"/><path d="M16 13v4"/></svg>
+</button>
+<button type="button" class="support-fab" id="support-fab" title="خدمة العملاء" aria-label="خدمة العملاء">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+</button>
+<button class="adm-fab" id="adm-fab" title="إدارة المنتجات" aria-label="إدارة">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+</button>
+
+<div class="adm-overlay" id="adm-overlay">
+  <div class="adm-panel">
+    <div class="adm-head">
+      <h3>🛠️ <span>Product</span> Manager</h3>
+      <div class="adm-head-actions">
+        <button class="adm-btn secondary adm-logout-btn" id="adm-logout-btn">خروج</button>
+        <button class="adm-close" id="adm-close">✕</button>
+      </div>
+    </div>
+    <div class="adm-body">
+
+      <div class="adm-tabs">
+        <button class="adm-tab active" data-tab="list" id="adm-tab-list">المنتجات</button>
+        <button class="adm-tab" data-tab="form" id="adm-tab-form">منتج جديد</button>
+        <button class="adm-tab" data-tab="orders" id="adm-tab-orders">الطلبات</button>
+        <button class="adm-tab" data-tab="requests" id="adm-tab-requests">طلبات الانضمام</button>
+        <button class="adm-tab" data-tab="barbers" id="adm-tab-barbers">الحلاقين</button>
+      </div>
+
+      <!-- ===== LIST VIEW ===== -->
+      <div class="adm-view active" id="adm-view-list">
+        <div class="adm-toolbar">
+          <input type="text" id="adm-search" placeholder="ابحث بالاسم أو التصنيف أو الوسوم..."/>
+          <button type="button" class="adm-btn" id="adm-quick-batch-btn" title="رفع سريع حتى 30 منتج">رفع سريع (صور)</button>
+          <button class="adm-btn secondary" id="adm-bulk-delete-btn">حذف منتجات</button>
+          <span class="adm-stats" id="adm-stats"></span>
+        </div>
+
+        <div class="adm-bulk-bar" id="adm-bulk-bar" hidden>
+          <label class="adm-check"><input type="checkbox" id="adm-bulk-select-all"/> تحديد الكل</label>
+          <span class="adm-bulk-count" id="adm-bulk-count">0 محدد</span>
+          <div class="adm-bulk-actions">
+            <button type="button" class="adm-btn danger" id="adm-bulk-delete-selected-btn">حذف المحدد</button>
+            <button type="button" class="adm-btn secondary" id="adm-bulk-cancel-btn">إلغاء</button>
+          </div>
+        </div>
+
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th class="adm-bulk-col" id="adm-th-check" style="display:none;"></th>
+                <th>المنتج</th>
+                <th>التصنيف</th>
+                <th>القسم</th>
+                <th>السعر</th>
+                <th>المخزون</th>
+                <th>الشارة</th>
+                <th>المصدر</th>
+                <th>الحالة</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="adm-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== FORM VIEW (Add / Edit) ===== -->
+      
+      <div class="adm-view" id="adm-view-barbers">
+        <div class="adm-toolbar">
+          <span class="adm-stats">موافقة الحلاقين قبل الظهور للعملاء</span>
+          <button type="button" class="adm-btn secondary" id="adm-barbers-refresh">تحديث</button>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th>الحلاق</th>
+                <th>المنطقة</th>
+                <th>الحالة</th>
+                <th>خدمات</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="adm-barbers-tbody"></tbody>
+          </table>
+        </div>
+        <h4 style="margin:18px 0 10px;font-size:14px;">آخر الحجوزات</h4>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th>المرجع</th>
+                <th>الحلاق</th>
+                <th>العميل</th>
+                <th>الموعد</th>
+                <th>الخدمة</th>
+                <th>الحالة</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="adm-bookings-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+<div class="adm-view" id="adm-view-form">
+        <div class="adm-errors" id="adm-errors"></div>
+        <form id="adm-form">
+          <input type="hidden" id="f-id"/>
+          <div class="adm-form-grid">
+            <div class="adm-field">
+              <label>اسم المنتج *</label>
+              <input type="text" id="f-name" required/>
+            </div>
+            <div class="adm-field">
+              <label>التصنيف *</label>
+              <select id="f-category" required>
+                <option value="إلكترونيات">إلكترونيات</option>
+                <option value="موبايلات">موبايلات</option>
+                <option value="لاب توب">لاب توب</option>
+                <option value="أزياء">أزياء</option>
+                <option value="أحذية">أحذية</option>
+                <option value="ساعات وإكسسوارات">ساعات وإكسسوارات</option>
+                <option value="المنزل">المنزل</option>
+                <option value="مستلزمات الحيوانات">مستلزمات الحيوانات</option>
+                <option value="الألعاب">الألعاب</option>
+                <option value="الرياضة">الرياضة</option>
+                <option value="الجمال والعناية">الجمال والعناية</option>
+                <option value="الأطفال">الأطفال</option>
+                <option value="الكتب">الكتب</option>
+                <option value="مستلزمات حلاقة للمحلات بالجملة">مستلزمات حلاقة للمحلات بالجملة</option>
+                <option value="خدمات">خدمات</option>
+              </select>
+            </div>
+
+            <div class="adm-field">
+              <label>التصنيف الفرعي</label>
+              <input type="text" id="f-subcategory"/>
+            </div>
+            <div class="adm-field">
+              <label>القسم *</label>
+              <select id="f-section">
+                <option value="electronics">إلكترونيات</option>
+                <option value="mobiles">موبايلات</option>
+                <option value="laptops">لاب توب</option>
+                <option value="fashion">أزياء</option>
+                <option value="shoes">أحذية</option>
+                <option value="watches">ساعات وإكسسوارات</option>
+                <option value="home">المنزل</option>
+                <option value="pets">مستلزمات الحيوانات</option>
+                <option value="toys">الألعاب</option>
+                <option value="sports">الرياضة</option>
+                <option value="beauty">الجمال والعناية</option>
+                <option value="kids">الأطفال</option>
+                <option value="books">الكتب</option>
+                <option value="barber_supplies">مستلزمات حلاقة للمحلات بالجملة</option>
+                <option value="services">خدمات</option>
+                <option value="barbers">قصها</option>
+                <option value="carwash">لمعها</option>
+                <option value="handmade">انامل</option>
+                <option value="merchants">كسبني</option>
+                <option value="bestsellers">الأكثر مبيعاً</option>
+                <option value="new">وصل حديثاً</option>
+              </select>
+            </div>
+
+            <div class="adm-field">
+              <label>السعر الحالي (جنيه) *</label>
+              <input type="number" id="f-price" min="0" required/>
+            </div>
+            <div class="adm-field">
+              <label>السعر قبل الخصم</label>
+              <input type="number" id="f-oldPrice" min="0"/>
+            </div>
+
+            <div class="adm-field">
+              <label>تكلفة التاجر</label>
+              <input type="number" id="f-taagerCost" min="0"/>
+            </div>
+            <div class="adm-field" id="f-stock-field">
+              <label>المخزون *</label>
+              <input type="number" id="f-stock" min="0" required/>
+            </div>
+
+            <div class="adm-field">
+              <label>نوع المنتج</label>
+              <select id="f-productType">
+                <option value="physical">منتج مادي</option>
+                <option value="digital">منتج رقمي</option>
+                <option value="course">كورس</option>
+                <option value="service">خدمة</option>
+                <option value="classified">إعلان</option>
+              </select>
+            </div>
+            <div class="adm-field">
+              <label>المصدر</label>
+              <select id="f-source">
+                <option value="doddz">Doddz</option>
+                <option value="merchant">تاجر</option>
+              </select>
+            </div>
+
+            <div class="adm-image-upload">
+              <label for="f-images">صور المنتج</label>
+              <input type="file" id="f-images" accept="image/*" multiple/>
+              <p class="adm-image-note">يمكنك رفع حتى 5 صور من جهازك. اختر صورة لتكون الأساسية.</p>
+              <div class="adm-image-previews" id="f-image-previews"></div>
+            </div>
+
+            <div class="adm-field">
+              <label>الألوان (مفصولة بفاصلة)</label>
+              <input type="text" id="f-colors" placeholder="أحمر, أزرق"/>
+            </div>
+            <div class="adm-field">
+              <label>المقاسات (مفصولة بفاصلة)</label>
+              <input type="text" id="f-sizes" placeholder="S, M, L"/>
+            </div>
+
+            <div class="adm-field">
+              <label>التقييم (0-5)</label>
+              <input type="number" id="f-rating" min="0" max="5" step="0.1"/>
+            </div>
+            <div class="adm-field">
+              <label>عدد التقييمات</label>
+              <input type="number" id="f-reviewsCount" min="0"/>
+            </div>
+
+            <div class="adm-field">
+              <label>الشارة</label>
+              <select id="f-badge">
+                <option value="">بدون</option>
+                <option value="best">الأكثر مبيعاً</option>
+                <option value="new">جديد</option>
+                <option value="sale">خصم</option>
+              </select>
+            </div>
+            <div class="adm-field">
+              <label>الوسوم (مفصولة بفاصلة)</label>
+              <input type="text" id="f-tags" placeholder="هدايا, ديكور"/>
+            </div>
+
+            <div class="adm-field full">
+              <label>الوصف</label>
+              <textarea id="f-description"></textarea>
+            </div>
+
+            <div class="adm-field full">
+              <label>خصائص إضافية</label>
+              <div class="adm-checks">
+                <label class="adm-check"><input type="checkbox" id="f-featured"/> مميز</label>
+                <label class="adm-check"><input type="checkbox" id="f-isBestSeller"/> الأكثر مبيعاً</label>
+                <label class="adm-check"><input type="checkbox" id="f-isNew"/> منتج جديد</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="adm-form-actions">
+            <button type="submit" class="adm-btn" id="adm-save-btn">💾 حفظ المنتج</button>
+            <button type="button" class="adm-btn secondary" id="adm-cancel-btn">إلغاء</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== ORDERS VIEW ===== -->
+      <div class="adm-view" id="adm-view-orders">
+        <div class="adm-toolbar">
+          <input type="text" id="adm-orders-search" placeholder="ابحث بالاسم أو رقم الموبايل..."/>
+          <select id="adm-orders-status-filter">
+            <option value="">كل الحالات</option>
+            <option value="pending">قيد الانتظار</option>
+            <option value="confirmed">مؤكد</option>
+            <option value="shipping">جاري الشحن</option>
+            <option value="delivered">تم التسليم</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+          <button class="adm-btn secondary" id="adm-orders-refresh-btn">تحديث</button>
+          <span class="adm-stats" id="adm-orders-stats"></span>
+        </div>
+
+        <div class="adm-orders-list" id="adm-orders-list"></div>
+      </div>
+
+      <!-- ===== SIGNUP REQUESTS VIEW ===== -->
+      <div class="adm-view" id="adm-view-requests">
+        <div class="adm-toolbar">
+          <select id="adm-requests-status-filter">
+            <option value="pending">قيد الانتظار</option>
+            <option value="approved">مقبول</option>
+            <option value="rejected">مرفوض</option>
+            <option value="">الكل</option>
+          </select>
+          <button class="adm-btn secondary" id="adm-requests-refresh-btn">تحديث</button>
+          <span class="adm-stats" id="adm-requests-stats"></span>
+        </div>
+        <div class="adm-orders-list" id="adm-requests-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     ADMIN LOGIN — بوابة الدخول للوحة الإدارة (Supabase Auth)
+     بتظهر قبل لوحة إدارة المنتجات لو الأدمن مش مسجّل دخوله.
+     ================================================================ -->
+<div class="adm-overlay" id="adm-login-overlay">
+  <div class="adm-login-panel">
+    <div class="adm-login-head">
+      <h3>تسجيل دخول الإدارة</h3>
+    </div>
+    <form id="adm-login-form" class="adm-login-form">
+      <div class="adm-field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="adm-login-email" required autocomplete="username"/>
+      </div>
+      <div class="adm-field">
+        <label>كلمة المرور</label>
+        <input type="password" id="adm-login-password" required autocomplete="current-password"/>
+      </div>
+      <div class="adm-errors" id="adm-login-errors"></div>
+      <div class="adm-form-actions">
+        <button type="submit" class="adm-btn" id="adm-login-submit">دخول</button>
+        <button type="button" class="adm-btn secondary" id="adm-login-cancel">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Quick batch helper -->
+<div class="adm-overlay" id="adm-quick-batch-overlay">
+  <div class="adm-login-panel" style="max-width:520px;">
+    <div class="adm-login-head">
+      <h3>رفع سريع بالصور</h3>
+      <p style="margin:8px 0 0;font-size:12.5px;font-weight:600;color:#64748b;line-height:1.55;">
+        اختَر حتى <strong>30 صورة</strong>. كل صورة = منتج جديد. الاسم يتولد من اسم الملف، والسعر والقسم الافتراضيين قابلين للتعديل قبل الحفظ.
+      </p>
+    </div>
+    <div class="adm-field">
+      <label>القسم الافتراضي</label>
+      <select id="qb-section">
+        <option value="kids">الأطفال</option>
+        <option value="electronics">إلكترونيات</option>
+        <option value="mobiles">موبايلات</option>
+        <option value="home">المنزل</option>
+        <option value="fashion">أزياء</option>
+        <option value="merchants">كسبني</option>
+      </select>
+    </div>
+    <div class="adm-field">
+      <label>التصنيف الافتراضي</label>
+      <input type="text" id="qb-category" value="عام"/>
+    </div>
+    <div class="adm-field">
+      <label>السعر الافتراضي (جنيه)</label>
+      <input type="number" id="qb-price" min="1" value="100"/>
+    </div>
+    <div class="adm-field">
+      <label>الصور (حتى 30)</label>
+      <input type="file" id="qb-images" accept="image/*" multiple/>
+    </div>
+    <div class="adm-errors" id="qb-errors"></div>
+    <div class="adm-form-actions">
+      <button type="button" class="adm-btn" id="qb-start-btn">بدء الرفع</button>
+      <button type="button" class="adm-btn secondary" id="qb-cancel-btn">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SELLER ENTRY — مرحلة لاحقة (مخفي حالياً)
+     ================================================================ -->
+<div class="adm-overlay" id="seller-entry-overlay">
+  <div class="adm-login-panel">
+    <div class="adm-login-head"><h3>حسابي على Doddz Go</h3><p style="margin:8px 0 0;font-size:12.5px;font-weight:600;color:#64748b;line-height:1.5;">سجّل كزائر للتسوق، أو كتاجر / مقدّم خدمة (يحتاج موافقة للأدمن).</p></div>
+    <div class="seller-entry-choices">
+      <button type="button" class="adm-btn" id="seller-entry-login-btn">لدي حساب بالفعل</button>
+      <button type="button" class="adm-btn secondary" id="seller-entry-signup-btn">طلب انضمام جديد</button>
+    </div>
+    <div class="adm-form-actions" style="margin-top:14px;">
+      <button type="button" class="adm-btn secondary" id="seller-entry-cancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SELLER LOGIN — مرحلة لاحقة (مخفي حالياً)
+     ================================================================ -->
+<div class="adm-overlay" id="seller-login-overlay">
+  <div class="adm-login-panel">
+    <div class="adm-login-head">
+      <h3>تسجيل الدخول</h3>
+    </div>
+    <form id="seller-login-form" class="adm-login-form">
+      <div class="adm-field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="seller-login-email" required autocomplete="username"/>
+      </div>
+      <div class="adm-field">
+        <label>كلمة المرور</label>
+        <input type="password" id="seller-login-password" required autocomplete="current-password"/>
+      </div>
+      <div class="adm-errors" id="seller-login-errors"></div>
+      <div class="adm-form-actions">
+        <button type="submit" class="adm-btn" id="seller-login-submit">دخول</button>
+        <button type="button" class="adm-btn secondary" id="seller-login-cancel">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================================================================
+     SELLER SIGNUP REQUEST — مرحلة لاحقة (مخفي حالياً)
+     ================================================================ -->
+<div class="adm-overlay" id="seller-signup-overlay">
+  <div class="adm-login-panel seller-signup-panel" style="max-width:340px;">
+    <div class="adm-login-head"><h3>طلب الانضمام</h3></div>
+
+    <form id="seller-signup-form" class="adm-login-form">
+      <div class="adm-field">
+        <label>نوع الحساب / التخصص *</label>
+        <select id="ss-type" required>
+          <option value="">— اختَر النوع —</option>
+          <option value="visitor">زائر — تصفح المنتجات والخدمات</option>
+          <option value="merchant">كسبني — تاجر منتجات</option>
+          <option value="barber">قصها — حلاق</option>
+          <option value="carwash">لمعها — مغاسل سيارات</option>
+          <option value="handmade">انامل — هند ميد</option>
+          <option value="other_service">خدمات أخرى</option>
+        </select>
+      </div>
+      <div class="adm-field">
+        <label>الاسم بالكامل *</label>
+        <input type="text" id="ss-name" required/>
+      </div>
+      <div class="adm-field">
+        <label>البريد الإلكتروني *</label>
+        <input type="email" id="ss-email" required/>
+      </div>
+      <div class="adm-field">
+        <label>رقم الموبايل *</label>
+        <input type="tel" id="ss-phone" required placeholder="01xxxxxxxxx"/>
+      </div>
+      <div class="adm-field">
+        <label>كلمة المرور *</label>
+        <input type="password" id="ss-password" required minlength="6" autocomplete="new-password" placeholder="6 أحرف على الأقل"/>
+      </div>
+      <div class="adm-field">
+        <label>تأكيد كلمة المرور *</label>
+        <input type="password" id="ss-password2" required minlength="6" autocomplete="new-password"/>
+      </div>
+      <div class="adm-field">
+        <label>اسم النشاط/المتجر (اختياري)</label>
+        <input type="text" id="ss-business"/>
+      </div>
+      <div class="adm-field">
+        <label>نبذة عن نشاطك (اختياري)</label>
+        <textarea id="ss-description"></textarea>
+      </div>
+      <div class="adm-errors" id="seller-signup-errors"></div>
+      <div class="adm-form-actions">
+        <button type="submit" class="adm-btn" id="seller-signup-submit">إرسال الطلب</button>
+        <button type="button" class="adm-btn secondary" id="seller-signup-cancel">إلغاء</button>
+      </div>
+    </form>
+
+    <div class="checkout-success" id="seller-signup-success" hidden>
+      <div class="checkout-success-icon" aria-hidden="true"></div>
+      <h3>تم إرسال طلبك!</h3>
+      <p>هيراجعه فريقنا ويتواصل معاك على الإيميل/الموبايل قريباً.</p>
+      <button type="button" class="checkout-done-btn" id="seller-signup-done">تمام ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SELLER PANEL — مرحلة لاحقة (مخفي حالياً)
+     ================================================================ -->
+<div class="adm-overlay" id="seller-overlay">
+  <div class="adm-panel">
+    <div class="adm-head">
+      <h3>🏪 <span>لوحة</span> البائع</h3>
+      <div class="adm-head-actions">
+        <button class="adm-btn secondary adm-logout-btn" id="seller-logout-btn">خروج</button>
+        <button class="adm-close" id="seller-close">✕</button>
+      </div>
+    </div>
+    <div class="adm-body">
+
+      <div class="adm-tabs">
+        <button class="adm-tab active" data-tab="mine" id="seller-tab-mine">منتجاتي</button>
+        <button class="adm-tab" data-tab="add" id="seller-tab-add">إضافة منتج</button>
+        <button class="adm-tab" data-tab="barber-bookings" id="seller-tab-barber-bookings">حجوزاتي</button>
+        <button class="adm-tab" data-tab="barber-services" id="seller-tab-barber-services">خدماتي</button>
+        <button class="adm-tab" data-tab="barber-home" id="seller-tab-barber-home">الخدمة المنزلية</button>
+      </div>
+
+      <!-- ===== MY PRODUCTS ===== -->
+      <div class="adm-view active" id="seller-view-mine">
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="seller-stats"></span>
+          <button class="adm-btn secondary" id="seller-refresh-btn">تحديث</button>
+        </div>
+        <div class="adm-orders-list" id="seller-products-list"></div>
+      </div>
+
+      <!-- ===== ADD PRODUCT ===== -->
+      
+      <div class="adm-view" id="seller-view-barber-bookings">
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="seller-barber-bookings-stats">حجوزات الحلاق</span>
+          <button type="button" class="adm-btn secondary" id="seller-barber-bookings-refresh">تحديث</button>
+        </div>
+        <div id="seller-barber-bookings-list"></div>
+      </div>
+
+      <div class="adm-view" id="seller-view-barber-services">
+        <div class="adm-errors" id="seller-barber-services-errors"></div>
+        <p style="font-size:12.5px;font-weight:700;color:#6b6b7b;margin:0 0 10px;">عدّل خدماتك وأسعارها — تظهر فورًا في صفحة الحجز.</p>
+        <div id="seller-barber-services-editor"></div>
+        <div class="adm-form-actions" style="margin-top:12px;">
+          <button type="button" class="adm-btn secondary" id="seller-barber-add-service">إضافة خدمة</button>
+          <button type="button" class="adm-btn" id="seller-barber-save-services">حفظ الخدمات</button>
+        </div>
+      </div>
+
+      <div class="adm-view" id="seller-view-barber-home">
+        <div class="adm-errors" id="seller-barber-home-errors"></div>
+        <div class="adm-form-grid">
+          <div class="adm-field full">
+            <label>صورة الملف الشخصي (البروفايل)</label>
+            <input type="url" id="sb-avatar-url" placeholder="https://... صورة الحلاق أو الصالون"/>
+            <input type="file" id="sb-avatar-file" accept="image/*" style="margin-top:8px"/>
+          </div>
+          <div class="adm-field full">
+            <label>صورة الغلاف (Cover)</label>
+            <input type="url" id="sb-cover-url" placeholder="https://... صورة غلاف الصالون"/>
+            <input type="file" id="sb-cover-file" accept="image/*" style="margin-top:8px"/>
+          </div>
+          <div class="adm-field full">
+            <button type="button" class="adm-btn" id="sb-save-profile-photos">حفظ صور البروفايل</button>
+          </div>
+          <div class="adm-field full">
+            <label class="adm-check"><input type="checkbox" id="sb-home-enabled"/> تفعيل الخدمة المنزلية</label>
+          </div>
+          <div class="adm-field full">
+            <label>المناطق (افصل بفاصلة)</label>
+            <input type="text" id="sb-home-areas" placeholder="المعادي، المقطم، ..."/>
+          </div>
+          <div class="adm-field">
+            <label>رسوم الانتقال (جنيه)</label>
+            <input type="number" id="sb-home-travel" min="0" value="0"/>
+          </div>
+          <div class="adm-field">
+            <label>رسوم إضافية (جنيه)</label>
+            <input type="number" id="sb-home-extra" min="0" value="0"/>
+          </div>
+          <div class="adm-field full">
+            <label>ملاحظة للعملاء</label>
+            <textarea id="sb-home-note" rows="2" placeholder="مثال: متاح في المعادي والمقطم فقط"></textarea>
+          </div>
+        </div>
+        <div class="adm-form-actions">
+          <button type="button" class="adm-btn" id="seller-barber-save-home">💾 حفظ إعدادات المنزلي</button>
+        </div>
+      </div>
+
+<div class="adm-view" id="seller-view-add">
+        <div class="adm-errors" id="seller-errors"></div>
+        <form id="seller-form">
+          <div class="adm-form-grid">
+            <div class="adm-field">
+              <label>نوع العرض *</label>
+              <select id="sf-offering-type" required>
+                <option value="product">منتج للبيع</option>
+                <option value="service">خدمة</option>
+                <option value="classified">إعلان بيع</option>
+              </select>
+            </div>
+            <div class="adm-field">
+              <label>اسم المنتج/الخدمة *</label>
+              <input type="text" id="sf-name" required/>
+            </div>
+            <div class="adm-field">
+              <label>التصنيف *</label>
+              <select id="sf-category" required>
+                <option value="إلكترونيات">إلكترونيات</option>
+                <option value="موبايلات">موبايلات</option>
+                <option value="لاب توب">لاب توب</option>
+                <option value="أزياء">أزياء</option>
+                <option value="أحذية">أحذية</option>
+                <option value="ساعات وإكسسوارات">ساعات وإكسسوارات</option>
+                <option value="المنزل">المنزل</option>
+                <option value="مستلزمات الحيوانات">مستلزمات الحيوانات</option>
+                <option value="الألعاب">الألعاب</option>
+                <option value="الرياضة">الرياضة</option>
+                <option value="الجمال والعناية">الجمال والعناية</option>
+                <option value="الأطفال">الأطفال</option>
+                <option value="الكتب">الكتب</option>
+                <option value="مستلزمات حلاقة للمحلات بالجملة">مستلزمات حلاقة للمحلات بالجملة</option>
+                <option value="خدمات">خدمات</option>
+              </select>
+            </div>
+            <div class="adm-field">
+              <label>السعر (جنيه) *</label>
+              <input type="number" id="sf-price" min="0" required/>
+            </div>
+            <div class="adm-field">
+              <label>الكمية المتاحة *</label>
+              <input type="number" id="sf-stock" min="0" required/>
+            </div>
+
+            <div class="adm-image-upload">
+              <label for="sf-images">صور المنتج</label>
+              <input type="file" id="sf-images" accept="image/*" multiple/>
+              <p class="adm-image-note">حتى 5 صور — اختار وحدة تكون الصورة الأساسية.</p>
+              <div class="adm-image-previews" id="sf-image-previews"></div>
+            </div>
+
+            <div class="adm-field full">
+              <label>الوصف</label>
+              <textarea id="sf-description"></textarea>
+            </div>
+          </div>
+
+          <div class="adm-form-actions">
+            <button type="submit" class="adm-btn" id="seller-submit-btn">📤 إرسال للمراجعة</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="adm-toast" id="adm-toast"></div>
+
+<!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/barbers-data.js"></script>
+<script src="js/barbers-ui.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/wishlist.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/seller.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/site.js"></script>
+<script src="js/search.js"></script>
+<script src="js/slider.js"></script>
+
+</body>
+</html>

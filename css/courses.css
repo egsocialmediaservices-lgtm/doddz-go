@@ -1,0 +1,25 @@
+/* كروت الكورسات */
+.course-card {
+  flex-shrink:0; width:240px;
+  background:white; border-radius:12px;
+  border:1px solid var(--border); overflow:hidden;
+  cursor:pointer; transition:all 0.25s;
+}
+.course-card:hover { box-shadow:0 8px 28px rgba(0,0,0,0.12); transform:translateY(-3px); }
+.cc-img { height:130px; display:flex; align-items:center; justify-content:center; font-size:56px; }
+.cc-body { padding:14px; }
+.cc-level { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--mid); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+.cc-level span { background:var(--gray); padding:2px 8px; border-radius:50px; }
+.cc-name { font-size:13px; font-weight:700; line-height:1.5; margin-bottom:10px; }
+.cc-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.cc-duration { font-size:11px; color:var(--mid); }
+.cc-students { font-size:11px; color:var(--mid); }
+.cc-price { font-size:17px; font-weight:900; color:var(--black); margin-bottom:10px; }
+.cc-price s { font-size:12px; color:var(--mid); font-weight:400; margin-left:6px; }
+.cc-btn {
+  width:100%; background:var(--black); color:var(--coral);
+  border:none; padding:9px; border-radius:8px;
+  font-family:'Cairo',sans-serif; font-size:13px; font-weight:900; cursor:pointer;
+  transition:background 0.2s;
+}
+.cc-btn:hover { background:#333; }

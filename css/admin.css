@@ -1,0 +1,510 @@
+/* نافذة إدارة المنتجات */
+.seller-fab {
+  position: fixed;
+  left: 18px;
+  bottom: 80px;
+  z-index: 4000;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid #ececf2;
+  background: #1c1c2e;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s;
+}
+.seller-fab:hover { transform: scale(1.06); }
+.seller-fab svg, .adm-fab svg { display: block; }
+.adm-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.provider-fab {
+  position: fixed;
+  left: 18px;
+  bottom: 80px;
+  z-index: 4000;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #1c1c2e;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s;
+  border: 1px solid #ececf2;
+}
+.provider-fab:hover { transform: scale(1.06); }
+.adm-fab { position:fixed; left:18px; bottom:18px; z-index:4000; width:52px; height:52px; border-radius:50%; border:none; background:#1c1c2e; color:#ff6b4a; font-size:22px; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; transition:transform .15s; }
+.adm-fab:hover { transform:scale(1.06); }
+.adm-overlay { position:fixed; inset:0; z-index:5000; background:rgba(10,10,20,.55); display:none; align-items:center; justify-content:center; padding:20px; }
+.adm-overlay.open { display:flex; }
+.adm-panel { width:100%; max-width:960px; max-height:88vh; background:#fff; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+.adm-head { background:#1c1c2e; color:#fff; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
+.adm-head h3 { margin:0; font-size:17px; font-weight:900; }
+.adm-head h3 span { color:#ff6b4a; }
+.adm-close { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; opacity:.8; }
+.adm-close:hover { opacity:1; }
+.adm-body { padding:16px 20px; overflow-y:auto; }
+.adm-tabs { display:flex; gap:8px; margin-bottom:14px; }
+.adm-tab { padding:8px 14px; border-radius:8px; border:1px solid #ddd; background:#fff; cursor:pointer; font-family:'Cairo',sans-serif; font-size:13px; font-weight:700; color:#555; }
+.adm-tab.active { background:#ff6b4a; border-color:#ff6b4a; color:#fff; }
+.adm-view { display:none; }
+.adm-view.active { display:block; }
+
+/* شريط الأدوات (بحث + أزرار) */
+.adm-toolbar { display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center; }
+.adm-toolbar input[type="text"] {
+  flex:1; min-width:160px; padding:9px 12px; border-radius:8px;
+  border:1px solid #ddd; font-family:'Cairo',sans-serif; font-size:13px;
+}
+.adm-btn {
+  padding:9px 16px; border-radius:8px; border:none; cursor:pointer;
+  font-family:'Cairo',sans-serif; font-weight:700; font-size:13px;
+  background:#ff6b4a; color:#fff; white-space:nowrap;
+}
+.adm-btn.secondary { background:#eee; color:#2a2a3d; }
+.adm-btn.danger { background:#fdeaea; color:#d33; }
+.adm-btn:hover { filter:brightness(0.95); }
+.adm-stats { font-size:12px; color:#888; margin-inline-start:auto; }
+
+.adm-import-preview { margin-top:14px; border:1px solid #f0d9d4; border-radius:12px; background:#fffaf9; padding:12px; }
+.adm-import-header { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+.adm-import-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.adm-import-summary { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:10px; }
+.adm-import-stat { background:#fff; border:1px solid #f1d5c6; border-radius:9px; padding:8px 10px; font-size:12px; color:#5b5b5b; }
+.adm-import-stat strong { display:block; font-size:16px; color:#1c1c2e; margin-top:3px; }
+.adm-import-table-wrap { max-height:420px; overflow:auto; }
+.adm-import-table th, .adm-import-table td { font-size:12px; }
+.adm-import-table td:nth-child(1), .adm-import-table th:nth-child(1) { width:60px; text-align:center; }
+.adm-import-table .adm-preview-image { width:52px; height:52px; object-fit:cover; border-radius:8px; border:1px solid #eee; }
+.adm-import-badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+.adm-import-badge.success { background:#eafaf1; color:#1d8f58; }
+.adm-import-badge.warning { background:#fff4d8; color:#a66a00; }
+.adm-import-badge.error { background:#fdeaea; color:#b30000; }
+.adm-import-badge.duplicate { background:#f0ebff; color:#5f45d8; }
+.adm-import-status { font-size:11px; }
+.adm-preview-empty { color:#7a7a7a; text-align:center; padding:18px; }
+.adm-duplicate-modal { position:fixed; inset:0; background:rgba(16,16,28,.5); display:none; align-items:center; justify-content:center; z-index:7000; padding:20px; }
+.adm-duplicate-modal.open { display:flex; }
+.adm-duplicate-dialog { width:min(420px, 90vw); background:#fff; border-radius:16px; padding:18px; box-shadow:0 20px 50px rgba(0,0,0,.25); }
+.adm-duplicate-dialog h4 { margin:0 0 8px; font-size:18px; }
+.adm-duplicate-dialog p { margin:0 0 14px; color:#555; line-height:1.6; }
+.adm-duplicate-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.adm-duplicate-actions .adm-btn { flex:1; min-width:105px; }
+
+/* جدول المنتجات */
+.adm-table-wrap { overflow-x:auto; border:1px solid #eee; border-radius:10px; }
+table.adm-table { width:100%; border-collapse:collapse; font-size:13px; }
+table.adm-table th, table.adm-table td {
+  padding:9px 10px; text-align:right; border-bottom:1px solid #f0f0f0; white-space:nowrap;
+}
+table.adm-table th { background:#f7f7f7; color:#555; font-weight:700; }
+table.adm-table tr:last-child td { border-bottom:none; }
+.adm-badge-tag { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:700; }
+.adm-badge-best { background:#fff3cd; color:#b8860b; }
+.adm-badge-new  { background:#d4f7e3; color:#1a8f4c; }
+.adm-badge-sale { background:#fde2e2; color:#d33; }
+.adm-row-actions { display:flex; gap:6px; }
+.adm-icon-btn { border:none; background:#f2f2f2; border-radius:6px; padding:5px 8px; cursor:pointer; font-size:13px; }
+.adm-icon-btn:hover { background:#e6e6e6; }
+.adm-empty { text-align:center; color:#999; padding:30px 10px; font-size:13px; }
+
+/* فورم إضافة/تعديل منتج */
+.adm-form-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px 16px; }
+.adm-field { display:flex; flex-direction:column; gap:4px; }
+.adm-field.full { grid-column:1 / -1; }
+.adm-field label { font-size:12px; color:#666; font-weight:700; }
+.adm-field input[type="text"],
+.adm-field input[type="number"],
+.adm-field select,
+.adm-field textarea {
+  padding:8px 10px; border-radius:8px; border:1px solid #ddd;
+  font-family:'Cairo',sans-serif; font-size:13px; background:#fff;
+}
+.adm-field textarea { resize:vertical; min-height:60px; }
+
+/* رفع الصور */
+.adm-image-upload {
+  grid-column: 1 / -1;
+  padding: 16px;
+  border: 1px solid var(--line, #e2e8f0);
+  border-radius: 14px;
+  background: #fff;
+}
+.adm-image-upload-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.adm-image-upload-head strong {
+  font-size: 13.5px;
+  color: var(--ink, #0b1220);
+}
+.adm-image-count {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--brand, #0f766e);
+  background: var(--brand-soft, #f0fdfa);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.adm-image-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 110px;
+  padding: 18px 14px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, background .15s;
+}
+.adm-image-drop:hover,
+.adm-image-upload.dragover .adm-image-drop {
+  border-color: var(--brand, #0f766e);
+  background: #f0fdfa;
+}
+.adm-image-drop-title {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--ink, #0b1220);
+}
+.adm-image-drop-sub {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.45;
+  max-width: 360px;
+}
+.adm-image-note {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.adm-image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+.adm-image-preview {
+  position: relative;
+  width: 104px;
+}
+.adm-image-preview img {
+  width: 104px;
+  height: 90px;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  background: #f1f5f9;
+}
+.adm-image-preview.primary img {
+  border-color: var(--brand, #0f766e);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+.adm-image-primary {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+}
+.adm-image-remove {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(11, 18, 32, 0.85);
+  color: #fff;
+  cursor: pointer;
+  line-height: 22px;
+  font-size: 14px;
+}
+
+.adm-checks { display:flex; gap:16px; flex-wrap:wrap; }
+.adm-check { display:flex; align-items:center; gap:6px; font-size:12.5px; color:#444; }
+.adm-form-actions { display:flex; gap:10px; margin-top:16px; justify-content:flex-start; }
+.adm-errors {
+  background:#fdeaea; color:#b30000; border-radius:8px; padding:10px 12px;
+  font-size:12.5px; margin-bottom:12px; display:none;
+}
+.adm-errors.show { display:block; }
+
+/* Toast تأكيد إجراءات الإدارة */
+.adm-toast {
+  position:fixed; bottom:84px; left:18px; z-index:6000;
+  background:#1c1c2e; color:#fff; padding:10px 16px; border-radius:8px;
+  font-size:13px; opacity:0; transform:translateY(8px);
+  transition:opacity .25s, transform .25s; pointer-events:none;
+}
+.adm-toast.show { opacity:1; transform:none; }
+
+/* حذف جماعي (Bulk delete) — بديل زرار إعادة تعيين المتجر */
+.adm-bulk-col { width:36px; text-align:center; }
+.adm-bulk-bar {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  background:#fff4f2; border:1px solid #f3c8bd; border-radius:10px;
+  padding:10px 14px; margin-bottom:12px;
+}
+.adm-bulk-count { font-size:12px; color:#7a4a3d; font-weight:700; }
+.adm-bulk-actions { display:flex; gap:8px; margin-inline-start:auto; }
+
+/* ================================================================
+   ADMIN ORDERS TAB
+================================================================ */
+.adm-orders-list { display:flex; flex-direction:column; gap:10px; }
+.adm-order-card { border:1px solid #eee; border-radius:10px; overflow:hidden; background:#fff; }
+.adm-order-head {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px; cursor:pointer; flex-wrap:wrap;
+}
+.adm-order-head:hover { background:#fafafa; }
+.adm-order-head-main { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; }
+.adm-order-customer { font-weight:700; color:#1c1c2e; }
+.adm-order-date { font-size:11.5px; color:#999; }
+.adm-order-head-side { display:flex; align-items:center; gap:10px; }
+.adm-order-total { font-weight:900; font-size:13px; color:#1c1c2e; }
+.adm-order-caret { font-size:12px; color:#999; }
+
+.adm-order-badge { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.adm-order-badge.pending   { background:#fff3cd; color:#a66a00; }
+.adm-order-badge.confirmed { background:#e0ecff; color:#1d4ed8; }
+.adm-order-badge.shipping  { background:#f0ebff; color:#5f45d8; }
+.adm-order-badge.delivered { background:#d4f7e3; color:#1a8f4c; }
+.adm-order-badge.cancelled { background:#fdeaea; color:#b30000; }
+
+.adm-order-details { padding:14px; border-top:1px solid #f0f0f0; background:#fcfcfc; }
+.adm-order-info-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:8px 16px;
+  font-size:12.5px; color:#444; margin-bottom:12px;
+}
+.adm-order-info-grid .full { grid-column:1 / -1; }
+.adm-order-info-grid strong { color:#1c1c2e; }
+
+.adm-order-items-table { width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12.5px; }
+.adm-order-items-table th, .adm-order-items-table td { padding:6px 8px; text-align:right; border-bottom:1px solid #eee; }
+.adm-order-items-table th { color:#888; font-weight:700; }
+
+.adm-order-totals {
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:13px; color:#444; margin-bottom:12px; padding-top:8px; border-top:1px dashed #ddd;
+}
+
+.adm-order-status-row { display:flex; align-items:center; gap:10px; }
+.adm-order-status-row label { font-size:12.5px; font-weight:700; color:#555; }
+.adm-order-status-select {
+  padding:7px 10px; border-radius:8px; border:1px solid #ddd;
+  font-family:'Cairo',sans-serif; font-size:12.5px;
+}
+
+/* رأس اللوحة — تجميع زرار الخروج مع زرار الإغلاق */
+.adm-head-actions { display:flex; align-items:center; gap:10px; }
+.adm-logout-btn { padding:7px 14px; font-size:12px; }
+
+/* ================================================================
+   ADMIN LOGIN SCREEN
+================================================================ */
+.adm-login-panel {
+  width:100%; max-width:380px; background:#fff; border-radius:16px;
+  padding:28px; box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.adm-login-head h3 {
+  margin:0 0 20px; font-size:18px; font-weight:900; color:#1c1c2e; text-align:center;
+}
+.adm-login-form { display:flex; flex-direction:column; gap:14px; }
+.adm-login-form .adm-form-actions { margin-top:6px; }
+.adm-login-form .adm-form-actions .adm-btn { flex:1; }
+
+/* شاشة اختيار التاجر: دخول ولا طلب انضمام */
+.seller-entry-choices { display:flex; flex-direction:column; gap:10px; }
+
+/* صندوق الموافقة على طلب انضمام داخل تبويب الأدمن */
+.adm-request-approve-box {
+  margin-top:12px; padding:12px; background:#fff8f0; border:1px solid #f3dcc0; border-radius:10px;
+}
+.adm-request-approve-hint { font-size:12px; color:#7a5a2e; line-height:1.9; margin-bottom:10px; }
+.adm-request-approve-hint code {
+  background:#fff; border:1px solid #f0d9b8; border-radius:5px; padding:1px 6px; font-family:monospace; direction:ltr; display:inline-block;
+}
+.adm-request-approve-row { display:flex; gap:8px; flex-wrap:wrap; }
+.adm-request-uuid-input {
+  flex:1; min-width:180px; padding:8px 10px; border-radius:8px; border:1px solid #ddd;
+  font-family:monospace; font-size:12px; direction:ltr;
+}
+
+
+/* Admin professional panel */
+.adm-overlay.open .adm-panel,
+.adm-panel {
+  border-radius: 18px !important;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+}
+.adm-head {
+  background: linear-gradient(135deg, #0f766e, #0d9488) !important;
+  color: #fff !important;
+  border-radius: 18px 18px 0 0;
+}
+.adm-head h2, .adm-head h3 { color: #fff !important; font-weight: 900; }
+.adm-tab.active {
+  color: #0f766e !important;
+  border-bottom: 2px solid #0f766e !important;
+  font-weight: 800;
+}
+.adm-btn {
+  background: #0f766e !important;
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+}
+.adm-btn.secondary {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+.adm-table th {
+  background: #f8fafc !important;
+  font-weight: 800 !important;
+  color: #334155 !important;
+}
+
+/* Seller / provider panels */
+#seller-entry-overlay .adm-login-panel,
+#seller-login-overlay .adm-login-panel,
+#seller-signup-overlay .adm-login-panel {
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 50px rgba(15,23,42,.16);
+}
+#seller-entry-overlay .adm-login-head h3,
+#seller-login-overlay .adm-login-head h3,
+#seller-signup-overlay .adm-login-head h3 {
+  color: #0f766e;
+  font-weight: 900;
+}
+.seller-entry-choices {
+  display: grid;
+  gap: 10px;
+}
+.seller-entry-choices .adm-btn {
+  width: 100%;
+  padding: 12px 14px;
+}
+
+/* Support chat */
+.support-fab {
+  position: fixed;
+  left: 18px;
+  bottom: 142px;
+  z-index: 4000;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #0f766e;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(15,23,42,.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.support-chat {
+  position: fixed;
+  left: 18px;
+  bottom: 210px;
+  width: min(340px, calc(100vw - 32px));
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(15,23,42,.16);
+  z-index: 4100;
+  overflow: hidden;
+}
+.support-chat-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #0f766e, #0d9488);
+  color: #fff;
+  font-weight: 800;
+}
+.support-chat-head button {
+  border: 0; background: transparent; color: #fff; cursor: pointer; font-size: 16px;
+}
+.support-chat-body { padding: 14px; font-size: 13.5px; color: #334155; line-height: 1.6; font-weight: 600; }
+.support-chat-hint { color: #64748b; font-size: 12.5px; }
+
+
+/* صفحة طلب الانضمام — أصغر وأكثف */
+#seller-signup-overlay .adm-login-panel,
+.seller-signup-panel {
+  max-width: 340px !important;
+  width: min(340px, calc(100vw - 24px)) !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  padding: 14px 14px 12px !important;
+  border-radius: 14px !important;
+}
+#seller-signup-overlay .adm-login-head {
+  margin-bottom: 8px !important;
+  padding-bottom: 8px !important;
+}
+#seller-signup-overlay .adm-login-head h3 {
+  font-size: 15px !important;
+  margin: 0 !important;
+}
+#seller-signup-overlay .adm-field {
+  margin-bottom: 8px !important;
+}
+#seller-signup-overlay .adm-field label {
+  font-size: 12px !important;
+  margin-bottom: 4px !important;
+}
+#seller-signup-overlay .adm-field input,
+#seller-signup-overlay .adm-field select,
+#seller-signup-overlay .adm-field textarea {
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  border-radius: 10px !important;
+}
+#seller-signup-overlay .adm-field textarea {
+  min-height: 52px !important;
+  resize: vertical;
+}
+#seller-signup-overlay .adm-form-actions {
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+#seller-signup-overlay .adm-btn {
+  padding: 9px 12px !important;
+  font-size: 13px !important;
+}

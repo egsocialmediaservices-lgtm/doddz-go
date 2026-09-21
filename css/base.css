@@ -1,0 +1,220 @@
+/* ================================================================
+   Doddz Go — Design System
+   Premium Modern Marketplace (Trust · Clarity · Speed)
+================================================================ */
+:root {
+  --font-ar: 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
+  --font-en: 'Inter', system-ui, sans-serif;
+
+  /* Brand — deep ink + teal commerce accent */
+  --brand: #0F766E;
+  --brand-hover: #0D9488;
+  --brand-deep: #115E59;
+  --brand-soft: #F0FDFA;
+  --brand-muted: rgba(15, 118, 110, 0.12);
+
+  /* Neutrals */
+  --ink: #0B1220;
+  --ink-2: #1E293B;
+  --ink-3: #64748B;
+  --line: #E2E8F0;
+  --line-strong: #CBD5E1;
+  --surface: #FFFFFF;
+  --surface-2: #F8FAFC;
+  --page: #F1F5F9;
+  --success: #059669;
+  --danger: #DC2626;
+  --star: #D97706;
+  --warning: #F59E0B;
+
+  /* Legacy aliases (keep existing components working) */
+  --coral: var(--brand);
+  --coral-light: var(--brand-hover);
+  --coral-pale: var(--brand-soft);
+  --yellow: var(--warning);
+  --yellow-dark: var(--star);
+  --black: var(--ink);
+  --dark: var(--ink-2);
+  --gray: var(--surface-2);
+  --mid: var(--ink-3);
+  --border: var(--line);
+  --white: #fff;
+  --red: var(--danger);
+  --green: var(--success);
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(11, 18, 32, 0.04);
+  --shadow-sm: 0 2px 8px rgba(11, 18, 32, 0.05), 0 1px 2px rgba(11, 18, 32, 0.03);
+  --shadow-md: 0 8px 24px rgba(11, 18, 32, 0.08), 0 2px 6px rgba(11, 18, 32, 0.04);
+  --shadow-lg: 0 20px 48px rgba(11, 18, 32, 0.12), 0 4px 12px rgba(11, 18, 32, 0.05);
+  --shadow-brand: 0 8px 20px rgba(15, 118, 110, 0.28);
+
+  /* Radius */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
+
+  /* Layout */
+  --header-h: 68px;
+  --container: 1240px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Type */
+  --font: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-en: 'Inter', 'Cairo', system-ui, sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+
+  font-family: var(--font-ar);
+  background: var(--page);
+  color: var(--ink-2);
+  direction: rtl;
+  font-size: 14.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { text-decoration: none; color: inherit; }
+button, input, select, textarea { font-family: inherit; }
+img { max-width: 100%; display: block; }
+
+.content {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 28px 20px 56px;
+}
+
+.site-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translate(-50%, 12px);
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  box-shadow: var(--shadow-lg);
+  max-width: min(92vw, 420px);
+  text-align: center;
+}
+.site-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.phase-later { display: none !important; }
+
+
+/* Professional status mark (no emoji) */
+.checkout-success-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  border: 2px solid rgba(15, 118, 110, 0.35);
+  position: relative;
+}
+.checkout-success-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 12px;
+  height: 22px;
+  border: solid var(--brand);
+  border-width: 0 3px 3px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.row-title .rt-icon:empty {
+  background: linear-gradient(135deg, var(--brand-soft), #E0F2FE);
+  position: relative;
+}
+.row-title .rt-icon:empty::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  display: block;
+}
+.pd-nf-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  position: relative;
+}
+.pd-nf-icon::after {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border: 2px dashed var(--line-strong);
+  border-radius: 8px;
+}
+.barber-hero-icon:empty {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+
+/* Arabic typography — أكبر وأسمك في كل الموقع */
+html, body {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--font-ar), 'IBM Plex Sans Arabic', 'Cairo', sans-serif !important;
+}
+body.lang-en {
+  font-family: var(--font-en), Inter, sans-serif !important;
+  font-weight: 500;
+}
+button, input, select, textarea, label, a, p, span, li, td, th, h1, h2, h3, h4 {
+  font-family: inherit;
+}
+body:not(.lang-en) button,
+body:not(.lang-en) input,
+body:not(.lang-en) select,
+body:not(.lang-en) textarea,
+body:not(.lang-en) label,
+body:not(.lang-en) .nav-item,
+body:not(.lang-en) .pcard-name,
+body:not(.lang-en) .pcard-btn,
+body:not(.lang-en) .row-title,
+body:not(.lang-en) .promo-title,
+body:not(.lang-en) .sb-title,
+body:not(.lang-en) .hdr-btn .label,
+body:not(.lang-en) .hdr-btn .sub,
+body:not(.lang-en) .adm-btn,
+body:not(.lang-en) .cart-title,
+body:not(.lang-en) .top-bar {
+  font-weight: 700 !important;
+}
+h1, h2, h3, .row-title, .pcard-name, .bp-name, .pd-title {
+  font-weight: 800 !important;
+}

@@ -1,0 +1,50 @@
+/* Footer */
+footer {
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.72);
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.footer-top {
+  max-width: var(--container);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 36px;
+  padding: 48px 20px 40px;
+}
+.footer-brand .logo-doddz { color: #5EEAD4; font-size: 22px; }
+.footer-brand .logo-go { color: #fff; font-size: 22px; }
+.footer-brand p {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 280px;
+}
+.footer-col h4 {
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 900;
+  margin-bottom: 14px;
+  letter-spacing: -0.2px;
+}
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 10px; }
+.footer-col a {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color .15s;
+}
+.footer-col a:hover { color: #5EEAD4; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+}

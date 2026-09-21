@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <title>تفاصيل المنتج — Doddz Go</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- ===== CSS — نفس ملفات الموقع الأساسية + ملف صفحة التفاصيل ===== -->
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/header.css"/>
+  <link rel="stylesheet" href="css/footer.css"/>
+  <link rel="stylesheet" href="css/cart.css"/>
+  <link rel="stylesheet" href="css/product-details.css"/>
+  <link rel="stylesheet" href="css/checkout.css"/>
+  <link rel="stylesheet" href="css/responsive.css"/>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span>توصيل مجاني داخل المعادي</span>
+  <span><a href="index.html?account=1" id="top-register-visitor">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+  <span class="top-bar-support">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+    خدمة عملاء 24/7
+  </span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-main">
+    <a href="index.html" style="display:flex; align-items:center; text-decoration:none;">
+      <div class="logo">
+        <span class="logo-doddz">Doddz</span><span class="logo-go">Go</span>
+      </div>
+    </a>
+    <button type="button" class="lang-toggle" id="lang-toggle" title="Language"><span data-lang-label>EN</span></button>
+    <div class="search-bar">
+      <input type="text" placeholder="ابحث عن منتجات، كورسات، ماركات..." id="pd-search-input"/>
+      <select class="search-cat" id="pd-search-cat" aria-label="القسم">
+        <option value="">كل الأقسام</option>
+        <option value="electronics">إلكترونيات</option>
+        <option value="mobiles">موبايلات</option>
+        <option value="laptops">لاب توب</option>
+        <option value="fashion">أزياء</option>
+        <option value="kids">الأطفال</option>
+        <option value="home">المنزل</option>
+        <option value="barbers">قصها</option>
+        <option value="merchants">كسبني</option>
+      </select>
+      <button type="button" id="pd-search-btn" onclick="(function(){var q=document.getElementById('pd-search-input').value.trim();var c=document.getElementById('pd-search-cat').value;var u='index.html';if(q||c){u+='?';if(q)u+='q='+encodeURIComponent(q);if(q&&c)u+='&';if(c)u+='section='+encodeURIComponent(c);}window.location.href=u;})()" aria-label="بحث">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="hdr-btn" id="account-btn" title="حسابي" onclick="window.location.href='index.html?account=1'">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </span>
+        <span class="label">حسابي</span>
+        <span class="sub">تسجيل دخول</span>
+      </button>
+      <button type="button" class="hdr-btn" id="fav-btn" onclick="openWishlist()">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </span>
+        <span class="label">المفضلة</span>
+        <span class="sub" id="fav-count">0 عناصر</span>
+      </button>
+      <button type="button" class="hdr-btn" id="cart-btn">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cart-count" hidden>0</span>
+        </span>
+        <span class="label">العربة</span>
+        <span class="sub" id="cart-total">0 جنيه</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Breadcrumb -->
+<div class="pd-breadcrumb">
+  <a href="index.html">الرئيسية</a>
+  <span class="pd-sep">›</span>
+  <span id="pd-breadcrumb-cat"></span>
+  <span class="pd-sep">›</span>
+  <span id="pd-breadcrumb-current">تفاصيل المنتج</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- حالة: المنتج مش موجود (مخفية افتراضياً) -->
+  <div class="pd-not-found" id="pd-not-found" style="display:none;">
+    <div class="pd-nf-icon" aria-hidden="true"></div>
+    <h2>المنتج غير موجود</h2>
+    <p>يمكن يكون اتحذف أو الرابط غلط. جرّب ترجع للمتجر وتدور من هناك.</p>
+    <a href="index.html">← الرجوع للمتجر</a>
+  </div>
+
+  <!-- تفاصيل المنتج -->
+  <div class="pd-wrap" id="pd-main" style="display:none;">
+
+    <!-- Gallery -->
+    <div class="pd-gallery">
+      <div class="pd-gallery-main" id="pd-gallery-main">📦</div>
+      <div class="pd-thumbs" id="pd-thumbs"></div>
+    </div>
+
+    <!-- Info -->
+    <div class="pd-info">
+      <div class="pd-cat" id="pd-cat"></div>
+      <h1 class="pd-name" id="pd-name"></h1>
+
+      <div class="pd-stars-row">
+        <span class="stars" id="pd-stars"></span>
+        <span class="stars-count" id="pd-reviews"></span>
+      </div>
+
+      <div class="pd-price-row">
+        <span class="pd-price-now" id="pd-price-now"></span>
+        <span class="pd-price-was" id="pd-price-was" style="display:none;"></span>
+        <span class="pd-price-off" id="pd-price-off" style="display:none;"></span>
+      </div>
+
+      <div class="pd-badges" id="pd-badges"></div>
+      <div class="pd-stock" id="pd-stock"></div>
+      <div class="pd-desc" id="pd-desc"></div>
+      <button type="button" class="pd-desc-toggle" id="pd-desc-toggle" hidden>عرض المزيد</button>
+      <div class="pd-variants" id="pd-variants"></div>
+      <div class="pd-source" id="pd-source"></div>
+
+      <div class="pd-actions-row">
+  <button class="pd-add-btn" id="pd-add-btn">+ أضف للعربة</button>
+  <button type="button" class="pd-fav-btn" id="pd-fav-btn" title="أضف للمفضلة" aria-label="المفضلة">
+      <svg class="icon-heart" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </button>
+</div>
+
+      <div class="pd-tags" id="pd-tags"></div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">
+        <span class="logo-doddz">Doddz</span><span class="logo-go">Go</span>
+      </a>
+      <p>سوقك الذكي للتسوق والبيع — منتجات متنوعة، عروض مميزة، وتجربة تسوق سهلة وموثوقة.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link" aria-label="فيسبوك">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="إنستجرام">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="تيك توك">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.16 8.16 0 0 0 4.77 1.52V6.76a4.85 4.85 0 0 1-1-.07z"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="يوتيوب">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="#fff" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </a>
+        <a href="https://wa.me/201000000000" class="footer-social-link" aria-label="واتساب">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>الأقسام</h4>
+      <ul>
+        <li><a href="index.html">عروض مميزة</a></li>
+        <li><a href="index.html">مستلزمات حيوانات</a></li>
+        <li><a href="index.html">المنزل والديكور</a></li>
+        <li><a href="index.html">ملابس وأزياء</a></li>
+        <li><a href="index.html">تكنولوجيا</a></li>
+        <li><a href="index.html">وصل حديثاً</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>خدمة العملاء</h4>
+      <ul>
+        <li><a href="index.html">تتبع طلبك</a></li>
+        <li><a href="index.html">سياسة الإرجاع</a></li>
+        <li><a href="index.html">الشحن والتوصيل</a></li>
+        <li><a href="index.html">الأسئلة الشائعة</a></li>
+        <li><a href="index.html">البيع على Doddz</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>تواصل معنا</h4>
+      <ul class="footer-contact">
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.12 6.12l1.11-1.11a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:+201000000000">01000000000</a>
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:support@doddzgo.com">support@doddzgo.com</a>
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>السبت — الخميس، 9ص — 9م</span>
+        </li>
+        <li>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>القاهرة، مصر</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Doddz Go. جميع الحقوق محفوظة</span>
+    <span class="footer-bottom-links">
+      <a href="#">سياسة الخصوصية</a>
+      <a href="#">الشروط والأحكام</a>
+    </span>
+  </div>
+</footer>
+
+<!-- ============================================================
+     DODDZ CART DRAWER — نفس الماركب بالظبط اللي في index.html
+     عشان cart.js يشتغل من غير أي تعديل
+============================================================= -->
+<div id="cart-overlay" class="cart-overlay" onclick="closeCart()"></div>
+
+<aside id="cart-drawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <div>
+      <div class="cart-title">🛒 عربتي</div>
+      <div class="cart-subtitle">منتجاتك المختارة</div>
+    </div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+
+  <div id="cart-items" class="cart-items"></div>
+  <div id="cart-drawer-footer" class="cart-drawer-footer"></div>
+</aside>
+
+<!-- ============================================================
+     CHECKOUT MODAL — إتمام الطلب وربطه بجدول orders في Supabase
+============================================================= -->
+<div class="checkout-overlay" id="checkout-overlay">
+  <div class="checkout-panel">
+    <div class="checkout-head">
+      <h3>🧾 إتمام الطلب</h3>
+      <button class="checkout-close" id="checkout-close">✕</button>
+    </div>
+
+    <div class="checkout-body">
+      <div class="checkout-summary" id="checkout-summary"></div>
+
+      <form id="checkout-form" class="checkout-form">
+        <div class="checkout-field">
+          <label>الاسم بالكامل *</label>
+          <input type="text" id="co-name" required/>
+        </div>
+        <div class="checkout-field">
+          <label>رقم الموبايل *</label>
+          <input type="tel" id="co-phone" required placeholder="01xxxxxxxxx"/>
+        </div>
+        <div class="checkout-field">
+          <label>العنوان بالتفصيل *</label>
+          <textarea id="co-address" required></textarea>
+        </div>
+        <div class="checkout-field">
+          <label>المنطقة</label>
+          <input type="text" id="co-area" placeholder="مثال: المعادي"/>
+        </div>
+        <div class="checkout-field">
+          <label>ملاحظات (اختياري)</label>
+          <textarea id="co-notes"></textarea>
+        </div>
+        <div class="checkout-field">
+          <label>طريقة الدفع</label>
+          <div class="checkout-payment-options">
+            <label class="checkout-radio"><input type="radio" name="co-payment" value="cash" checked/> الدفع عند الاستلام</label>
+            <label class="checkout-radio checkout-radio-disabled"><input type="radio" name="co-payment" value="card" disabled/> بطاقة (قريباً)</label>
+          </div>
+        </div>
+
+        <div class="checkout-errors" id="checkout-errors"></div>
+
+        <button type="submit" class="checkout-submit-btn" id="checkout-submit-btn">تأكيد الطلب ←</button>
+      </form>
+
+      <div class="checkout-success" id="checkout-success" hidden>
+        <div class="checkout-success-icon">✅</div>
+        <h3>تم استلام طلبك بنجاح!</h3>
+        <p>هنتواصل معاك على رقم الموبايل لتأكيد الطلب.</p>
+        <p class="checkout-order-ref" id="checkout-order-ref"></p>
+        <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== JS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/wishlist.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/site.js"></script>
+<script src="js/product-details.js"></script>
+
+</body>
+</html>
