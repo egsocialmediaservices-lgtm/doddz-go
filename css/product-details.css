@@ -91,7 +91,8 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 16px;
+  object-position: center;
+  padding: 8px;
 }
 .pd-thumbs {
   display: flex;
@@ -576,4 +577,50 @@ body:has(.pd-wrap) .search-bar {
   background: #ecfdf5 !important;
   color: #0f766e !important;
   border: 1px solid #99f6e4 !important;
+}
+
+/* Mobile product details clarity */
+@media (max-width: 768px) {
+  .pd-wrap {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .pd-gallery {
+    position: static !important;
+    padding: 10px !important;
+    border-radius: 14px;
+  }
+  .pd-gallery-main {
+    aspect-ratio: 1;
+    min-height: 0 !important;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .pd-gallery-main img {
+    padding: 6px !important;
+    object-fit: contain !important;
+  }
+  .pd-thumbs {
+    gap: 8px;
+  }
+  .pd-thumb {
+    width: 56px;
+    height: 56px;
+  }
+  .pd-title, #pd-title {
+    font-size: 18px !important;
+    line-height: 1.4 !important;
+    font-weight: 800 !important;
+  }
+  #pd-price-now {
+    font-size: 22px !important;
+  }
+  .pd-desc, #pd-desc {
+    font-size: 13.5px !important;
+    line-height: 1.55;
+  }
+  .pd-fav-btn {
+    width: 44px !important;
+    height: 44px !important;
+  }
 }

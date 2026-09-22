@@ -113,9 +113,10 @@
 .pcard-img img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 12px;
-  transition: transform .3s ease;
+  object-fit: cover;
+  object-position: center;
+  padding: 0;
+  transition: transform .3s ease, opacity .35s ease;
 }
 .pcard:hover .pcard-img img { transform: scale(1.04); }
 
@@ -284,8 +285,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   opacity: 0;
-  transition: opacity .35s ease;
+  transition: opacity .4s ease;
   pointer-events: none;
 }
 .pcard-gallery-img.is-active { opacity: 1; }
@@ -313,3 +315,96 @@
 
 .section-row { max-width: 100%; overflow: hidden; }
 .products-scroll { max-width: 100%; }
+
+/* Mobile product cards — صورة أوضح ونص أقل ازدحامًا */
+@media (max-width: 768px) {
+  .pcard {
+    width: 158px;
+  }
+  .pcard-img {
+    height: 168px !important;
+    background: #fff;
+  }
+  .pcard-gallery,
+  .pcard-gallery-img {
+    object-fit: cover !important;
+  }
+  .pcard-body {
+    padding: 10px 10px 10px !important;
+    gap: 2px !important;
+  }
+  .pcard-cat {
+    font-size: 10px !important;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pcard-name {
+    font-size: 12.5px !important;
+    line-height: 1.35 !important;
+    min-height: 0 !important;
+    max-height: 2.7em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0 0 2px;
+  }
+  .pcard-stars {
+    font-size: 11px;
+    margin: 0;
+  }
+  .pcard-stars .stars-count {
+    font-size: 10px;
+  }
+  .pcard-price {
+    margin-top: 2px;
+  }
+  .price-now {
+    font-size: 14px !important;
+    font-weight: 800;
+  }
+  .price-was, .price-off {
+    font-size: 11px !important;
+  }
+  .pcard-btn {
+    margin-top: 6px;
+    padding: 8px 6px !important;
+    font-size: 11.5px !important;
+    min-height: 36px;
+  }
+  .pcard-fav {
+    width: 32px;
+    height: 32px;
+    top: 8px;
+    left: 8px;
+  }
+  .pcard-gallery-dots {
+    bottom: 6px;
+  }
+  .pcard-dot {
+    width: 5px;
+    height: 5px;
+  }
+  .products-scroll {
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+  .search-results-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px;
+  }
+  .search-results-grid .pcard {
+    width: 100% !important;
+  }
+  .search-results-grid .pcard-img {
+    height: 150px !important;
+  }
+}
+@media (max-width: 380px) {
+  .pcard { width: 142px; }
+  .pcard-img { height: 148px !important; }
+  .search-results-grid .pcard-img { height: 140px !important; }
+}

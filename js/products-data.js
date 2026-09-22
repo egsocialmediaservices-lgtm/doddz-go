@@ -1200,25 +1200,81 @@ function initProductCardGalleries() {
     gallery.dataset.active = String(i);
   }
 
-  root.addEventListener('mouseenter', (e) => {
-    const gallery = e.target.closest?.('.pcard-gallery');
+  function startSlide(gallery) {
     if (!gallery || Number(gallery.dataset.galleryCount || 0) <= 1) return;
     if (gallery._slideTimer) return;
     gallery._slideTimer = setInterval(() => {
       const cur = Number(gallery.dataset.active || 0);
       setActive(gallery, cur + 1);
-    }, 900);
-  }, true);
+    }, 1100);
+  }
 
-  root.addEventListener('mouseleave', (e) => {
-    const gallery = e.target.closest?.('.pcard-gallery');
+  function stopSlide(gallery, reset) {
     if (!gallery) return;
     if (gallery._slideTimer) {
       clearInterval(gallery._slideTimer);
       gallery._slideTimer = null;
     }
-    setActive(gallery, 0);
+    if (reset) setActive(gallery, 0);
+  }
+
+  // Desktop hover
+  root.addEventListener('mouseenter', (e) => {
+    const gallery = e.target.closest?.('.pcard-gallery');
+    startSlide(gallery);
   }, true);
+  root.addEventListener('mouseleave', (e) => {
+    const gallery = e.target.closest?.('.pcard-gallery');
+    stopSlide(gallery, true);
+  }, true);
+
+  // Mobile / touch: auto-slide while card is on screen
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const gallery = entry.target;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+          startSlide(gallery);
+        } else {
+          stopSlide(gallery, true);
+        }
+      });
+    }, { threshold: [0.55, 0.75] });
+
+    const observeAll = () => {
+      document.querySelectorAll('.pcard-gallery[data-gallery-count]').forEach((g) => {
+        if (Number(g.dataset.galleryCount || 0) > 1 && !g.dataset.ioBound) {
+          g.dataset.ioBound = '1';
+          io.observe(g);
+        }
+      });
+    };
+    observeAll();
+    // بعد رسم أقسام جديدة
+    const mo = new MutationObserver(() => observeAll());
+    mo.observe(root, { childList: true, subtree: true });
+  }
+
+  // لمس سريع: تمرير يدوي بين الصور
+  let touchX = 0;
+  root.addEventListener('touchstart', (e) => {
+    const gallery = e.target.closest?.('.pcard-gallery');
+    if (!gallery || Number(gallery.dataset.galleryCount || 0) <= 1) return;
+    touchX = e.changedTouches[0].clientX;
+    stopSlide(gallery, false);
+  }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    const gallery = e.target.closest?.('.pcard-gallery');
+    if (!gallery || Number(gallery.dataset.galleryCount || 0) <= 1) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) < 30) {
+      startSlide(gallery);
+      return;
+    }
+    const cur = Number(gallery.dataset.active || 0);
+    setActive(gallery, dx < 0 ? cur + 1 : cur - 1);
+    startSlide(gallery);
+  }, { passive: true });
 }
 
 // إعادة ربط بعد أي إعادة رسم أقسام
