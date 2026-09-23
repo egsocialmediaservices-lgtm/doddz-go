@@ -48,3 +48,12 @@ footer {
   font-weight: 600;
   color: rgba(255, 255, 255, 0.4);
 }
+
+.footer-logo .site-logo,
+.site-logo-footer {
+  height: 40px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+}

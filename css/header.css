@@ -404,3 +404,41 @@ body.lang-en .hdr-btn .sub {
   opacity: 0.95;
   color: #5EEAD4;
 }
+
+
+
+/* Brand logo — white transparent, mobile-friendly */
+.logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  line-height: 0;
+}
+.site-logo {
+  height: 42px;
+  width: auto;
+  max-width: 170px;
+  object-fit: contain;
+  display: block;
+}
+.site-logo-footer {
+  height: 38px;
+  max-width: 160px;
+}
+@media (max-width: 768px) {
+  .site-logo {
+    height: 34px;
+    max-width: 140px;
+  }
+  .site-logo-footer {
+    height: 32px;
+  }
+}
+@media (max-width: 400px) {
+  .site-logo {
+    height: 30px;
+    max-width: 120px;
+  }
+}

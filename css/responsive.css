@@ -647,3 +647,51 @@ html, body {
     gap: 8px;
   }
 }
+
+/* Mobile UX logo + touch v3 */
+@media (max-width: 768px) {
+  .header-main {
+    gap: 6px !important;
+    padding-inline: 0;
+  }
+  .lang-toggle {
+    min-width: 36px;
+    height: 34px;
+    font-size: 11px;
+    padding: 0 8px;
+  }
+  .search-bar {
+    height: 38px !important;
+    min-width: 0;
+  }
+  .search-bar input {
+    font-size: 13px !important;
+    padding: 0 12px !important;
+  }
+  .hdr-btn {
+    min-width: 48px !important;
+    padding: 4px 4px !important;
+  }
+  .hdr-btn .label {
+    font-size: 10.5px !important;
+  }
+  .nav-item {
+    padding: 11px 12px !important;
+    font-size: 12.5px !important;
+  }
+  /* touch spacing for product rows */
+  .products-scroll {
+    padding-bottom: 10px;
+    margin-inline: -2px;
+  }
+  .pcard-btn {
+    min-height: 40px !important;
+  }
+}
+
+/* Mobile UX polish — logo visibility + compact chrome */
+@media (max-width: 768px) {
+  .logo-link { margin-inline-end: 2px; }
+  .header-actions { gap: 2px; }
+  .top-bar { gap: 10px; }
+}
