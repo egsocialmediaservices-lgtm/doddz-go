@@ -503,3 +503,49 @@ body.lang-en .hero-slider .slide-overlay {
     transform: none !important;
   }
 }
+
+/* Hero slider UX tweaks — no arrows, longer readable CTAs on mobile */
+.hero-slider-nav,
+.slider-arrow {
+  display: none !important;
+}
+.hero-slider {
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+}
+.hero-slider:active {
+  cursor: grabbing;
+}
+.hero-slider .slider-dots {
+  bottom: 14px;
+  z-index: 6;
+}
+.hero-slider .dot {
+  width: 9px;
+  height: 9px;
+}
+.hero-slider .dot.active {
+  width: 24px;
+}
+
+@media (max-width: 800px) {
+  .hero-slider .slide-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding: 11px 16px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+  .hero-slider .slide-text {
+    padding-bottom: 36px !important;
+  }
+  .hero-slider .slide p {
+    margin-bottom: 14px !important;
+  }
+}

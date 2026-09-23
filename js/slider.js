@@ -1,11 +1,11 @@
 // ================================================================
-// Hero Slider — smooth transitions + performance-friendly
+// Hero Slider — swipe like sections, longer read time, no arrows
 // ================================================================
 (function () {
   let current = 0;
   let timer = null;
   let locked = false;
-  const INTERVAL = 5200;
+  const INTERVAL = 8500; // وقت أطول لقراءة السلايد
   const TRANSITION_MS = 700;
 
   function slides() {
@@ -87,21 +87,37 @@
     if (root) {
       root.addEventListener('mouseenter', stopAuto);
       root.addEventListener('mouseleave', startAuto);
-      root.addEventListener('focusin', stopAuto);
-      root.addEventListener('focusout', startAuto);
 
-      // Touch swipe
-      let x0 = null;
+      // Touch swipe (مثل سكرول الأقسام)
+      let startX = 0;
+      let startY = 0;
+      let tracking = false;
+
       root.addEventListener('touchstart', (e) => {
-        x0 = e.changedTouches[0].clientX;
+        if (!e.changedTouches.length) return;
+        startX = e.changedTouches[0].clientX;
+        startY = e.changedTouches[0].clientY;
+        tracking = true;
         stopAuto();
       }, { passive: true });
+
+      root.addEventListener('touchmove', (e) => {
+        if (!tracking || !e.changedTouches.length) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        // لو السحب أفقي أوضح من الرأسي → منع سكرول الصفحة شوية
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 12) {
+          // لا نمنع افتراضيًا هنا (passive) — الاعتماد على touchend
+        }
+      }, { passive: true });
+
       root.addEventListener('touchend', (e) => {
-        if (x0 == null) return;
-        const dx = e.changedTouches[0].clientX - x0;
-        x0 = null;
-        if (Math.abs(dx) > 40) {
-          // RTL: swipe right → previous visually depends; keep simple
+        if (!tracking || !e.changedTouches.length) return;
+        tracking = false;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+          // RTL: سحب لليسار = التالي، لليمين = السابق
           if (dx < 0) nextSlide();
           else prevSlide();
         }
@@ -109,7 +125,6 @@
       }, { passive: true });
     }
 
-    // Pause when tab hidden
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stopAuto();
       else startAuto();
