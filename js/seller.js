@@ -661,12 +661,24 @@
       const userId = signData?.user?.id || null;
       try {
         if (userId) {
-          await client.from('profiles').upsert([{
+          // حفظ بيانات الزائر في profiles (بدون signup_requests)
+          const row = {
             id: userId,
             role: 'visitor',
             display_name: fullName,
-            phone: phone || null
-          }], { onConflict: 'id' });
+            phone: phone || null,
+            email: email || null
+          };
+          let { error: upErr } = await client.from('profiles').upsert([row], { onConflict: 'id' });
+          if (upErr) {
+            // لو عمود email/phone مش موجود نجرب الحقول الأساسية فقط
+            const { error: upErr2 } = await client.from('profiles').upsert([{
+              id: userId,
+              role: 'visitor',
+              display_name: fullName
+            }], { onConflict: 'id' });
+            if (upErr2) console.warn('[Visitor] profiles upsert:', upErr2);
+          }
         }
       } catch (profileErr) {
         console.warn('[Visitor] profiles upsert:', profileErr);
@@ -765,17 +777,41 @@
     const client = getClient();
     if (!client) return;
 
-    const email    = loginEmail.value.trim();
+    const rawId   = loginEmail.value.trim();
     const password = loginPassword.value;
 
     loginSubmitBtn.disabled = true;
     loginSubmitBtn.textContent = 'جارِ الدخول...';
+
+    // دعم الدخول بالإيميل أو رقم الموبايل
+    let email = rawId;
+    if (/^01[0-9]{9}$/.test(rawId)) {
+      email = null;
+      try {
+        const { data: rpcEmail } = await client.rpc('login_email_for_phone', { p_phone: rawId });
+        if (rpcEmail) email = rpcEmail;
+      } catch (_) {}
+      if (!email) {
+        try {
+          const { data: row } = await client.from('profiles').select('email').eq('phone', rawId).maybeSingle();
+          if (row?.email) email = row.email;
+        } catch (_) {}
+      }
+      if (!email) {
+        loginSubmitBtn.disabled = false;
+        loginSubmitBtn.textContent = 'دخول';
+        loginErrors.innerHTML = '• لم يتم العثور على حساب مرتبط بهذا الموبايل. سجّل كزائر أولاً أو استخدم الإيميل.';
+        loginErrors.classList.add('show');
+        return;
+      }
+    }
+
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     loginSubmitBtn.disabled = false;
     loginSubmitBtn.textContent = 'دخول';
 
     if (error) {
-      loginErrors.innerHTML = '• البريد الإلكتروني أو كلمة المرور غير صحيحة';
+      loginErrors.innerHTML = '• الإيميل/الموبايل أو كلمة المرور غير صحيحة. لو لسه مسجّل، تأكد إن تأكيد الإيميل معطّل في Supabase أو استخدم الإيميل.';
       loginErrors.classList.add('show');
       return;
     }
