@@ -442,3 +442,17 @@ body.lang-en .hdr-btn .sub {
     max-width: 120px;
   }
 }
+
+/* Nav bar clean on light page */
+.nav-bar {
+  background: #fff !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+.nav-item:hover,
+.nav-item.active {
+  color: var(--brand) !important;
+  background: var(--brand-soft) !important;
+}
+.search-bar button {
+  background: var(--brand) !important;
+}

@@ -549,3 +549,21 @@ body.lang-en .hero-slider .slide-overlay {
     margin-bottom: 14px !important;
   }
 }
+
+/* Warm CTA on slides */
+.hero-slider .slide-btn {
+  background: #fff !important;
+  color: #0B1220 !important;
+}
+.hero-slider .slide-btn:hover {
+  background: var(--brand-soft, #ECFDF5) !important;
+  color: var(--brand, #0F766E) !important;
+}
+.hero-slider .slide-tag {
+  background: rgba(15, 118, 110, 0.92) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.25) !important;
+}
+.hero-slider .dot.active {
+  background: #5EEAD4 !important;
+}

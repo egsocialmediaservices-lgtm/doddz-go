@@ -1004,7 +1004,7 @@
      ================================================================ -->
 <div class="adm-overlay" id="seller-entry-overlay">
   <div class="adm-login-panel">
-    <div class="adm-login-head"><h3>حسابي على Doddz Go</h3><p style="margin:8px 0 0;font-size:12.5px;font-weight:600;color:#64748b;line-height:1.5;">سجّل كزائر للتسوق، أو كتاجر / مقدّم خدمة (يحتاج موافقة للأدمن).</p></div>
+    <div class="adm-login-head"><h3>حسابي على Doddz Go</h3><p style="margin:8px 0 0;font-size:12.5px;font-weight:600;color:#64748b;line-height:1.5;">الزائر يسجّل مباشرة. التاجر ومقدّم الخدمة يحتاجون موافقة الإدارة.</p></div>
     <div class="seller-entry-choices">
       <button type="button" class="adm-btn" id="seller-entry-login-btn">لدي حساب بالفعل</button>
       <button type="button" class="adm-btn secondary" id="seller-entry-signup-btn">طلب انضمام جديد</button>
@@ -1025,8 +1025,8 @@
     </div>
     <form id="seller-login-form" class="adm-login-form">
       <div class="adm-field">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="seller-login-email" required autocomplete="username"/>
+        <label>البريد الإلكتروني *</label>
+        <input type="email" id="seller-login-email" required autocomplete="username" placeholder="الإيميل المستخدم في التسجيل"/>
       </div>
       <div class="adm-field">
         <label>كلمة المرور</label>
@@ -1081,11 +1081,11 @@
         <label>تأكيد كلمة المرور *</label>
         <input type="password" id="ss-password2" required minlength="6" autocomplete="new-password"/>
       </div>
-      <div class="adm-field">
+      <div class="adm-field ss-provider-only" id="ss-business-wrap">
         <label>اسم النشاط/المتجر (اختياري)</label>
         <input type="text" id="ss-business"/>
       </div>
-      <div class="adm-field">
+      <div class="adm-field ss-provider-only" id="ss-description-wrap">
         <label>نبذة عن نشاطك (اختياري)</label>
         <textarea id="ss-description"></textarea>
       </div>
@@ -1098,8 +1098,8 @@
 
     <div class="checkout-success" id="seller-signup-success" hidden>
       <div class="checkout-success-icon" aria-hidden="true"></div>
-      <h3>تم إرسال طلبك!</h3>
-      <p>هيراجعه فريقنا ويتواصل معاك على الإيميل/الموبايل قريباً.</p>
+      <h3 id="seller-signup-success-title">تم إرسال طلبك!</h3>
+      <p id="seller-signup-success-msg">هيراجعه فريقنا ويتواصل معاك على الإيميل/الموبايل قريباً.</p>
       <button type="button" class="checkout-done-btn" id="seller-signup-done">تمام ✓</button>
     </div>
   </div>

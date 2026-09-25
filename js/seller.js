@@ -563,12 +563,26 @@
     signupSuccessEl.hidden = true;
     signupForm.reset();
     signupOverlay.classList.add('open');
+    setTimeout(updateSignupTypeUI, 0);
   }
   function closeSignupForm() { signupOverlay.classList.remove('open'); }
 
   signupCancelBtn?.addEventListener('click', closeSignupForm);
   signupOverlay?.addEventListener('click', (e) => { if (e.target === signupOverlay) closeSignupForm(); });
   signupDoneBtn?.addEventListener('click', closeSignupForm);
+
+  
+  function updateSignupTypeUI() {
+    const type = ($('#ss-type')?.value || '');
+    const isVisitor = type === 'visitor';
+    document.querySelectorAll('.ss-provider-only').forEach(el => {
+      el.style.display = isVisitor ? 'none' : '';
+    });
+    if (signupSubmitBtn) {
+      signupSubmitBtn.textContent = isVisitor ? 'إنشاء الحساب' : 'إرسال الطلب';
+    }
+  }
+  $('#ss-type')?.addEventListener('change', updateSignupTypeUI);
 
   signupForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -614,7 +628,7 @@
     }
 
     signupSubmitBtn.disabled = true;
-    signupSubmitBtn.textContent = 'جارِ إنشاء الحساب...';
+    signupSubmitBtn.textContent = (requestType === 'visitor') ? 'جارِ التسجيل...' : 'جارِ إرسال الطلب...';
 
     // إنشاء حساب Auth بكلمة المرور ثم إرسال طلب المراجعة للأدمن
     const { data: signData, error: signError } = await client.auth.signUp({
@@ -642,20 +656,48 @@
       return;
     }
 
-    // الزائر: حساب مباشر بدون طلب موافقة أدمن
+    // الزائر: تسجيل مباشر بدون طلب موافقة — بيانات في Auth + profiles
     if (requestType === 'visitor') {
+      const userId = signData?.user?.id || null;
+      try {
+        if (userId) {
+          await client.from('profiles').upsert([{
+            id: userId,
+            role: 'visitor',
+            display_name: fullName,
+            phone: phone || null
+          }], { onConflict: 'id' });
+        }
+      } catch (profileErr) {
+        console.warn('[Visitor] profiles upsert:', profileErr);
+      }
+      // لو مفيش session (تأكيد إيميل مفعّل) نحاول الدخول مباشرة
+      if (!signData?.session) {
+        try {
+          await client.auth.signInWithPassword({ email, password });
+        } catch (_) {}
+      }
       try {
         localStorage.setItem('doddz_user_role', 'visitor');
         localStorage.setItem('doddz_user_name', fullName);
+        if (phone) localStorage.setItem('doddz_user_phone', phone);
       } catch (_) {}
       signupSubmitBtn.disabled = false;
-      signupSubmitBtn.textContent = 'إرسال الطلب';
+      signupSubmitBtn.textContent = 'إنشاء الحساب';
       signupForm.hidden = true;
       if (signupSuccessEl) {
         signupSuccessEl.hidden = false;
-        signupSuccessEl.innerHTML = '<strong>تم إنشاء حساب الزائر</strong><p>تقدر تتصفح المنتجات والخدمات دلوقتي. سجّل الدخول من «حسابي» في أي وقت.</p>';
+        const titleEl = document.getElementById('seller-signup-success-title');
+        const msgEl = document.getElementById('seller-signup-success-msg');
+        if (titleEl) titleEl.textContent = 'تم التسجيل بنجاح';
+        if (msgEl) {
+          msgEl.textContent = 'حساب الزائر جاهز. تقدر تتسوق دلوقتي وتسجّل الدخول من «حسابي» بنفس الإيميل وكلمة المرور. (الشراء واستخدام الموقع فقط — بدون لوحة تاجر)';
+        } else {
+          signupSuccessEl.innerHTML = '<strong>تم التسجيل بنجاح</strong><p>تقدر تتسوق دلوقتي. سجّل الدخول من حسابي بنفس الإيميل وكلمة المرور.</p><button type="button" class="checkout-done-btn" id="seller-signup-done">تمام ✓</button>';
+          document.getElementById('seller-signup-done')?.addEventListener('click', closeSignupForm);
+        }
       } else {
-        notify('تم إنشاء حساب الزائر بنجاح');
+        notify('تم تسجيل الزائر بنجاح');
         closeSignupForm();
       }
       return;
@@ -739,7 +781,24 @@
     }
 
     currentUserId = data?.user?.id || null;
+    // تحديد الدور من profiles — الزائر يدخل للتسوق فقط بدون لوحة تاجر
+    let role = 'visitor';
+    try {
+      const { data: prof } = await client.from('profiles').select('role,display_name').eq('id', currentUserId).maybeSingle();
+      if (prof?.role) role = prof.role;
+      if (prof?.display_name) {
+        try { localStorage.setItem('doddz_user_name', prof.display_name); } catch (_) {}
+      }
+    } catch (_) {
+      role = localStorage.getItem('doddz_user_role') || 'visitor';
+    }
+    try { localStorage.setItem('doddz_user_role', role); } catch (_) {}
+
     closeLogin();
+    if (role === 'visitor') {
+      notify('تم تسجيل الدخول كزائر — تقدر تتصفح وتشتري دلوقتي');
+      return;
+    }
     openPanel();
   });
 

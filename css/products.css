@@ -408,3 +408,18 @@
   .pcard-img { height: 148px !important; }
   .search-results-grid .pcard-img { height: 140px !important; }
 }
+
+/* Warm marketplace cards */
+.pcard-img {
+  background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%) !important;
+}
+.pcard-cat {
+  color: var(--brand) !important;
+}
+.price-now {
+  color: var(--ink) !important;
+  font-weight: 900 !important;
+}
+.badge-sale {
+  background: var(--brand) !important;
+}

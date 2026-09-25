@@ -1909,12 +1909,14 @@
     const reject = e.target.closest('[data-barber-reject]');
     if (approve && typeof BarberStore !== 'undefined') {
       BarberStore.setStatus(approve.dataset.barberApprove, 'approved');
+      if (typeof renderBarbersSection === 'function') renderBarbersSection();
       toast('تم اعتماد الحلاق');
       renderBarbersAdmin();
       if (typeof renderBarbersSection === 'function') renderBarbersSection();
     }
     if (reject && typeof BarberStore !== 'undefined') {
       BarberStore.setStatus(reject.dataset.barberReject, 'rejected');
+      if (typeof renderBarbersSection === 'function') renderBarbersSection();
       toast('تم رفض/إيقاف الحلاق');
       renderBarbersAdmin();
       if (typeof renderBarbersSection === 'function') renderBarbersSection();

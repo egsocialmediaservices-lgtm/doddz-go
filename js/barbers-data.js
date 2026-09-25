@@ -158,7 +158,6 @@ const BarberStore = (() => {
         normalizeBarber(b);
         const seed = seedMap[b.id];
         if (seed && seed.homeService && (b.homeService.enabled === false && !b.homeService.areas.length)) {
-          // لو لسه افتراضي فاضي و الـ seed فيه إعدادات، ننسخ مرة واحدة
           if (seed.homeService.enabled) b.homeService = JSON.parse(JSON.stringify(seed.homeService));
         }
         return b;
@@ -169,6 +168,12 @@ const BarberStore = (() => {
       const rawB = localStorage.getItem(STORAGE_BOOKINGS);
       bookings = rawB ? JSON.parse(rawB) : [];
     } catch { bookings = []; }
+    // مزامنة الحالات من السحابة (إيقاف/تفعيل يظهر على كل الأجهزة)
+    pullBarberStatuses().then(() => {
+      try {
+        if (typeof renderBarbersSection === 'function') renderBarbersSection();
+      } catch (_) {}
+    });
   }
 
   function persistBarbers() {
@@ -197,7 +202,52 @@ const BarberStore = (() => {
     if (!b) return { success: false, error: 'غير موجود' };
     b.status = status;
     persistBarbers();
+    // مزامنة للحالة على السحابة عشان الموبايل وأي جهاز تاني
+    pushBarberStatus(id, status);
     return { success: true, barber: b };
+  }
+
+  function getSupabase() {
+    return window.supabaseClient || null;
+  }
+
+  async function pushBarberStatus(barberId, status) {
+    const client = getSupabase();
+    if (!client) return;
+    try {
+      const { error } = await client.from('barber_status').upsert([{
+        barber_id: String(barberId),
+        status: String(status),
+        updated_at: new Date().toISOString()
+      }], { onConflict: 'barber_id' });
+      if (error) console.warn('[Barbers] cloud status push:', error.message || error);
+    } catch (e) {
+      console.warn('[Barbers] cloud status push failed', e);
+    }
+  }
+
+  async function pullBarberStatuses() {
+    const client = getSupabase();
+    if (!client) return;
+    try {
+      const { data, error } = await client.from('barber_status').select('barber_id,status');
+      if (error) {
+        console.warn('[Barbers] cloud status pull:', error.message || error);
+        return;
+      }
+      if (!Array.isArray(data) || !data.length) return;
+      let changed = false;
+      data.forEach(row => {
+        const b = barbers.find(x => String(x.id) === String(row.barber_id));
+        if (b && row.status && b.status !== row.status) {
+          b.status = row.status;
+          changed = true;
+        }
+      });
+      if (changed) persistBarbers();
+    } catch (e) {
+      console.warn('[Barbers] cloud status pull failed', e);
+    }
   }
 
   function getService(barberId, serviceId) {
@@ -457,6 +507,8 @@ const BarberStore = (() => {
       return !!(b && b.homeService && b.homeService.enabled);
     },
     setStatus,
+    pullBarberStatuses,
+    pushBarberStatus,
     getService,
     getSlots,
     createBooking,
