@@ -151,7 +151,7 @@
     }
   }
 
-  function renderSlots() {
+  async function renderSlots() {
     const box = $('bk-slots');
     const date = $('bk-date').value;
     state.date = date || null;
@@ -161,7 +161,9 @@
       box.innerHTML = '<span style="color:#888;font-size:12px;font-weight:700;">اختَر التاريخ أولاً</span>';
       return;
     }
-    const slots = BarberStore.getSlots(barber.id, date);
+    box.innerHTML = '<span style="color:#888;font-size:12px;font-weight:700;">جاري تحميل المواعيد...</span>';
+    const slots = await BarberStore.getSlots(barber.id, date);
+    if ($('bk-date').value !== date) return; // المستخدم غيّر التاريخ أثناء التحميل
     if (!slots.length) {
       box.innerHTML = '<span style="color:#888;font-size:12px;font-weight:700;">لا يوجد مواعيد في هذا اليوم</span>';
       return;
@@ -267,8 +269,11 @@
 
     // Step 5: confirm
     $('bk-back-5')?.addEventListener('click', () => setStep(4));
-    $('bk-confirm')?.addEventListener('click', () => {
-      const result = BarberStore.createBooking({
+    $('bk-confirm')?.addEventListener('click', async () => {
+      const confirmBtn = $('bk-confirm');
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'جارِ تأكيد الحجز...';
+      const result = await BarberStore.createBooking({
         barberId: barber.id,
         serviceId: state.serviceId,
         locationType: state.locationType,
@@ -280,6 +285,8 @@
         address: state.address,
         notes: state.notes
       });
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'تأكيد الحجز';
       if (!result.success) return showError(result.error || 'فشل الحجز');
       for (let i = 1; i <= 5; i++) {
         const panel = $('bk-step-' + i);

@@ -148,7 +148,7 @@
     return approved[0] || null;
   }
 
-  function renderSellerBarberBookings() {
+  async function renderSellerBarberBookings() {
     const listEl = $('#seller-barber-bookings-list');
     const stats = $('#seller-barber-bookings-stats');
     if (!listEl || typeof BarberStore === 'undefined') return;
@@ -161,6 +161,7 @@
     if (currentUserId && !barber.userId) {
       BarberStore.linkUser(barber.id, currentUserId);
     }
+    await BarberStore.refreshBookings();
     const rows = BarberStore.getBookingsByBarber(barber.id);
     if (stats) stats.textContent = `${barber.name} · ${rows.length} حجز`;
     if (!rows.length) {
@@ -661,24 +662,12 @@
       const userId = signData?.user?.id || null;
       try {
         if (userId) {
-          // حفظ بيانات الزائر في profiles (بدون signup_requests)
-          const row = {
+          await client.from('profiles').upsert([{
             id: userId,
             role: 'visitor',
             display_name: fullName,
-            phone: phone || null,
-            email: email || null
-          };
-          let { error: upErr } = await client.from('profiles').upsert([row], { onConflict: 'id' });
-          if (upErr) {
-            // لو عمود email/phone مش موجود نجرب الحقول الأساسية فقط
-            const { error: upErr2 } = await client.from('profiles').upsert([{
-              id: userId,
-              role: 'visitor',
-              display_name: fullName
-            }], { onConflict: 'id' });
-            if (upErr2) console.warn('[Visitor] profiles upsert:', upErr2);
-          }
+            phone: phone || null
+          }], { onConflict: 'id' });
         }
       } catch (profileErr) {
         console.warn('[Visitor] profiles upsert:', profileErr);
@@ -777,41 +766,17 @@
     const client = getClient();
     if (!client) return;
 
-    const rawId   = loginEmail.value.trim();
+    const email    = loginEmail.value.trim();
     const password = loginPassword.value;
 
     loginSubmitBtn.disabled = true;
     loginSubmitBtn.textContent = 'جارِ الدخول...';
-
-    // دعم الدخول بالإيميل أو رقم الموبايل
-    let email = rawId;
-    if (/^01[0-9]{9}$/.test(rawId)) {
-      email = null;
-      try {
-        const { data: rpcEmail } = await client.rpc('login_email_for_phone', { p_phone: rawId });
-        if (rpcEmail) email = rpcEmail;
-      } catch (_) {}
-      if (!email) {
-        try {
-          const { data: row } = await client.from('profiles').select('email').eq('phone', rawId).maybeSingle();
-          if (row?.email) email = row.email;
-        } catch (_) {}
-      }
-      if (!email) {
-        loginSubmitBtn.disabled = false;
-        loginSubmitBtn.textContent = 'دخول';
-        loginErrors.innerHTML = '• لم يتم العثور على حساب مرتبط بهذا الموبايل. سجّل كزائر أولاً أو استخدم الإيميل.';
-        loginErrors.classList.add('show');
-        return;
-      }
-    }
-
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     loginSubmitBtn.disabled = false;
     loginSubmitBtn.textContent = 'دخول';
 
     if (error) {
-      loginErrors.innerHTML = '• الإيميل/الموبايل أو كلمة المرور غير صحيحة. لو لسه مسجّل، تأكد إن تأكيد الإيميل معطّل في Supabase أو استخدم الإيميل.';
+      loginErrors.innerHTML = '• البريد الإلكتروني أو كلمة المرور غير صحيحة';
       loginErrors.classList.add('show');
       return;
     }
@@ -848,16 +813,18 @@
   $('#seller-tab-barber-home')?.addEventListener('click', () => { switchTab('barber-home'); loadSellerBarberHomeForm(); });
 
   $('#seller-barber-bookings-refresh')?.addEventListener('click', renderSellerBarberBookings);
-  $('#seller-barber-bookings-list')?.addEventListener('click', (e) => {
+  $('#seller-barber-bookings-list')?.addEventListener('click', async (e) => {
     const conf = e.target.closest('[data-sb-confirm]');
     const canc = e.target.closest('[data-sb-cancel]');
     if (conf && typeof BarberStore !== 'undefined') {
-      BarberStore.updateBookingStatus(conf.dataset.sbConfirm, 'confirmed');
+      const r = await BarberStore.updateBookingStatus(conf.dataset.sbConfirm, 'confirmed');
+      if (!r.success) { notify(r.error || 'تعذر تأكيد الحجز'); return; }
       notify('تم تأكيد الحجز');
       renderSellerBarberBookings();
     }
     if (canc && typeof BarberStore !== 'undefined') {
-      BarberStore.cancelBooking(canc.dataset.sbCancel);
+      const r = await BarberStore.cancelBooking(canc.dataset.sbCancel);
+      if (!r.success) { notify(r.error || 'تعذر إلغاء الحجز'); return; }
       notify('تم إلغاء الحجز');
       renderSellerBarberBookings();
     }

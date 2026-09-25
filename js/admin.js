@@ -1499,7 +1499,7 @@
   tabForm.addEventListener('click', () => { clearForm(); switchTab('form'); });
 
   // ── Barbers approval + bookings (P0/P1) ─────────────────────
-  function renderBarbersAdmin() {
+  async function renderBarbersAdmin() {
     const tbody = $('#adm-barbers-tbody');
     const bookingsBody = $('#adm-bookings-tbody');
     if (!tbody || typeof BarberStore === 'undefined') return;
@@ -1530,7 +1530,8 @@
     }
 
     if (bookingsBody) {
-      const bookings = BarberStore.getBookings().slice(0, 30);
+      bookingsBody.innerHTML = '<tr><td colspan="7" class="adm-empty">جاري تحميل الحجوزات...</td></tr>';
+      const bookings = (await BarberStore.refreshBookings()).slice(0, 30);
       if (!bookings.length) {
         bookingsBody.innerHTML = '<tr><td colspan="7" class="adm-empty">لا توجد حجوزات بعد</td></tr>';
       } else {
@@ -1922,16 +1923,18 @@
       if (typeof renderBarbersSection === 'function') renderBarbersSection();
     }
   });
-  $('#adm-bookings-tbody')?.addEventListener('click', (e) => {
+  $('#adm-bookings-tbody')?.addEventListener('click', async (e) => {
     const conf = e.target.closest('[data-booking-confirm]');
     const canc = e.target.closest('[data-booking-cancel]');
     if (conf && typeof BarberStore !== 'undefined') {
-      BarberStore.updateBookingStatus(conf.dataset.bookingConfirm, 'confirmed');
+      const r = await BarberStore.updateBookingStatus(conf.dataset.bookingConfirm, 'confirmed');
+      if (!r.success) { toast(r.error || 'تعذر تأكيد الحجز'); return; }
       toast('تم تأكيد الحجز');
       renderBarbersAdmin();
     }
     if (canc && typeof BarberStore !== 'undefined') {
-      BarberStore.cancelBooking(canc.dataset.bookingCancel);
+      const r = await BarberStore.cancelBooking(canc.dataset.bookingCancel);
+      if (!r.success) { toast(r.error || 'تعذر إلغاء الحجز'); return; }
       toast('تم إلغاء الحجز');
       renderBarbersAdmin();
     }

@@ -174,6 +174,8 @@ const BarberStore = (() => {
         if (typeof renderBarbersSection === 'function') renderBarbersSection();
       } catch (_) {}
     });
+    // مزامنة الحجوزات من السحابة — بتشتغل بس لو فيه جلسة مسجّلة (أدمن/حلاق)
+    refreshBookings();
   }
 
   function persistBarbers() {
@@ -250,14 +252,118 @@ const BarberStore = (() => {
     }
   }
 
+  // ── حجوزات الحلاقين على Supabase ─────────────────────────────
+  const BOOKINGS_TABLE = 'barber_bookings';
+
+  function _toSupabaseBooking(b) {
+    return {
+      id: b.id,
+      barber_id: b.barberId,
+      barber_name: b.barberName,
+      service_id: b.serviceId,
+      service_name: b.serviceName,
+      duration_min: b.durationMin,
+      price: b.price,
+      travel_fee: b.travelFee,
+      extra_fee: b.extraFee,
+      total_price: b.totalPrice,
+      location_type: b.locationType,
+      address: b.address,
+      customer_area: b.customerArea,
+      customer_name: b.customerName,
+      customer_phone: b.customerPhone,
+      date: b.date,
+      time: b.time,
+      notes: b.notes,
+      status: b.status,
+      created_at: b.createdAt
+    };
+  }
+
+  function _fromSupabaseBooking(r) {
+    return {
+      id: r.id,
+      barberId: r.barber_id,
+      barberName: r.barber_name,
+      serviceId: r.service_id,
+      serviceName: r.service_name,
+      durationMin: r.duration_min,
+      price: r.price,
+      travelFee: r.travel_fee,
+      extraFee: r.extra_fee,
+      totalPrice: r.total_price,
+      locationType: r.location_type,
+      address: r.address,
+      customerArea: r.customer_area,
+      customerName: r.customer_name,
+      customerPhone: r.customer_phone,
+      date: r.date,
+      time: typeof r.time === 'string' ? r.time.slice(0, 5) : r.time,
+      notes: r.notes,
+      status: r.status,
+      createdAt: r.created_at,
+      updatedAt: r.updated_at
+    };
+  }
+
+  /** جلب كل الحجوزات من السحابة للكاش المحلي — للأدمن/الحلاق المسجّلين فقط */
+  async function refreshBookings() {
+    const client = getSupabase();
+    if (!client) return bookings.slice();
+    try {
+      const { data: sessionData } = await client.auth.getSession();
+      if (!sessionData?.session) return bookings.slice();
+      const { data, error } = await client
+        .from(BOOKINGS_TABLE)
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(300);
+      if (error) {
+        console.warn('[Barbers] bookings pull:', error.message || error);
+        return bookings.slice();
+      }
+      bookings = (data || []).map(_fromSupabaseBooking);
+      persistBookings();
+    } catch (e) {
+      console.warn('[Barbers] bookings pull failed', e);
+    }
+    return bookings.slice();
+  }
+
+  /** المواعيد المحجوزة لحلاق في يوم معيّن — من السحابة + الكاش المحلي */
+  async function fetchBookedTimes(barberId, dateStr) {
+    const local = bookings
+      .filter(x => x.barberId === barberId && x.date === dateStr && x.status !== 'cancelled')
+      .map(x => x.time);
+    const client = getSupabase();
+    if (!client) return new Set(local);
+    try {
+      const { data, error } = await client
+        .from(BOOKINGS_TABLE)
+        .select('time,status')
+        .eq('barber_id', barberId)
+        .eq('date', dateStr)
+        .neq('status', 'cancelled');
+      if (error) {
+        console.warn('[Barbers] booked-times pull:', error.message || error);
+        return new Set(local);
+      }
+      const remote = (data || []).map(r => (typeof r.time === 'string' ? r.time.slice(0, 5) : r.time));
+      return new Set([...local, ...remote]);
+    } catch (e) {
+      console.warn('[Barbers] booked-times pull failed', e);
+      return new Set(local);
+    }
+  }
+
   function getService(barberId, serviceId) {
     const b = getById(barberId);
     if (!b) return null;
     return (b.services || []).find(s => s.id === serviceId) || null;
   }
 
-  /** Generate available time slots for a date (local) */
-  function getSlots(barberId, dateStr) {
+  /** Generate available time slots for a date — async: يقرأ المحجوز من السحابة */
+  async function getSlots(barberId, dateStr) {
     const b = getById(barberId);
     if (!b) return [];
     const date = new Date(dateStr + 'T12:00:00');
@@ -265,11 +371,7 @@ const BarberStore = (() => {
     const day = date.getDay(); // 0 Sun
     if (!(b.workDays || []).includes(day)) return [];
 
-    const booked = new Set(
-      bookings
-        .filter(x => x.barberId === barberId && x.date === dateStr && x.status !== 'cancelled')
-        .map(x => x.time)
-    );
+    const booked = await fetchBookedTimes(barberId, dateStr);
 
     const slots = [];
     const start = b.workStart || 10;
@@ -299,7 +401,7 @@ const BarberStore = (() => {
     return slots;
   }
 
-  function createBooking(payload) {
+  async function createBooking(payload) {
     const b = getById(payload.barberId);
     if (!b || b.status !== 'approved') {
       return { success: false, error: 'الحلاق غير متاح للحجز' };
@@ -320,7 +422,10 @@ const BarberStore = (() => {
       if (!(payload.address || '').trim()) return { success: false, error: 'العنوان مطلوب للخدمة المنزلية' };
     }
 
-    const slots = getSlots(payload.barberId, payload.date);
+    const client = getSupabase();
+    if (!client) return { success: false, error: 'تعذر الاتصال بالخادم، حاول تاني بعد قليل' };
+
+    const slots = await getSlots(payload.barberId, payload.date);
     const slot = slots.find(s => s.time === payload.time);
     if (!slot || !slot.available) {
       return { success: false, error: 'الموعد غير متاح، اختَر وقت آخر' };
@@ -353,6 +458,17 @@ const BarberStore = (() => {
       status: 'pending',
       createdAt: new Date().toISOString()
     };
+
+    const { error } = await client.from(BOOKINGS_TABLE).insert([_toSupabaseBooking(booking)]);
+    if (error) {
+      // الـunique index بيمنع حجزين لنفس الموعد حتى لو اتقدموا في نفس اللحظة
+      if (error.code === '23505' || /duplicate key/i.test(error.message || '')) {
+        return { success: false, error: 'الموعد ده اتحجز للتو، اختَر وقت آخر' };
+      }
+      console.error('[Barbers] booking insert failed:', error);
+      return { success: false, error: 'تعذر إرسال الحجز، جرّب تاني' };
+    }
+
     bookings.unshift(booking);
     persistBookings();
     return { success: true, booking };
@@ -363,13 +479,25 @@ const BarberStore = (() => {
     return bookings.filter(x => x.barberId === barberId);
   }
 
-  function updateBookingStatus(id, status) {
+  async function updateBookingStatus(id, status) {
+    const client = getSupabase();
+    if (!client) return { success: false, error: 'تعذر الاتصال بالخادم، حاول تاني بعد قليل' };
+    const updatedAt = new Date().toISOString();
+    const { error } = await client
+      .from(BOOKINGS_TABLE)
+      .update({ status, updated_at: updatedAt })
+      .eq('id', id);
+    if (error) {
+      console.error('[Barbers] booking update failed:', error);
+      return { success: false, error: 'تعذر تحديث الحجز — تأكد إنك مسجّل دخول' };
+    }
     const row = bookings.find(x => x.id === id);
-    if (!row) return { success: false, error: 'الحجز غير موجود' };
-    row.status = status;
-    row.updatedAt = new Date().toISOString();
-    persistBookings();
-    return { success: true, booking: row };
+    if (row) {
+      row.status = status;
+      row.updatedAt = updatedAt;
+      persistBookings();
+    }
+    return { success: true, booking: row || { id, status } };
   }
 
   function cancelBooking(id) {
@@ -514,6 +642,7 @@ const BarberStore = (() => {
     createBooking,
     getBookings,
     getBookingsByBarber,
+    refreshBookings,
     updateBookingStatus,
     cancelBooking,
     upsertFromApplication,
