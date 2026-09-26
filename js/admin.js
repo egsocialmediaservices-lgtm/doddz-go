@@ -1459,6 +1459,11 @@
 
   // ── Events ──────────────────────────────────────────────────
   fab.addEventListener('click', openModal);
+
+  // مدخل بديل لو زرار الأدمن مخفي عن الحساب ده: index.html?admin=1
+  if (new URLSearchParams(location.search).get('admin') === '1') {
+    document.addEventListener('DOMContentLoaded', openModal);
+  }
   closeBtn.addEventListener('click', closeModal);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
 

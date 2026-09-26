@@ -662,12 +662,13 @@
       const userId = signData?.user?.id || null;
       try {
         if (userId) {
-          await client.from('profiles').upsert([{
+          const { error: profileError } = await client.from('profiles').upsert([{
             id: userId,
             role: 'visitor',
             display_name: fullName,
             phone: phone || null
           }], { onConflict: 'id' });
+          if (profileError) console.warn('[Visitor] profiles upsert:', profileError);
         }
       } catch (profileErr) {
         console.warn('[Visitor] profiles upsert:', profileErr);
@@ -798,6 +799,7 @@
     closeLogin();
     if (role === 'visitor') {
       notify('تم تسجيل الدخول كزائر — تقدر تتصفح وتشتري دلوقتي');
+      window.DoddzAccount?.open?.();
       return;
     }
     openPanel();

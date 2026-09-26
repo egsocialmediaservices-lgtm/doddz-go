@@ -291,6 +291,28 @@ function generateOrderId() {
   return 'order_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 }
 
+// خطأ برسالة واضحة للمستخدم (بدون ما نضيّع السبب الحقيقي)
+function userFacingError(message) {
+  const err = new Error(message);
+  err.userMessage = message;
+  return err;
+}
+
+function checkoutFriendlyMessage(error) {
+  const code = error && error.code ? String(error.code) : '';
+  const msg  = error && error.message ? String(error.message).toLowerCase() : '';
+  if (code === '42501' || msg.includes('row-level security')) {
+    return 'السيرفر رفض حفظ الطلب (صلاحية) — حدّث الصفحة وجرّب تاني.';
+  }
+  if (code === '42703' || msg.includes('does not exist') || msg.includes('column')) {
+    return 'في تحديث ناقص في قاعدة البيانات — بلّغ الإدارة.';
+  }
+  if (msg.includes('failed to fetch') || msg.includes('networkerror')) {
+    return 'تعذر الوصول للسيرفر — تأكد من الاتصال بالإنترنت وجرّب تاني.';
+  }
+  return 'تعذر إرسال الطلب. جرّب تاني بعد قليل.';
+}
+
 function showCheckoutError(message) {
   if (!checkoutErrorsEl) return;
   checkoutErrorsEl.innerHTML = `• ${message}`;
@@ -338,6 +360,60 @@ function openCheckout() {
   checkoutForm.reset();
   renderCheckoutSummary();
   checkoutOverlay.classList.add('open');
+  prefillCheckoutFromProfile();
+}
+
+// لو الزائر مسجّل دخولاه —املّى الاسم والموبايل والعنوان من حسابه
+async function prefillCheckoutFromProfile() {
+  const client = window.supabaseClient;
+  if (!client) return;
+  try {
+    const { data: sess } = await client.auth.getSession();
+    const uid = sess?.session?.user?.id;
+    if (!uid) return;
+
+    const { data: prof } = await client
+      .from('profiles')
+      .select('display_name,phone,governorate,area,street,building,floor')
+      .eq('id', uid)
+      .maybeSingle();
+    const minimal = prof ? null : await client
+      .from('profiles')
+      .select('display_name,phone')
+      .eq('id', uid)
+      .maybeSingle();
+    const saved = prof || minimal?.data;
+    if (!saved) return;
+
+    // ممكن المستخدم يقفل اللوحة ويغيّر العربة — نتأكد إن الفورم لسه مفتوح وفاضي
+    if (!checkoutOverlay.classList.contains('open')) return;
+
+    const nameEl    = document.getElementById('co-name');
+    const phoneEl   = document.getElementById('co-phone');
+    const addrEl    = document.getElementById('co-address');
+    const areaEl    = document.getElementById('co-area');
+
+    if (nameEl && !nameEl.value && saved.display_name) nameEl.value = saved.display_name;
+    if (phoneEl && !phoneEl.value && saved.phone) phoneEl.value = saved.phone;
+    if (areaEl && !areaEl.value && saved.area) areaEl.value = saved.area;
+
+    if (addrEl && !addrEl.value) {
+      const withPrefix = (value, prefix) => {
+        const v = String(value || '').trim();
+        if (!v) return '';
+        return /^[\d\u0660-\u0669]/.test(v) ? prefix + ' ' + v : v;
+      };
+      const streetParts = [
+        withPrefix(saved.street, 'شارع'),
+        withPrefix(saved.building, 'رقم'),
+        withPrefix(saved.floor, 'الدور')
+      ].filter(Boolean).join('، ');
+      const fullAddr = [saved.governorate, streetParts].filter(Boolean).join(' - ');
+      if (fullAddr) addrEl.value = fullAddr;
+    }
+  } catch (error) {
+    console.warn('[Checkout] prefill from profile:', error);
+  }
 }
 
 function closeCheckout() {
@@ -378,13 +454,20 @@ async function submitCheckout(event) {
   const subtotal = getCartTotal();
   const total    = subtotal + DELIVERY_FEE;
   const orderId  = generateOrderId();
+  let orderCreated = false;
 
   checkoutSubmitBtn.disabled = true;
   checkoutSubmitBtn.textContent = 'جارِ إرسال الطلب...';
   clearCheckoutError();
 
   try {
-    const { error: orderError } = await window.supabaseClient.from('orders').insert([{
+    let customerUserId = null;
+    try {
+      const { data: sess } = await window.supabaseClient.auth.getSession();
+      customerUserId = sess?.session?.user?.id || null;
+    } catch (_) {}
+
+    const orderPayload = {
       id: orderId,
       customer_name: name,
       customer_phone: phone,
@@ -396,8 +479,21 @@ async function submitCheckout(event) {
       total: total,
       payment_method: paymentMethod,
       status: 'pending'
-    }]);
+    };
+    if (customerUserId) orderPayload.customer_user_id = customerUserId;
+
+    let { error: orderError } = await window.supabaseClient.from('orders').insert([orderPayload]);
+
+    // عمود customer_user_id لسه مش موجود في القاعدة — نكمل بدونه بدل ما الطلب يفشل
+    const missingColumn = orderError && (orderError.code === '42703' || orderError.code === 'PGRST204');
+    if (missingColumn && customerUserId) {
+      console.warn('[Checkout] orders.customer_user_id غير متوفر:', orderError.message);
+      delete orderPayload.customer_user_id;
+      ({ error: orderError } = await window.supabaseClient.from('orders').insert([orderPayload]));
+    }
     if (orderError) throw orderError;
+
+    orderCreated = true;
 
     const orderItemsPayload = products.map(product => {
       const variantLabel = [product.selectedColor, product.selectedSize].filter(Boolean).join(' - ');
@@ -415,7 +511,16 @@ async function submitCheckout(event) {
     });
 
     const { error: itemsError } = await window.supabaseClient.from('order_items').insert(orderItemsPayload);
-    if (itemsError) throw itemsError;
+    if (itemsError) {
+      console.error('[Checkout] order_items:', itemsError);
+      // منتج في العربة اتحذف من المتجر — نشيل الطلب اليتيم ونقول السبب الصحيح
+      try { await window.supabaseClient.from('orders').delete().eq('id', orderId); } catch (_) {}
+      orderCreated = false;
+      if (itemsError.code === '23503') {
+        throw userFacingError('في منتج في عربتك اتمسح من المتجر — حدّث الصفحة وزيده تاني.');
+      }
+      throw userFacingError('تعذر إرسال تفاصيل الطلب. جرّب تاني بعد قليل.');
+    }
 
     // نجاح — نفضّي العربة ونعرض شاشة التأكيد
     cart = [];
@@ -427,7 +532,10 @@ async function submitCheckout(event) {
     checkoutOrderRefEl.textContent = `رقم مرجعي: ${orderId.slice(-8).toUpperCase()}`;
   } catch (error) {
     console.error('[Checkout] فشل إرسال الطلب:', error);
-    showCheckoutError('تعذر إرسال الطلب. تأكد من اتصالك بالإنترنت وجرّب تاني.');
+    if (orderCreated) {
+      try { await window.supabaseClient.from('orders').delete().eq('id', orderId); } catch (_) {}
+    }
+    showCheckoutError(error && error.userMessage ? error.userMessage : checkoutFriendlyMessage(error));
   } finally {
     checkoutSubmitBtn.disabled = false;
     checkoutSubmitBtn.textContent = 'تأكيد الطلب ←';

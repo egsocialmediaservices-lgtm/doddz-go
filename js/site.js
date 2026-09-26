@@ -111,8 +111,12 @@ function wireSectionLinks() {
 document.addEventListener('DOMContentLoaded', wireSectionLinks);
 
 
-// حسابي → دخول تاجر / زائر / مقدّم خدمة
+// حسابي → لو مسجّل دخولك: لوحة الحساب — غير كده: دخول/تسجيل
 document.getElementById('account-btn')?.addEventListener('click', () => {
+  if (window.DoddzAccount?.isLoggedIn()) {
+    window.DoddzAccount.open();
+    return;
+  }
   const entry = document.getElementById('seller-entry-overlay');
   if (entry) {
     entry.classList.add('open');
@@ -134,7 +138,15 @@ document.getElementById('support-chat-close')?.addEventListener('click', () => {
 
 if (new URLSearchParams(location.search).get('account') === '1') {
   document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('seller-entry-overlay')?.classList.add('open');
+    const openEntry = () => document.getElementById('seller-entry-overlay')?.classList.add('open');
+    if (window.DoddzAccount?.whenReady) {
+      window.DoddzAccount.whenReady().then(() => {
+        if (window.DoddzAccount.isLoggedIn()) window.DoddzAccount.open();
+        else openEntry();
+      });
+    } else {
+      openEntry();
+    }
     history.replaceState({}, '', location.pathname);
   });
 }

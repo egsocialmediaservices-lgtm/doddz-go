@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="css/footer.css"/>
   <link rel="stylesheet" href="css/cart.css"/>
   <link rel="stylesheet" href="css/checkout.css"/>
+  <link rel="stylesheet" href="css/account.css"/>
   <link rel="stylesheet" href="css/admin.css"/>
   <link rel="stylesheet" href="css/responsive.css"/>
   <link rel="stylesheet" href="css/barber.css"/>
@@ -81,8 +82,8 @@
         <span class="icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         </span>
-        <span class="label">حسابي</span>
-        <span class="sub">تسجيل دخول</span>
+        <span class="label" id="account-btn-label">حسابي</span>
+        <span class="sub" id="account-btn-sub">تسجيل دخول</span>
       </button>
       <button class="hdr-btn" id="fav-btn" onclick="openWishlist()">
         <span class="icon">
@@ -615,10 +616,166 @@
 
       <div class="checkout-success" id="checkout-success" hidden>
         <div class="checkout-success-icon" aria-hidden="true"></div>
-        <h3>تم استلام طلبك بنجاح!</h3>
-        <p>هنتواصل معاك على رقم الموبايل لتأكيد الطلب.</p>
+        <h3>تم الطلب بنجاح ✓</h3>
+        <p>استلمنا طلبك وهنتواصل معاك على رقم الموبايل لتأكيده. احتفظ بالرقم المرجعي لتتبع طلبك.</p>
         <p class="checkout-order-ref" id="checkout-order-ref"></p>
         <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ACCOUNT PANEL — لوحة حساب الزائر (js/account.js)
+============================================================= -->
+<div class="account-overlay" id="account-overlay">
+  <div class="account-panel">
+    <div class="account-head">
+      <div class="account-user">
+        <div class="account-avatar" id="account-avatar">؟</div>
+        <div style="min-width:0;">
+          <h3 id="account-user-name">حسابي</h3>
+          <p id="account-user-email"></p>
+        </div>
+      </div>
+      <button class="account-close" id="account-close" aria-label="إغلاق">✕</button>
+    </div>
+
+    <div class="account-body">
+      <nav class="account-nav">
+        <button type="button" class="account-nav-btn active" data-account-tab="orders">مشترياتك</button>
+        <button type="button" class="account-nav-btn" data-account-tab="address">عنوانك</button>
+        <button type="button" class="account-nav-btn" data-account-tab="settings">تعديل البيانات</button>
+        <button type="button" class="account-nav-btn" data-account-tab="track">تتبع طلب</button>
+        <button type="button" class="account-nav-btn" data-account-tab="support">خدمة العملاء</button>
+        <button type="button" class="account-nav-btn" data-account-tab="staff" id="account-nav-staff" hidden>لوحة التحكم</button>
+        <button type="button" class="account-nav-btn danger" id="account-logout-btn">تسجيل الخروج</button>
+      </nav>
+
+      <div class="account-views">
+
+        <!-- مشترياتك -->
+        <section class="account-view active" id="account-view-orders">
+          <h4 class="account-view-title">مشترياتك</h4>
+          <div id="account-orders-list">
+            <div class="account-orders-empty">سجّل دخولك وشوف كل طلباتك هنا.</div>
+          </div>
+        </section>
+
+        <!-- عنوانك -->
+        <section class="account-view" id="account-view-address">
+          <h4 class="account-view-title">عنوانك</h4>
+          <div class="account-form">
+            <div class="account-form-row">
+              <div class="account-field">
+                <label>المحافظة</label>
+                <input type="text" id="acc-governorate" placeholder="مثال: القاهرة"/>
+              </div>
+              <div class="account-field">
+                <label>المنطقة</label>
+                <input type="text" id="acc-area" placeholder="مثال: المعادي"/>
+              </div>
+            </div>
+            <div class="account-field">
+              <label>الشارع</label>
+              <input type="text" id="acc-street" placeholder="مثال: شارع ٩"/>
+            </div>
+            <div class="account-form-row">
+              <div class="account-field">
+                <label>رقم العقار</label>
+                <input type="text" id="acc-building" placeholder="مثال: ١٢"/>
+              </div>
+              <div class="account-field">
+                <label>الدور</label>
+                <input type="text" id="acc-floor" placeholder="مثال: الثالث"/>
+              </div>
+            </div>
+            <div class="account-msg" id="acc-address-msg"></div>
+            <button type="button" class="account-btn" id="acc-address-save">حفظ العنوان</button>
+          </div>
+        </section>
+
+        <!-- تعديل البيانات -->
+        <section class="account-view" id="account-view-settings">
+          <h4 class="account-view-title">تعديل البيانات</h4>
+          <div class="account-form">
+            <div class="account-field">
+              <label>الاسم بالكامل</label>
+              <input type="text" id="acc-display-name"/>
+            </div>
+            <div class="account-field">
+              <label>رقم الموبايل</label>
+              <input type="tel" id="acc-phone" placeholder="01xxxxxxxxx"/>
+            </div>
+            <div class="account-field">
+              <label>البريد الإلكتروني</label>
+              <input type="email" id="acc-email" placeholder="Example@mail.com" style="direction:ltr;text-align:right;"/>
+            </div>
+            <hr class="account-divider"/>
+            <div class="account-form-row">
+              <div class="account-field">
+                <label>كلمة مرور جديدة</label>
+                <input type="password" id="acc-password" autocomplete="new-password" placeholder="سيبة فاضي لو مش عايز تغيّرها"/>
+              </div>
+              <div class="account-field">
+                <label>تأكيد كلمة المرور</label>
+                <input type="password" id="acc-password2" autocomplete="new-password"/>
+              </div>
+            </div>
+            <div class="account-msg" id="acc-settings-msg"></div>
+            <button type="button" class="account-btn" id="acc-settings-save">حفظ التعديلات</button>
+            <p style="margin:0;font-size:11.5px;color:#8888aa;font-weight:700;line-height:1.6;">لو غيّرت الإيميل، Supabase هيبعت رابط تأكيد على الإيميل الجديد.</p>
+          </div>
+        </section>
+
+        <!-- تتبع طلب -->
+        <section class="account-view" id="account-view-track">
+          <h4 class="account-view-title">تتبع طلب</h4>
+          <div class="account-form">
+            <div class="account-field">
+              <label>رقم الأوردر (الرقم المرجعي)</label>
+              <input type="text" id="acc-track-ref" placeholder="مثال: 6_9L3Q17"/>
+            </div>
+            <div class="account-field">
+              <label>رقم الموبايل المستخدم في الطلب</label>
+              <input type="tel" id="acc-track-phone" placeholder="01xxxxxxxxx"/>
+            </div>
+            <div class="account-msg" id="acc-track-msg"></div>
+            <button type="button" class="account-btn" id="acc-track-btn">تتبع الطلب</button>
+            <div class="account-track-result" id="acc-track-result"></div>
+          </div>
+        </section>
+
+        <!-- خدمة العملاء -->
+        <section class="account-view" id="account-view-support">
+          <h4 class="account-view-title">التواصل مع خدمة العملاء</h4>
+          <div class="account-support-list">
+            <a class="account-support-item" href="https://wa.me/201000000000" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+              <span>واتساب<span class="hint">01000000000</span></span>
+            </a>
+            <a class="account-support-item" href="tel:+201000000000">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>اتصال هاتفي<span class="hint">01000000000</span></span>
+            </a>
+            <a class="account-support-item" href="mailto:support@doddzgo.com">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+              <span>البريد الإلكتروني<span class="hint">support@doddzgo.com</span></span>
+            </a>
+          </div>
+          <p style="margin:14px 0 0;font-size:12px;color:#8888aa;font-weight:700;line-height:1.7;">الشات بوت هيشتغل قريبًا — حاليًا التواصل المباشر عن طريق واتساب أو التليفون أو البريد.</p>
+        </section>
+
+        <!-- لوحة التحكم (للتاجر والأدمن فقط) -->
+        <section class="account-view" id="account-view-staff">
+          <h4 class="account-view-title">لوحة التحكم</h4>
+          <div class="account-form">
+            <button type="button" class="account-btn" id="acc-open-seller">دخول لوحة التاجر</button>
+            <button type="button" class="account-btn secondary" id="acc-open-admin">Product Manager</button>
+            <p style="margin:0;font-size:11.5px;color:#8888aa;font-weight:700;line-height:1.6;">الأزرار دي بتظهر لحسابات التجار والأدمن فقط — الزائر مالهوش صلاحية غير الشراء واستخدام الخدمات.</p>
+          </div>
+        </section>
+
       </div>
     </div>
   </div>
@@ -1271,14 +1428,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/products-data.js"></script>
-<script src="js/barbers-data.js"></script>
+<script src="js/barbers-data.js?v=20260926c"></script>
 <script src="js/barbers-ui.js"></script>
-<script src="js/cart.js"></script>
+<script src="js/cart.js?v=20260926c"></script>
 <script src="js/wishlist.js"></script>
-<script src="js/admin.js"></script>
-<script src="js/seller.js"></script>
-<script src="js/i18n.js"></script>
-<script src="js/site.js"></script>
+<script src="js/account.js?v=20260926c"></script>
+<script src="js/admin.js?v=20260926c"></script>
+<script src="js/seller.js?v=20260926c"></script>
+<script src="js/i18n.js?v=20260926c"></script>
+<script src="js/site.js?v=20260926c"></script>
 <script src="js/search.js"></script>
 <script src="js/slider.js"></script>
 

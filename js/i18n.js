@@ -468,8 +468,9 @@
     if (accountBtn) {
       const label = accountBtn.querySelector('.label');
       const sub = accountBtn.querySelector('.sub');
+      const signedInName = window.DoddzAccount?.isLoggedIn?.() ? window.DoddzAccount.displayName?.() : null;
       if (label) label.textContent = L.account;
-      if (sub) sub.textContent = L.login;
+      if (sub) sub.textContent = signedInName || L.login;
     }
     const favBtn = document.getElementById('fav-btn');
     if (favBtn) {
