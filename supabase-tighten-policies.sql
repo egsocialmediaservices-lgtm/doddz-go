@@ -35,7 +35,12 @@ $$;
 
 -- 1) products
 drop policy if exists "Auth manage products" on public.products;
-drop policy if exists "Auth insert products" on public.products;
+-- ⚠️ "Auth insert products" متشيلتش بالعمد: دي السياسة اللي بيمنعش حد من
+--    رفع منتج، وهي آمنة لأن التريجر trg_enforce_seller_product_insert بيرغم
+--    owner_id = auth.uid() و status = 'pending' لأي حساب مش أدمن — فمفيش
+--    طريقة ترفع بيها منتج باسم حد تاني أو معتمد. لو مسحناها لوحة البائع
+--    (ومنها حساب الحلاق) هتقف عن رفع المنتجات خالص.
+-- drop policy if exists "Auth insert products" on public.products;
 drop policy if exists "Owner or admin update products" on public.products;
 drop policy if exists "Owner or admin delete products" on public.products;
 
@@ -55,6 +60,18 @@ create policy "products_delete_owner_or_admin"
   on public.products
   for delete to authenticated
   using (public.is_admin() or owner_id = auth.uid());
+
+-- 4ب) سياسة رفع منتجات للتاجر/الحلاق — لازم تبقى موجودة، وإلا «إضافة منتج»
+--     في لوحة البائع هيفشل بعد شيل "Auth insert products" فوق (RLS بيمتنع
+--     بالإفتراض). الحماية الحقيقية مش في السياسة دي، موجودة في التريجر
+--     trg_enforce_seller_product_insert: أي حساب مش أدمن بيتحطله
+--     owner_id = auth.uid() و status = 'pending' بالقوة من قاعدة البيانات،
+--     فمحدش يقدر يرفع منتج باسم حد تاني أو يعتمده بنفسه.
+drop policy if exists "products_insert_authenticated" on public.products;
+create policy "products_insert_authenticated"
+  on public.products
+  for insert to authenticated
+  with check (true);
 
 -- 5) منع تصعيد الصلاحية: policy بتاعة profiles سمحة لأي حساب يكتب أي صف،
 --    يعني زائر يقدر يغيّر role بتاعه لـ 'admin'. التريجر ده بيرفض ده

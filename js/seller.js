@@ -543,6 +543,7 @@
 
   // ── Events ───────────────────────────────────────────────────
   sellerFab?.addEventListener('click', openFlow);
+  window.DoddzSeller = { open: openFlow };
 
   // شاشة الاختيار (دخول ولا طلب انضمام)
   entryLoginBtn?.addEventListener('click', () => {

@@ -5,7 +5,7 @@
 (function () {
   const $ = (sel) => document.querySelector(sel);
 
-  const fab       = $('#adm-fab');
+  const fab       = $('#adm-fab');   // optional — زرار الأدمن العائم اتشيل، الدخول بقى من «حسابي»
   const overlay   = $('#adm-overlay');
   const closeBtn  = $('#adm-close');
   const tabList   = $('#adm-tab-list');
@@ -135,11 +135,40 @@
     }
     const { data } = await client.auth.getSession();
     if (data?.session) {
+      if (!(await isAdminAccount(data.session.user.id))) {
+        toast('الحساب ده مالهوش صلاحية لوحة الأدمن');
+        return;
+      }
       showAdminPanel();
     } else {
       showLoginOverlay();
     }
   }
+
+  // الأدمن بس اللي يدخل Product Manager — التاجر والحلاق لهما لوحة البائع فقط
+  async function isAdminAccount(userId) {
+    const client = getSupabaseClient();
+    if (!client) return false;
+    try {
+      let uid = userId;
+      if (!uid) {
+        const { data } = await client.auth.getUser();
+        uid = data?.user?.id;
+      }
+      if (!uid) return false;
+      const { data, error } = await client
+        .from('profiles')
+        .select('role')
+        .eq('id', uid)
+        .maybeSingle();
+      if (error) return false;
+      return data?.role === 'admin';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  window.DoddzAdmin = { open: openModal, close: closeModal, isAdmin: isAdminAccount };
 
   function showAdminPanel() {
     overlay.classList.add('open');
@@ -1458,7 +1487,7 @@
   }
 
   // ── Events ──────────────────────────────────────────────────
-  fab.addEventListener('click', openModal);
+  fab?.addEventListener('click', openModal);
 
   // مدخل بديل لو زرار الأدمن مخفي عن الحساب ده: index.html?admin=1
   if (new URLSearchParams(location.search).get('admin') === '1') {
@@ -1477,13 +1506,20 @@
 
     loginSubmitBtn.disabled = true;
     loginSubmitBtn.textContent = 'جارِ الدخول...';
-    const { error } = await client.auth.signInWithPassword({ email, password });
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
     loginSubmitBtn.disabled = false;
     loginSubmitBtn.textContent = 'دخول';
 
     if (error) {
       loginErrors.innerHTML = '• البريد الإلكتروني أو كلمة المرور غير صحيحة';
       loginErrors.classList.add('show');
+      return;
+    }
+
+    if (!(await isAdminAccount(data?.user?.id))) {
+      loginErrors.innerHTML = '• الحساب ده مش حساب أدمن — استخدم لوحة التاجر';
+      loginErrors.classList.add('show');
+      await client.auth.signOut();
       return;
     }
 

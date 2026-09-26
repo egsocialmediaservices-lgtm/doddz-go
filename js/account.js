@@ -14,6 +14,8 @@
     ordersLoaded: false
   };
 
+  const STAFF_ROLES = ['seller', 'merchant', 'service_provider', 'admin'];
+
   const STATUS_LABELS = {
     pending:   { label: 'قيد الانتظار', cls: 'pending' },
     confirmed: { label: 'مؤكد',         cls: 'confirmed' },
@@ -62,17 +64,24 @@
       if (label) label.textContent = 'حسابي';
     }
 
-    // صلاحيات الأزرار العائمة: الزائر مالوش غير الشراء
+    // الأدمن بس اللي يشوف لوحة الأدمن — باقي الحسابات الإدارية لها لوحة البائع
     const role = state.user ? (state.role || localStorage.getItem('doddz_user_role') || 'visitor') : null;
-    const sellerFab = $('#seller-fab');
-    const admFab = $('#adm-fab');
-    if (sellerFab) sellerFab.style.display = (role === 'visitor') ? 'none' : '';
-    if (admFab) admFab.style.display = (role === 'visitor' || role === 'seller') ? 'none' : '';
+    const isStaff = !!role && STAFF_ROLES.includes(role);
+    const isAdmin = role === 'admin';
 
-    // تبويب «لوحة التحكم» يظهر للتجار والأدمن فقط
+    const sellerFab = $('#seller-fab');
+    // الزرار يفضل ظاهر لغير المسجلين (لأن منه بيتم تسجيل التجار والحلّاقين الجدد)،
+    // وبيختفي لحساب الزائر المسجّل — اللي ليه يشتري ويستخدم الخدمات بس.
+    if (sellerFab) sellerFab.style.display = (state.user && !isStaff) ? 'none' : '';
+
     const staffNav = $('#account-nav-staff');
-    if (staffNav) staffNav.hidden = (role === 'visitor' || !state.user);
+    if (staffNav) staffNav.hidden = !isStaff;
     if (staffNav?.hidden && $('.account-nav-btn.active') === staffNav) switchTab('orders');
+
+    const sellerBtn = $('#acc-open-seller');
+    if (sellerBtn) sellerBtn.hidden = !isStaff;
+    const adminBtn = $('#acc-open-admin');
+    if (adminBtn) adminBtn.hidden = !isAdmin;
   }
 
   async function loadProfile() {
@@ -415,11 +424,12 @@
     $('#account-logout-btn')?.addEventListener('click', logout);
     $('#acc-open-seller')?.addEventListener('click', () => {
       close();
+      if (window.DoddzSeller?.open) { window.DoddzSeller.open(); return; }
       $('#seller-fab')?.click();
     });
     $('#acc-open-admin')?.addEventListener('click', () => {
       close();
-      $('#adm-fab')?.click();
+      window.DoddzAdmin?.open?.();
     });
 
     const client = getClient();
