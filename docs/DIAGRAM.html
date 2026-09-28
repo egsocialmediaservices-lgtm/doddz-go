@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Doddz Go — مخطط التشغيل وخريطة التخزين</title>
+<style>
+  :root{
+    --ink:#141420; --muted:#6b6b7b; --line:#e2e4ee; --bg:#f6f7fb;
+    --brand:#1f6feb; --green:#1a7f4b; --amber:#b7791f; --red:#c0392b; --purple:#5b21b6;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI","Noto Naskh Arabic","Tahoma",sans-serif;line-height:1.75;font-size:15px}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+  header.hero{background:linear-gradient(135deg,#141420,#1f2a4a);color:#fff;border-radius:18px;padding:26px 28px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:27px}
+  header.hero p{margin:0;color:#c9d0e6;font-size:14.5px}
+  header.hero .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  header.hero .meta span{background:#ffffff1f;border:1px solid #ffffff2e;border-radius:999px;padding:4px 12px;font-size:12.5px}
+  h2{font-size:20px;margin:34px 0 4px;padding-inline-start:12px;border-inline-start:5px solid var(--brand)}
+  h2 .en{font-size:12px;color:var(--muted);font-weight:600;margin-inline-start:8px}
+  h3{font-size:16.5px;margin:22px 0 8px}
+  p.lead{margin:2px 0 16px;color:var(--muted);font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .grid{display:grid;gap:12px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  table{width:100%;border-collapse:collapse;font-size:13.6px;background:#fff;border-radius:12px;overflow:hidden}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;vertical-align:top}
+  th{background:#eef1fa;font-weight:800}
+  code,.mono{font-family:"Consolas","Courier New",monospace;font-size:12.8px;background:#eef1fa;border-radius:5px;padding:1px 5px;direction:ltr;display:inline-block}
+  /* ── صناديق التدفق ── */
+  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:0}
+  .step{flex:1 1 170px;min-width:165px;background:#fff;border:1.6px solid var(--line);border-radius:12px;padding:10px 12px;position:relative;margin:6px}
+  .step b{display:block;font-size:14px;margin-bottom:2px}
+  .step small{color:var(--muted);font-size:12.3px;display:block}
+  .step .n{position:absolute;top:-11px;inset-inline-start:-8px;width:22px;height:22px;border-radius:50%;
+    background:var(--brand);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .arrow{align-self:center;color:#9aa3bd;font-size:20px;padding:0 2px;user-select:none}
+  .s-blue{border-color:#b9d2ff}.s-blue .n{background:var(--brand)}
+  .s-green{border-color:#b7e3c9}.s-green .n{background:var(--green)}
+  .s-amber{border-color:#f0d9a8}.s-amber .n{background:var(--amber)}
+  .s-red{border-color:#f0b8b1}.s-red .n{background:var(--red)}
+  .s-purple{border-color:#d6c6f5}.s-purple .n{background:var(--purple)}
+  .tag{display:inline-block;font-size:11.5px;font-weight:800;border-radius:6px;padding:2px 8px;margin:2px 0 4px}
+  .t-cloud{background:#e6f0ff;color:#1a4d9e}
+  .t-local{background:#fff2d9;color:#8a5a00}
+  .t-idb{background:#e9f7ef;color:#1a7f4b}
+  .t-store{background:#f1e9ff;color:#5b21b6}
+  .note{background:#fff8e6;border:1px solid #f0d9a8;border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
+  .danger{background:#fdeceb;border-color:#f0b8b1}
+  .ok{background:#eaf7f0;border-color:#b7e3c9}
+  ul.tight{margin:6px 0 0;padding-inline-start:20px}
+  ul.tight li{margin-bottom:5px;font-size:13.6px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-start:5px;vertical-align:-1px}
+  /* شجرة الملفات */
+  pre.tree{background:#12121c;color:#dfe4f5;border-radius:12px;padding:14px 16px;overflow:auto;
+    font-family:"Consolas",monospace;font-size:12.6px;line-height:1.65;direction:ltr;text-align:left;margin:0}
+  pre.tree .c{color:#7f8ba8}
+  pre.tree .hl{color:#ffd479}
+  footer{margin-top:38px;color:var(--muted);font-size:12.6px;border-top:1px solid var(--line);padding-top:14px}
+  @media print{
+    body{background:#fff;font-size:11.5px}
+    .wrap{max-width:none;padding:0}
+    header.hero{background:#141420 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .card,.step,table,th{break-inside:avoid}
+    h2{break-after:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Doddz Go — مخطط التشغيل وخريطة التخزين</h1>
+  <p>اتجاه المشروع: موقع عربي RTL ثابت (HTML + CSS + JS) بدون خطوة build، والباك-إند كله Supabase (Auth + Postgres + Storage) بمفتاح publishable — فكل الصلاحيات في القاعدة (RLS + Triggers + Functions) مش في الكود.</p>
+  <div class="meta">
+    <span>تاريخ: 2026-09-28</span>
+    <span>إصدار الكاش: <code style="background:#ffffff22;color:#fff">?v=20260926e</code></span>
+    <span>4 أقسام: قصها · لمعها · انامل · كسبني</span>
+    <span>الدفع: كاش عند الاستلام</span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>1) الطبقات: المشروع بيشتغل إزاي <span class="en">runtime layers</span></h2>
+<p class="lead">مفيش سيرفر خاص بينا. المتصفح بيكلم Supabase مباشرة عن طريق REST/Auth/Storage.</p>
+<div class="flow">
+  <div class="step s-blue"><span class="n">1</span><b>الملفات الثابتة</b><small>index.html · product.html · barber.html + css/ + js/ + images/</small><small>تتقدّم من أي استاتيك هوست (أو <code>python -m http.server</code> محليًا)</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-blue"><span class="n">2</span><b>طبقة الـJS</b><small>ProductStore · SectionsStore · BarberStore · cart · account · admin · seller</small><small>كل ملف مسؤول عن جزء، وبيتحمّل بترتيب محدد</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">3</span><b>Supabase JS v2</b><small><code>window.supabaseClient</code> بمفتاح publishable</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">4</span><b>Supabase Backend</b><small>Auth (JWT) · Postgres (RLS + Triggers + RPC) · Storage bucket</small></div>
+</div>
+<div class="note">
+  <b>قاعدة صلاحيات مشروطة:</b> المتصفح ما فيهوش service key. عشان كده أي «مين يقدر يعمل إيه» لازم يتكتب في
+  <code>supabase/*.sql</code>. التعديلات اللي في الـJS لوحدها ما كفايةش — لازم السكربت المقابلها يتنفّذ في SQL Editor.
+</div>
+
+<h3>ترتيب تحميل السكربتات في <code>index.html</code></h3>
+<div class="card">
+<pre class="tree">supabase-js (CDN) → supabase-client.js → products-data.js → <span class="hl">sections-data.js</span> → barbers-data.js
+   → barbers-ui.js → <span class="hl">sections-ui.js</span> → cart.js → wishlist.js → account.js → admin.js → seller.js → i18n.js → site.js</pre>
+  <ul class="tight">
+    <li><code>sections-data.js</code> لازم يكون <b>قبل</b> <code>sections-ui.js</code> و<code>account/admin/seller</code> (كلهم بيستهلكوا <code>window.SectionsStore</code>).</li>
+    <li><code>products-data.js</code> بينفّذ <code>initProducts()</code> على <code>DOMContentLoaded</code>، وبعده <code>DoddzSectionsUI</code> بيلزّق كروت الأنشطة في نفس الأقسام (من غير ما يمسح المنتجات) — فلو المنتجات اتعملها re-render، بيتم إعادة اللزق تلقائيًا.</li>
+    <li>بعد أي تعديل JS: زوّد <code>?v=</code> في <b>كل</b> وسوم <code>&lt;script&gt;</code> في index/product/barber.</li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>2) خريطة الملفات بعد التنظيم <span class="en">project layout</span></h2>
+<div class="card">
+<pre class="tree">training/
+├── index.html            <span class="c"># الصفحة الرئيسية + لوحة الأدمن + لوحة البائع + تسجيل الحسابات</span>
+├── product.html          <span class="c"># صفحة المنتج + الشراء</span>
+├── barber.html           <span class="c"># ملف الحلاق + الحجز</span>
+├── css/                  styles.css, account.css, admin.css, barber.css, product.css…
+├── images/
+├── docs/                 <span class="hl">DIAGRAM.html</span>  <span class="c"># الملف ده</span>
+├── js/
+│   ├── supabase-client.js    <span class="c"># createClient بالمفتاح publishable</span>
+│   ├── products-data.js      <span class="c"># ProductStore: كتالوج + IndexedDB + Storage upload</span>
+│   ├── <span class="hl">sections-data.js</span>      <span class="c"># SectionsStore: الأقسام الأربعة (RPC + RLS-aware)</span>
+│   ├── <span class="hl">sections-ui.js</span>        <span class="c"># كروت أنشطة لمعها/انامل/كسبني على الرئيسية</span>
+│   ├── barbers-data.js       <span class="c"># BarberStore: كتالوج قصها (Supabase + seed fallback) + الحجوزات</span>
+│   ├── barbers-ui.js / barber-page.js
+│   ├── cart.js / wishlist.js / i18n.js / site.js / search.js / slider.js / splash.js
+│   ├── account.js            <span class="c"># «حسابي»: أدوار + لوحتين + بيانات الزائر</span>
+│   ├── admin.js              <span class="c"># Product Manager: منتجات/طلبات/أنشطة الأقسام/الحلاقين</span>
+│   └── seller.js             <span class="c"># لوحة البائع: منتجاتي/إضافة/حجوزاتي/خدماتي/منزلي/نشاطي</span>
+├── <span class="hl">supabase/</span>                 <span class="c"># كل ملفات القاعدة في مكان واحد (صفر .sql في الجذر)</span>
+│   ├── README.md             <span class="c"># ترتيب التشغيل + قواعد لازم تتحفظ</span>
+│   ├── 00-export-live-schema.sql   <span class="c"># قراءة بس: يطلّع الداتا الموجودة في الداشبورد</span>
+│   ├── 01-setup-all.sql  02-barber-bookings.sql  03-fix-stock-guard.sql
+│   ├── 04-tighten-policies.sql  <span class="hl">05-provider-sections.sql</span>
+│   ├── 90-new-staff-account.sql  99-cleanup-test-data.sql
+│   └── diagnostics/*.sql
+└── doddz_csv_template.csv</pre>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>3) الأدوار والأقسام <span class="en">who is who</span></h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0">الأدوار (profiles.role)</h3>
+    <table>
+      <tr><th>الدور</th><th>اللوحة</th><th>يرى لوحة الأدمن؟</th></tr>
+      <tr><td><code>visitor</code></td><td>«حسابي»: مشترياتك / عنوانك / تتبع الطلب — وشراء بدون تسجيل أصلاً</td><td>لأ</td></tr>
+      <tr><td><code>seller</code> / <code>merchant</code> / <code>service_provider</code></td><td>لوحة البائع</td><td>لأ</td></tr>
+      <tr><td><code>admin</code></td><td>لوحة البائع + Product Manager (من «حسابي»)</td><td>نعم (حصريًا)</td></tr>
+    </table>
+    <div class="note">
+      <code>role</code> محروس بـ<code>trg_guard_profile_role</code>: المتصفح ما يقدرش يرقية لنفسه.
+      الأدوار بتتعيين من SQL Editor أو من لوحة الأدمن بحساب أدمن.
+      <b>بوابة لوحة البائع الحقيقية بقى <code>profiles.category</code></b> (يعني الحساب اللي ليه نشاط في جدول قسم) — فالحساب الجديد بيشتغل فورًا من غير ما حد يغيّر دوره.
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">الأقسام الأربعة = جدول مستقل لكل قسم</h3>
+    <table>
+      <tr><th>القسم</th><th>صاحب النشاط</th><th>جدول Supabase</th></tr>
+      <tr><td><b>قصها</b></td><td>صاحب صالون حلاقة</td><td><code>barber_profiles</code></td></tr>
+      <tr><td><b>لمعها</b></td><td>صاحب مغسلة سيارات</td><td><code>carwash_profiles</code></td></tr>
+      <tr><td><b>انامل</b></td><td>فنّان هند ميد</td><td><code>handmade_profiles</code></td></tr>
+      <tr><td><b>كسبني</b></td><td>تاجر منتجات</td><td><code>merchant_profiles</code></td></tr>
+    </table>
+    <p style="font-size:13.3px;margin:8px 0 0">الجداول الأربعة نفس الأعمدة بالظبط (superset) + خصوصية لقصها (<code>bio</code>, <code>avatar_url</code>). جدول مراجع <code>service_categories</code> بيربط الكود ← الاسم العربي ← اسم الجدول.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>4) تدفق تسجيل صاحب نشاط <span class="en">signup → Supabase → admin</span></h2>
+<p class="lead">الحساب يشتغل فورًا، والموافقة تتحكم في <b>الظهور للعملاء</b> بس.</p>
+<div class="flow">
+  <div class="step s-blue"><span class="n">1</span><b>المستخدم يفتح «حسابي»</b><small>زرار التاجر بيديله شاشة (دخول / طلب انضمام)</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-blue"><span class="n">2</span><b>يملا النموذج ويختار القسم</b><small><code>#ss-type</code>: زائر / كسبني / قصها / لمعها / انامل</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">3</span><code>auth.signUp()</code><small>Auth → <code>auth.users</code> + تريجر <code>handle_new_user</code> يعمل صف <code>profiles</code> بدور <code>visitor</code></small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">4</span><code>SectionsStore.register()</code><small><code>rpc('register_provider_section')</code> — الجلسة بتفضل مفتوحة</small></div>
+</div>
+<div class="flow">
+  <div class="step s-purple"><span class="n">5a</span><b>صف النشاط في جدول القسم</b><small>status = <code>pending</code> — الحارس بيفرض <code>user_id = auth.uid()</code></small></div>
+  <div class="arrow">←</div>
+  <div class="step s-purple"><span class="n">5b</span><b><code>profiles.category / provider_id</code></b><small>الدالة SECURITY DEFINER — <code>role</code> ما بيتغيّرش</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-purple"><span class="n">5c</span><b>صف في <code>signup_requests</code></b><small>فيه <code>category + user_id + provider_id</code> → يظهر في الأدمن</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">6</span><b>لوحة البائع تفتح على طول</b><small>تاب «نشاطي» + إضافة منتج (<code>provider_id</code> بيتسجّل مع المنتج)</small></div>
+</div>
+<div class="flow">
+  <div class="step s-amber"><span class="n">7</span><b>الأدمن: تبويب «أنشطة الأقسام»</b><small>بيقرأ الجداول الأربعة كلها + فلتر قسم/معلق</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-amber"><span class="n">8</span><code>rpc('set_provider_status')</code><small>الفحص جوه الدالة: <code>if not public.is_admin()</code> → رفض</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">9</span><b><code>status='approved'</code></b><small>بيقفل طلب <code>signup_requests</code> ويحدّث <code>approved_at/by</code></small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">10</span><b>النشاط يظهر للعملاء</b><small>سياسة RLS: <code>status='approved' or user_id = auth.uid() or is_admin()</code></small></div>
+</div>
+<div class="note">
+  <b>لو تأكيد الإيميل مفعّل:</b> <code>signUp()</code> بيرجع بدون جلسة → الـJS بيخزن الطلب في
+  <code>localStorage['doddz_pending_registration_v1']</code> + صف <code>signup_requests</code> (لو الأعمدة موجودة)،
+  وأول ما المستخدم يسجّل الدخول <code>SectionsStore.completePendingRegistration()</code> بيكمل خطوتَي 4→5 أوتوماتيك.
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>5) الشراء كزائر (بدون تسجيل دخول) <span class="en">guest checkout</span></h2>
+<div class="flow">
+  <div class="step s-blue"><span class="n">1</span><b>يضيف للسلة</b><small><code>doddz_cart</code> <span class="tag t-local">localStorage</span></small></div>
+  <div class="arrow">←</div>
+  <div class="step s-blue"><span class="n">2</span><b>Checkout</b><small>اسم + موبايل + عنوان (مفيش حساب مطلوب)</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">3</span><code>insert orders</code><small>حالة <code>pending</code> · الدفع كاش</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">4</span><code>insert order_items</code><small> تريجر <code>tr_deduct_stock</code> → <code>deduct_product_stock()</code> بينقص <code>products.stock</code></small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">5</span><b>«تم الطلب بنجاح»</b><small>رقم الطلب للمتابعة: <code>rpc('track_order', order_id, phone)</code></small></div>
+</div>
+<div class="note ok">
+  <b>متحقق منه حيًّا (2026-09-26):</b> زائر مسجّل + زائر بدون دخول → الطلب بيتعمل، المخزون بينقص، وملكية المنتج ما بتنتقلش.
+  الحارس <code>pg_trigger_depth() &gt; 1</code> (ملف <code>03</code>) هو اللي بيخلي خصم المخزون يعدي من غير ما الحارس يرفضه.
+</div>
+
+<h3>حجز خدمة (قصها نموذجًا)</h3>
+<div class="flow">
+  <div class="step s-blue"><span class="n">1</span><b>barber.html?id=</b><small><code>BarberStore.getById</code> — الكتالوج بقى من <code>barber_profiles</code></small></div>
+  <div class="arrow">←</div>
+  <div class="step s-blue"><span class="n">2</span><b>خدمة + يوم + ميعاد</b><small><code>getSlots()</code> بيشوف المحجوز من السحابة</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-green"><span class="n">3</span><code>insert barber_bookings</code><small>فريد جزئي على (barber_id,date,time) يمنع التكرار</small></div>
+  <div class="arrow">←</div>
+  <div class="step s-amber"><span class="n">4</span><b>الحلاق/الأدمن يؤكد</b><small>تاب «حجوزاتي» أو تبويب «الحلاقين»</small></div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>6) خريطة التخزين: الداتا بتروح فين <span class="en">storage map</span></h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0"><span class="tag t-cloud">Supabase Postgres</span> الداتا المشتركة</h3>
+    <table>
+      <tr><th>جدول</th><th>فيه إيه</th><th>مين بيكتب</th></tr>
+      <tr><td><code>profiles</code></td><td>id/role/display_name/phone/العنوان + <b>category/provider_id</b></td><td>المتصفح (عدا <code>role</code> المحروس)</td></tr>
+      <tr><td><code>products</code></td><td>كل منتجات الموقع + <code>section</code> + <code>owner_id</code> + <b><code>provider_id</code></b> + <code>stock</code></td><td>الأدمن + التجار (pending)</td></tr>
+      <tr><td><code>orders</code> / <code>order_items</code></td><td>الطلبات وبنودها (حتى للزائر بدون حساب)</td><td>checkout</td></tr>
+      <tr><td><code>barber_profiles</code> <span class="tag t-cloud">قصها</span></td><td>اسم الصالون/الحلاق، المنطقة، الخدمات jsonb، الخدمة المنزلية، مواعيد الشغل، rating، <b>status</b></td><td>صاحب النشاط + الأدمن (status)</td></tr>
+      <tr><td><code>carwash_profiles</code> <span class="tag t-cloud">لمعها</span></td><td rowspan="3">نفس الأعمدة بالظبط (كل قسم في جدول مستقل)</td><td rowspan="3">صاحب النشاط + الأدمن</td></tr>
+      <tr><td><code>handmade_profiles</code> <span class="tag t-cloud">انامل</span></td></tr>
+      <tr><td><code>merchant_profiles</code> <span class="tag t-cloud">كسبني</span></td></tr>
+      <tr><td><code>service_categories</code></td><td>مرجع: كود ← اسم عربي ← اسم الجدول</td><td>SQL فقط</td></tr>
+      <tr><td><code>signup_requests</code></td><td>طلبات الانضمام + <b>category/user_id/provider_id</b> (المصدر اللي بيظهر للأدمن)</td><td>المتصفح / الدالة</td></tr>
+      <tr><td><code>barber_bookings</code></td><td>حجوزات الحلاقين</td><td>العميل + الحلاق + الأدمن</td></tr>
+      <tr><td><code>barber_status</code></td><td>جدول حالة قديم (قبل طبقة الأقسام) — لسه بيتقري للتوافق</td><td>BarberStore.setStatus</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0"><span class="tag t-store">Supabase Storage</span> <span class="tag t-idb">IndexedDB</span> الصور والكاش</h3>
+    <table>
+      <tr><th>مكان</th><th>الاسم</th><th>المحتوى</th></tr>
+      <tr><td><span class="tag t-store">Storage</span></td><td><code>product-images</code></td><td>صور المنتجات: <code>&lt;product_id&gt;/primary.*</code> و <code>&lt;product_id&gt;/additional/*.jpg</code> — والروابط العامة بتتخزن في <code>products.primary_image</code> / <code>additional_images</code></td></tr>
+      <tr><td><span class="tag t-idb">IndexedDB</span></td><td><code>doddz_store</code> → <code>products</code></td><td>كاش كامل لكتالوج المنتجات (لتحميل أسرع أوفلاين) — <b>مش</b> المصدر الأساسي</td></tr>
+    </table>
+    <h3><span class="tag t-local">localStorage</span> على جهاز الزائر</h3>
+    <table>
+      <tr><th>المفتاح</th><th>الغرض</th></tr>
+      <tr><td><code>doddz_cart</code></td><td>السلة</td></tr>
+      <tr><td><code>doddz_wishlist</code></td><td>المفضلة</td></tr>
+      <tr><td><code>doddz_user_role</code> / <code>doddz_user_name</code> / <code>doddz_user_phone</code></td><td>بيانات الجلسة للواجهة بس (المصدر الحقيقي: profiles)</td></tr>
+      <tr><td><b><code>doddz_user_category</code></b></td><td>قسم النشاط الحالي (قص/غسيل/…) — للوحة البائع</td></tr>
+      <tr><td><b><code>doddz_sections_v1</code></b></td><td>كاش كروت الأنشطة الأربعة (لو القاعدة مش شرّابة، العرض يفضل شغال)</td></tr>
+      <tr><td><b><code>doddz_pending_registration_v1</code></b></td><td>تسجيل مستني أول تسجيل دخول (تأكيد الإيميل)</td></tr>
+      <tr><td><code>doddz_barbers_v2</code></td><td>كتالوج الحلاقين — بقى نسخة مرآة من <code>barber_profiles</code> (مش المصدر)</td></tr>
+      <tr><td><code>doddz_barber_bookings_v1</code></td><td>كاش الحجوزات المحلي</td></tr>
+      <tr><td><code>doddz_barber_id</code></td><td>آخر حلاق تم فتحه</td></tr>
+      <tr><td><code>doddz_lang</code> / <code>doddz_lang_need_reload</code></td><td>لغة الواجهة (i18n)</td></tr>
+      <tr><td><code>doddz_products</code> / <code>doddz_products_backup_v1</code> / <code>doddz_store_seeded</code></td><td>كاش/احتياطي تشجير المنتجات القديمة</td></tr>
+    </table>
+  </div>
+</div>
+<div class="legend">
+  <span><i style="background:#e6f0ff;border:1px solid #b9d2ff"></i> مشترك في السحابة (Supabase)</span>
+  <span><i style="background:#f1e9ff;border:1px solid #d6c6f5"></i> ملفات صور (Storage)</span>
+  <span><i style="background:#e9f7ef;border:1px solid #b7e3c9"></i> كاش المتصفح الدائم (IndexedDB)</span>
+  <span><i style="background:#fff2d9;border:1px solid #f0d9a8"></i> على جهاز المستخدم بس (localStorage)</span>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>7) مين بيقرا إيه في الواجهة <span class="en">read paths</span></h2>
+<div class="grid g2">
+  <div class="card">
+    <h3 style="margin-top:0">الصفحة الرئيسية (<code>index.html</code>)</h3>
+    <table>
+      <tr><th>القسم</th><th>المصدر</th></tr>
+      <tr><td>قصها <code>#barbers-grid</code></td><td><code>BarberStore</code> ← <code>barber_profiles</code> (والـSEED أوفلاين)</td></tr>
+      <tr><td>لمعها / انامل / كسبني</td><td><code>SectionsStore.approved(code)</code> ← جداول الأقسام، بيلزّقه <code>sections-ui.js</code> جنب منتجات القسم</td></tr>
+      <tr><td>باقي أقسام المنتجات</td><td><code>ProductStore.getAll()</code> ← <code>products</code> (filter <code>status</code> معتمد)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">اللوحات</h3>
+    <table>
+      <tr><th>لوحة</th><th>بتجيب دالتها منين</th></tr>
+      <tr><td>لوحة البائع — منتجاتي</td><td><code>products</code> بفلترة <code>owner_id = auth.uid()</code></td></tr>
+      <tr><td>لوحة البائع — نشاطي</td><td><code>SectionsStore.myProvider()</code> (جدول قسمه) + حفظ بـ<code>saveMyProvider()</code></td></tr>
+      <tr><td>لوحة البائع — حجوزاتي/خدماتي/منزلي</td><td><code>BarberStore</code> (for barbers) + <code>pushCatalogField()</code> → <code>barber_profiles</code></td></tr>
+      <tr><td>Product Manager — أنشطة الأقسام</td><td><code>SectionsStore.loadAll()</code> + <code>setStatus()</code> (RPC محروس)</td></tr>
+      <tr><td>Product Manager — طلبات الانضمام</td><td><code>signup_requests</code></td></tr>
+      <tr><td>حسابي (زائر)</td><td><code>orders</code> + عنوانه في <code>profiles</code> + <code>track_order()</code></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>8) تشغيل/ترقية القاعدة <span class="en">run order</span></h2>
+<div class="card">
+<pre class="tree"><span class="c">SQL Editor → New query → الصق الملف → Run (الملف كله معاملة واحدة)</span>
+
+<span class="hl">00-export-live-schema.sql</span>   <span class="c">← شغّله الأول وخدّني المخرج (أي حاجة في الداشبورد ومش في ملف)</span>
+01-setup-all.sql              <span class="c">← اتنفّذ ✓</span>
+02-barber-bookings.sql        <span class="c">← اتنفّذ ✓</span>
+03-fix-stock-guard.sql        <span class="c">← اتنفّذ ✓</span>
+<span class="hl">05-provider-sections.sql</span>      <span class="c">← <b>مطلوب دلوقتي</b>: الجداول الأربعة + الأعمدة + الدوال + قايم الحلاقين</span>
+04-tighten-policies.sql       <span class="c">← اختياري: بعد ما يتثبت حساب أدمن</span>
+99-cleanup-test-data.sql      <span class="c">← بعد الاختبار</span></pre>
+  <div class="note danger">
+    <b>من غير <code>05-provider-sections.sql</code>:</b> الأقسام هتفضل فاضية والـJS هيطبع 404 في الكونسول
+    (<code>barber_profiles</code>, <code>carwash_profiles</code>, <code>handmade_profiles</code>, <code>merchant_profiles</code>)
+    ويرجع للكاش المحلي — يعني النظام شغال بس من غير تقسيم حقيقي في Supabase.
+  </div>
+  <ul class="tight">
+    <li><code>DISABLE TRIGGER ALL</code> مرفوض (<code>42501</code>) — عطّل بالاسم: <code>alter table products disable trigger trg_xxx;</code></li>
+    <li><code>UPDATE products</code> من الـEditor بيرفضه الحارس (<code>auth.uid()</code> فاضي) — عدّل من لوحة الأدمن بحساب <code>role='admin'</code>.</li>
+    <li>لو سطر فشل: كل الملف اتلف → عدّل وابدأ من أول الملف.</li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<h2>9) استضافة وتشغيل محلي <span class="en">serve</span></h2>
+<div class="grid g3">
+  <div class="card"><h3 style="margin-top:0">تطوير محلي</h3><pre class="tree">python -m http.server 8901
+<span class="c"># → http://localhost:8901/index.html</span></pre><p style="font-size:13px;color:var(--muted);margin:8px 0 0">فتح الملف بـ<code>file://</code> ممكن يمنع الطلبات لـSupabase؛ استخدم سيرفر محلي دايمًا.</p></div>
+  <div class="card"><h3 style="margin-top:0">بعد الرفع</h3><p style="font-size:13.4px;margin:2px 0 0">أي استاتيك هوست (Netlify / Vercel / GitHub Pages / Supabase Storage as website). مفيش env vars: المفتاح publishable مدمج في <code>js/supabase-client.js</code> وبيحميه RLS.</p></div>
+  <div class="card"><h3 style="margin-top:0">قائمة قبل الإطلاق</h3><ul class="tight" style="margin-top:2px">
+    <li>شغّل <code>05</code> و<code>04</code>، وعرّف حسابك <code>role='admin'</code>.</li>
+    <li>استبدل أرقام التواصل الوهمية <code>01000000000</code> و<code>wa.me/201000000000</code> و<code>support@doddzgo.com</code> في <code>index.html</code> و<code>product.html</code>.</li>
+    <li>حمّل الكتالوج الحقيقي (CSV أو رفع بالصور) — الكاش الحالي فيه منتج واحد فقط.</li>
+    <li>شغّل <code>99-cleanup-test-data.sql</code> بعد أي اختبار.</li>
+  </ul></div>
+</div>
+
+<footer>
+  Doddz Go — مخطط التشغيل وخريطة التخزين · آخر تحديث 2026-09-28 · ملف واحد بدون أي اعتماد خارجي (يعمل أوفلاين وباين في الطباعة).
+</footer>
+
+</div>
+</body>
+</html>

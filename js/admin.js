@@ -197,6 +197,14 @@
       renderBarbersAdmin();
       return;
     }
+    if (tab === 'providers') {
+      document.querySelectorAll('.adm-tab').forEach(x => x.classList.toggle('active', x.dataset.tab === 'providers'));
+      document.querySelectorAll('.adm-view').forEach(x => x.classList.remove('active'));
+      const view = $('#adm-view-providers');
+      if (view) view.classList.add('active');
+      loadProvidersAdmin();
+      return;
+    }
 
     tabList.classList.toggle('active', tab === 'list');
     tabForm.classList.toggle('active', tab === 'form');
@@ -204,12 +212,16 @@
     tabRequests.classList.toggle('active', tab === 'requests');
     const tabBarbersEl = $('#adm-tab-barbers');
     if (tabBarbersEl) tabBarbersEl.classList.toggle('active', tab === 'barbers');
+    const tabProvidersEl = $('#adm-tab-providers');
+    if (tabProvidersEl) tabProvidersEl.classList.toggle('active', tab === 'providers');
     viewList.classList.toggle('active', tab === 'list');
     viewForm.classList.toggle('active', tab === 'form');
     viewOrders.classList.toggle('active', tab === 'orders');
     viewRequests.classList.toggle('active', tab === 'requests');
     const viewBarbers = $('#adm-view-barbers');
     if (viewBarbers) viewBarbers.classList.toggle('active', tab === 'barbers');
+    const viewProviders = $('#adm-view-providers');
+    if (viewProviders) viewProviders.classList.toggle('active', tab === 'providers');
   }
 
   const REVIEW_STATUS_LABELS = {
@@ -2048,6 +2060,114 @@
     qbStart.textContent = 'بدء الرفع';
     qbOverlay?.classList.remove('open');
     toast(`تم: ${ok} منتج — فشل: ${fail}`);
+  });
+
+
+  // ================================================================
+  // أنشطة الأقسام الأربعة — قصها / لمعها / انامل / كسبني
+  //   جدول مستقل لكل قسم في Supabase (05-provider-sections.sql)
+  //   الحساب شغال فور التسجيل، والاعتماد هنا يتحكم في الظهور للعملاء.
+  // ================================================================
+  const PROVIDER_STATUS_META = {
+    pending:  { label: 'قيد المراجعة', cls: 'pending' },
+    approved: { label: 'معتمد',        cls: 'delivered' },
+    rejected: { label: 'مرفوض',        cls: 'cancelled' }
+  };
+  let providerRows = null;   // { barbers: [], carwash: [], handmade: [], merchants: [] }
+
+  function providerLabel(code) {
+    const s = window.SectionsStore && SectionsStore.section(code);
+    return s ? s.label : code;
+  }
+
+  async function loadProvidersAdmin() {
+    const tbodyEl = $('#adm-providers-tbody');
+    if (!tbodyEl) return;
+    if (!window.SectionsStore) {
+      tbodyEl.innerHTML = '<tr><td colspan="6"><div class="adm-empty">js/sections-data.js مش محمّل</div></td></tr>';
+      return;
+    }
+    tbodyEl.innerHTML = '<tr><td colspan="6"><div class="adm-empty">جارِ التحميل…</div></td></tr>';
+    try {
+      providerRows = await SectionsStore.loadAll();
+    } catch (err) {
+      console.error('[Admin] أنشطة الأقسام:', err);
+      providerRows = null;
+      tbodyEl.innerHTML = '<tr><td colspan="6"><div class="adm-empty">تعذر قراءة الأنشطة — تأكد إن <b>supabase/05-provider-sections.sql</b> اتنفّذ في SQL Editor.</div></td></tr>';
+      return;
+    }
+    renderProvidersAdmin();
+  }
+
+  function renderProvidersAdmin() {
+    const tbodyEl = $('#adm-providers-tbody');
+    const stats   = $('#adm-providers-stats');
+    if (!tbodyEl || !providerRows) return;
+    const filter = ($('#adm-providers-filter')?.value || '');
+    const codes  = ['barbers', 'carwash', 'handmade', 'merchants'];
+
+    let total = 0, pendingCount = 0;
+    const rowsOut = [];
+    codes.forEach((code) => {
+      if (filter && filter !== 'pending' && filter !== code) return;
+      const list = (providerRows[code] || []).slice()
+        .sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || String(a.name).localeCompare(String(b.name), 'ar'));
+      list.forEach(r => {
+        total += 1;
+        if (r.status === 'pending') pendingCount += 1;
+        if (filter === 'pending' && r.status !== 'pending') return;
+        const meta = PROVIDER_STATUS_META[r.status] || PROVIDER_STATUS_META.pending;
+        const services = Array.isArray(r.services) ? r.services.length : 0;
+        rowsOut.push(`<tr>
+          <td>
+            <strong>${r.name || '—'}</strong>
+            ${r.owner_name ? `<div class="adm-order-date">${r.owner_name}</div>` : ''}
+            ${services ? `<div class="adm-order-date">${services} خدمة</div>` : ''}
+          </td>
+          <td><span class="adm-order-badge delivered" style="background:#eef;color:#335;">${providerLabel(code)}</span></td>
+          <td>${r.area || r.governorate || '—'}</td>
+          <td>${r.phone ? `<a href="tel:${r.phone}" style="color:inherit;">${r.phone}</a>` : '—'}</td>
+          <td><span class="adm-order-badge ${meta.cls}">${meta.label}</span></td>
+          <td>
+            <div class="adm-row-actions">
+              ${r.status !== 'approved' ? `<button type="button" class="adm-btn" data-p-approve="${code}|${r.id}">قبول</button>` : ''}
+              ${r.status !== 'rejected' ? `<button type="button" class="adm-btn secondary" data-p-reject="${code}|${r.id}">رفض</button>` : ''}
+            </div>
+          </td>
+        </tr>`);
+      });
+    });
+
+    if (stats) stats.textContent = `${total} نشاط · ${pendingCount} في انتظار المراجعة`;
+    tbodyEl.innerHTML = rowsOut.length
+      ? rowsOut.join('')
+      : '<tr><td colspan="6"><div class="adm-empty">لا توجد أنشطة مطابقة</div></td></tr>';
+  }
+
+  $('#adm-tab-providers')?.addEventListener('click', () => switchTab('providers'));
+  $('#adm-providers-refresh')?.addEventListener('click', loadProvidersAdmin);
+  $('#adm-providers-filter')?.addEventListener('change', renderProvidersAdmin);
+  $('#adm-providers-tbody')?.addEventListener('click', async (e) => {
+    const approveBtn = e.target.closest('[data-p-approve]');
+    const rejectBtn  = e.target.closest('[data-p-reject]');
+    const btn = approveBtn || rejectBtn;
+    if (!btn || !window.SectionsStore) return;
+    const raw = (approveBtn ? btn.dataset.pApprove : btn.dataset.pReject) || '';
+    const sep = raw.indexOf('|');
+    const code = raw.slice(0, sep);
+    const id = raw.slice(sep + 1);
+    const status = approveBtn ? 'approved' : 'rejected';
+    btn.disabled = true;
+    const r = await SectionsStore.setStatus(code, id, status);
+    btn.disabled = false;
+    if (!r.success) { toast(r.error || 'تعذر تغيير الحالة'); return; }
+    toast(status === 'approved' ? `تم اعتماد نشاط «${providerLabel(code)}»` : 'تم رفض النشاط');
+    if (code === 'barbers' && typeof BarberStore !== 'undefined') {
+      BarberStore.setStatus(id, status);
+      if (typeof BarberStore.syncCatalogFromSupabase === 'function') await BarberStore.syncCatalogFromSupabase();
+      if (typeof renderBarbersSection === 'function') renderBarbersSection();
+    }
+    await loadProvidersAdmin();
   });
 
 })();

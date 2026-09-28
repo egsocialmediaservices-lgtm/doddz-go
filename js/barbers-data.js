@@ -168,8 +168,9 @@ const BarberStore = (() => {
       const rawB = localStorage.getItem(STORAGE_BOOKINGS);
       bookings = rawB ? JSON.parse(rawB) : [];
     } catch { bookings = []; }
-    // مزامنة الحالات من السحابة (إيقاف/تفعيل يظهر على كل الأجهزة)
-    pullBarberStatuses().then(() => {
+    // كتالوج «قصها» من Supabase (barber_profiles) → حالات barber_status القديمة
+    // → إعادة رسم. لو الجدول لسه مترفعش، الـSEED المحلي يفضل شغال.
+    syncCatalogFromSupabase().then(() => pullBarberStatuses()).then(() => {
       try {
         if (typeof renderBarbersSection === 'function') renderBarbersSection();
       } catch (_) {}
@@ -197,6 +198,111 @@ const BarberStore = (() => {
   }
   function getFeatured() {
     return getApproved().filter(b => b.isFeatured);
+  }
+
+  // ================================================================
+  // كتالوج الحلاقين من Supabase — جدول barber_profiles (قسم «قصها»)
+  //   قبل كده القائمة كانت localStorage بس، فحلاق جديد من جهاز الأدمن
+  //   ما يوصلش للعميل. دلوقتي القاعدة هي المصدر، والـSEED احتياطي أوفلاين.
+  // ================================================================
+  const BARBER_TABLE = 'barber_profiles';
+
+  function _rowToBarber(r) {
+    const b = {
+      id: r.id,
+      userId: r.user_id || '',
+      name: r.name || '',
+      area: r.area || '',
+      governorate: r.governorate || '',
+      bio: r.bio || r.description || '',
+      phone: r.phone || '',
+      avatar: '',
+      avatarUrl: r.avatar_url || r.logo_url || '',
+      coverUrl: r.cover_url || '',
+      rating: Number(r.rating || 0),
+      reviewsCount: Number(r.reviews_count || 0),
+      isFeatured: !!r.is_featured,
+      status: r.status || 'pending',
+      workDays: Array.isArray(r.work_days) ? r.work_days : [0, 1, 2, 3, 4, 5, 6],
+      workStart: Number(r.work_start != null ? r.work_start : 10),
+      workEnd: Number(r.work_end != null ? r.work_end : 22),
+      slotMinutes: Number(r.slot_minutes != null ? r.slot_minutes : 30),
+      cancelPolicy: r.cancel_policy || '',
+      services: Array.isArray(r.services) ? r.services : []
+    };
+    if (r.home_service && typeof r.home_service === 'object' && !Array.isArray(r.home_service)) {
+      b.homeService = r.home_service;
+    }
+    return normalizeBarber(b);
+  }
+
+  /** يسحب أنشطة «قصها» من Supabase ويادمجها في القائمة المحلية */
+  async function syncCatalogFromSupabase() {
+    const client = getSupabase();
+    if (!client) return { ok: false, count: 0, error: 'لا يوجد اتصال' };
+    try {
+      const { data, error } = await client.from(BARBER_TABLE)
+        .select('*')
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(300);
+      if (error) return { ok: false, count: 0, error: error.message };
+      const rows = data || [];
+      if (!rows.length) return { ok: true, count: 0, changed: 0 };
+      let changed = 0;
+      rows.forEach((r) => {
+        const nb = _rowToBarber(r);
+        const i = barbers.findIndex(b => String(b.id) === String(nb.id));
+        if (i === -1) { barbers.push(nb); changed++; return; }
+        const keep = barbers[i];
+        // القاعدة بتغلب على المحلي في البيانات العامة، والحسابات المحلية تتورّث
+        barbers[i] = {
+          ...keep,
+          ...nb,
+          services: nb.services.length ? nb.services : (keep.services || []),
+          homeService: (r.home_service && Object.keys(r.home_service).length) ? nb.homeService : keep.homeService
+        };
+        normalizeBarber(barbers[i]);
+        changed++;
+      });
+      if (changed) {
+        persistBarbers();
+        try { if (typeof renderBarbersSection === 'function') renderBarbersSection(); } catch (_) {}
+      }
+      return { ok: true, count: rows.length, changed };
+    } catch (err) {
+      return { ok: false, count: 0, error: err?.message || String(err) };
+    }
+  }
+
+  /** حفظ تعديلات الحلاق (خدمات / خدمة منزلية / مواعيد) في جدول القسم */
+  async function pushCatalogField(barberId, fields) {
+    const client = getSupabase();
+    if (!client) return { ok: false, error: 'لا يوجد اتصال' };
+    const patch = {};
+    if (fields.services !== undefined) patch.services = fields.services;
+    if (fields.homeService !== undefined) patch.home_service = fields.homeService;
+    if (fields.workDays !== undefined) patch.work_days = fields.workDays;
+    if (fields.workStart !== undefined) patch.work_start = fields.workStart;
+    if (fields.workEnd !== undefined) patch.work_end = fields.workEnd;
+    if (fields.slotMinutes !== undefined) patch.slot_minutes = fields.slotMinutes;
+    if (fields.cancelPolicy !== undefined) patch.cancel_policy = fields.cancelPolicy;
+    if (fields.name !== undefined) patch.name = fields.name;
+    if (fields.area !== undefined) patch.area = fields.area;
+    if (fields.bio !== undefined) patch.bio = fields.bio;
+    if (fields.phone !== undefined) patch.phone = fields.phone;
+    if (fields.avatarUrl !== undefined) patch.avatar_url = fields.avatarUrl;
+    if (fields.coverUrl !== undefined) patch.cover_url = fields.coverUrl;
+    patch.updated_at = new Date().toISOString();
+    if (Object.keys(patch).length <= 1) return { ok: true, skipped: true };
+    try {
+      const { error } = await client.from(BARBER_TABLE).update(patch).eq('id', String(barberId));
+      if (error) return { ok: false, error: error.message };
+      await syncCatalogFromSupabase();
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err?.message || String(err) };
+    }
   }
 
   function setStatus(id, status) {
@@ -637,6 +743,8 @@ const BarberStore = (() => {
     setStatus,
     pullBarberStatuses,
     pushBarberStatus,
+    syncCatalogFromSupabase,
+    pushCatalogField,
     getService,
     getSlots,
     createBooking,

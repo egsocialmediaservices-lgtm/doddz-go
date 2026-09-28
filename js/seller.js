@@ -60,6 +60,8 @@
   let primaryImageIndex = 0;
   let currentUserId = null;
   let currentProviderType = null;
+  let currentCategory = null;      // barbers | carwash | handmade | merchants
+  let currentProviderId = null;    // معرّف صف النشاط في جدول القسم
 
   function getClient() {
     return (typeof window !== 'undefined' && window.supabaseClient) ? window.supabaseClient : null;
@@ -99,8 +101,45 @@
     switchTab('mine');
     loadMyProducts();
     fetchProviderType();
+    loadMyBiz();
   }
   function closePanel() { panelOverlay.classList.remove('open'); }
+
+  /** نشاط الحساب من Supabase (جدول القسم) → يحدّد التابات الظاهرة */
+  async function loadMyBiz() {
+    const S = window.SectionsStore;
+    if (!S) return null;
+    try {
+      if (S.whenReady) await S.whenReady();
+      const me = await S.myProvider();
+      if (me) {
+        currentCategory = me.section;
+        currentProviderId = (me.row && me.row.id) || null;
+      } else {
+        currentCategory = S.mySection ? S.mySection() : null;
+        currentProviderId = null;
+      }
+    } catch (err) {
+      console.warn('[Seller] loadMyBiz:', err);
+    }
+    applySectionTabs();
+    renderMyBiz();
+    return currentCategory;
+  }
+
+  /** تابات «حجوزاتي / خدماتي / الخدمة المنزلية» لأصحاب قسم قصها بس،
+   *  و«نشاطي» لأي حساب ليه نشاط في قسم. */
+  function applySectionTabs() {
+    const isBarber = currentCategory === 'barbers';
+    const barberOnly = [$('#seller-tab-barber-bookings'), $('#seller-tab-barber-services'), $('#seller-tab-barber-home')];
+    barberOnly.forEach(el => { if (el) el.hidden = !isBarber; });
+    const bizTab = $('#seller-tab-biz');
+    if (bizTab) bizTab.hidden = !currentProviderId;
+    if (!isBarber && panelOverlay?.classList.contains('open')) {
+      const active = document.querySelector('.adm-tab.active');
+      if (active && active.dataset.tab === 'barber-bookings') { switchTab('mine'); loadMyProducts(); }
+    }
+  }
 
   async function fetchProviderType() {
     const client = getClient();
@@ -120,15 +159,19 @@
       add: $('#seller-tab-add'),
       'barber-bookings': $('#seller-tab-barber-bookings'),
       'barber-services': $('#seller-tab-barber-services'),
-      'barber-home': $('#seller-tab-barber-home')
+      'barber-home': $('#seller-tab-barber-home'),
+      biz: $('#seller-tab-biz')
     };
     const views = {
       mine: viewMine,
       add: viewAdd,
       'barber-bookings': $('#seller-view-barber-bookings'),
       'barber-services': $('#seller-view-barber-services'),
-      'barber-home': $('#seller-view-barber-home')
+      'barber-home': $('#seller-view-barber-home'),
+      biz: $('#seller-view-biz')
     };
+    // الأقسام المخفية ما تتفعّlesh — لو المستخدم طلب تاب مقفول نرجع لمنتجاتي
+    if (!tabs[tab]) tab = 'mine';
     Object.keys(tabs).forEach(k => {
       if (tabs[k]) tabs[k].classList.toggle('active', k === tab);
     });
@@ -510,6 +553,8 @@
       section:  isService ? 'services' : 'sell',
       productType: offeringType,
       source: 'merchant',
+      // المنتج يتبع نشاط صاحب الحساب في جدول القسم (لو مسجّل)
+      providerId: currentProviderId || null,
       // القاعدة (trigger) هي التي تفرض: owner_id = auth.uid() و status = 'pending'
       status: 'pending'
     };
@@ -727,36 +772,117 @@
       description || null
     ].filter(Boolean);
 
-    const { error } = await client.from('signup_requests').insert([{
-      request_type: dbRequestType,
-      full_name: fullName,
-      email,
+    // ── الأقسام الأربعة في Supabase: جدول مستقل لكل قسم ──────────
+    //   barber→قصها(barber_profiles) / carwash→لمعها / handmade→انامل / merchant→كسبني
+    //   «خدمات أخرى» مالهوش قسم — يفضل طلب يدوي للأدمن.
+    const Sections    = window.SectionsStore || null;
+    const sectionCode = Sections ? Sections.normalizeSection(requestType) : null;
+    const userId      = signData?.user?.id || null;
+
+    // لو تأكيد الإيميل مفعّل signUp بيرجع بلا جلسة — بنحاول الدخول بنفس البيانات
+    let session = signData?.session || null;
+    if (!session && userId) {
+      try {
+        const again = await client.auth.signInWithPassword({ email, password });
+        session = again?.data?.session || null;
+      } catch (_) {}
+    }
+
+    const providerPayload = {
+      section:   sectionCode,
+      name:      business || fullName,
+      ownerName: fullName,
       phone,
-      business_name: business || null,
-      description: descParts.length ? descParts.join('\n') : null,
-      status: 'pending'
-    }]);
+      description: description || null
+    };
+
+    // 1) فيه قسم + جلسة → النشاط يتسجل في جدول قسمه على طول (والدالة
+    //    SQL بتعمل صف الطلب في signup_requests بنفسها).
+    let registered = null;
+    if (sectionCode && session && Sections) {
+      registered = await Sections.register(providerPayload);
+    }
+
+    // 2) غير كده (مفيش قسم / مفيش جلسة / الدالة لسه مترفعِتش على السيرفر)
+      //    → طلب كلاسيكي في signup_requests، مع category و user_id لو العمودين موجودين.
+    if (!registered || !registered.success) {
+      if (registered) console.warn('[Seller] register_provider_section:', registered.error);
+      const baseRow = {
+        request_type: dbRequestType,
+        full_name: fullName,
+        email,
+        phone,
+        business_name: business || null,
+        description: descParts.length ? descParts.join('\n') : null,
+        status: 'pending'
+      };
+      let reqError = null;
+      if (sectionCode || userId) {
+        const { error } = await client.from('signup_requests').insert([{
+          ...baseRow, category: sectionCode || null, user_id: userId || null
+        }]);
+        reqError = error;
+        // العمودين لسه مش موجودين في القاعدة (05-provider-sections.sql مترفعش)
+        if (error && /category|user_id|provider_id|column|does not exist/i.test(error.message || '')) {
+          console.warn('[Seller] signup_requests بدون أعمدة الأقسام:', error.message);
+          reqError = (await client.from('signup_requests').insert([baseRow])).error;
+        }
+      } else {
+        reqError = (await client.from('signup_requests').insert([baseRow])).error;
+      }
+
+      if (reqError) {
+        console.error('[Seller] فشل إرسال طلب الانضمام:', reqError);
+        signupSubmitBtn.disabled = false;
+        signupSubmitBtn.textContent = 'إرسال الطلب';
+        const detail = reqError.message || reqError.details || '';
+        signupErrors.innerHTML = '• تم إنشاء الحساب، لكن تعذر إرسال طلب المراجعة' + (detail ? ': ' + detail : '') + '. تواصل مع الإدارة.';
+        signupErrors.classList.add('show');
+        return;
+      }
+
+      // مفيش جلسة (تأكيد الإيميل لسه) → نخزن الطلب محليًا لحد أول تسجيل دخول
+      if (!session && sectionCode && Sections) {
+        Sections.stashPendingRegistration({ ...providerPayload, email });
+      }
+    }
+
+    // 3) الحساب يشتغل فورًا: الجلسة بتفضل مفتوحة واللوحة تفتح — والموافقة
+    //    بتاعت الأدمن بتتحكم في الظهور للعملاء بس (status في جدول القسم).
+    if (session) {
+      currentUserId = userId || session.user.id;
+      try {
+        localStorage.setItem('doddz_user_role', 'visitor');
+        localStorage.setItem('doddz_user_name', fullName);
+        if (phone) localStorage.setItem('doddz_user_phone', phone);
+        if (sectionCode) localStorage.setItem('doddz_user_category', sectionCode);
+      } catch (_) {}
+    } else {
+      try { await client.auth.signOut(); } catch (_) {}
+    }
 
     signupSubmitBtn.disabled = false;
     signupSubmitBtn.textContent = 'إرسال الطلب';
 
-    if (error) {
-      console.error('[Seller] فشل إرسال طلب الانضمام:', error);
-      const detail = error.message || error.details || '';
-      // الحساب اتخلق لكن الطلب فشل — نوضح ذلك
-      signupErrors.innerHTML = '• تم إنشاء الحساب، لكن تعذر إرسال طلب المراجعة' + (detail ? ': ' + detail : '') + '. تواصل مع الإدارة.';
-      signupErrors.classList.add('show');
-      return;
-    }
-
-    // لا نُبقي جلسة مفتوحة قبل موافقة الأدمن
-    try { await client.auth.signOut(); } catch (_) {}
-
     signupForm.hidden = true;
     signupSuccessEl.hidden = false;
+    const successTitle = document.getElementById('seller-signup-success-title');
     const successP = signupSuccessEl.querySelector('p');
+    if (successTitle) successTitle.textContent = 'تم إنشاء حسابك ✓';
     if (successP) {
-      successP.textContent = 'تم إنشاء حسابك وإرسال الطلب للمراجعة. بعد موافقة الإدارة سجّل الدخول بنفس الإيميل وكلمة المرور.';
+      successP.textContent = session
+        ? `حسابك شغال دلوقتي${sectionCode ? ' ونشاطك اتسجل في قسم ' + specialtyLabel : ''}. تقدر تضيف منتجات وتدير خدماتك من لوحة البائع — النشاط بيظهر للعملاء بعد موافقة الإدارة.`
+        : `تم إنشاء الحساب وإرسال طلبك لقسم ${specialtyLabel}. أكّد إيميلك وسجّل الدخول بنفس الإيميل وكلمة المرور — هيتم تسجيل نشاطك تلقائيًا في Supabase.`;
+    }
+    // زرار «تمام» يفتح لوحة البائع بدل ما يقفل بس
+    const doneBtn = document.getElementById('seller-signup-done') || signupDoneBtn;
+    if (doneBtn) {
+      const newDone = doneBtn.cloneNode(true);
+      doneBtn.parentNode.replaceChild(newDone, doneBtn);
+      newDone.addEventListener('click', () => {
+        closeSignupForm();
+        if (session) openPanel(); else showLogin();
+      });
     }
   });
 
@@ -784,21 +910,39 @@
     }
 
     currentUserId = data?.user?.id || null;
-    // تحديد الدور من profiles — الزائر يدخل للتسوق فقط بدون لوحة تاجر
+    // الدور + القسم من profiles — الزائر المالك لنشاط (category) له لوحة البائع
     let role = 'visitor';
+    let category = null;
     try {
-      const { data: prof } = await client.from('profiles').select('role,display_name').eq('id', currentUserId).maybeSingle();
+      const cols = 'role,display_name,category,provider_type';
+      let { data: prof, error } = await client.from('profiles').select(cols).eq('id', currentUserId).maybeSingle();
+      if (error && /category|provider_type/i.test(error.message || '')) {
+        prof = (await client.from('profiles').select('role,display_name').eq('id', currentUserId).maybeSingle()).data;
+      }
       if (prof?.role) role = prof.role;
+      category = prof?.category || null;
       if (prof?.display_name) {
         try { localStorage.setItem('doddz_user_name', prof.display_name); } catch (_) {}
       }
     } catch (_) {
       role = localStorage.getItem('doddz_user_role') || 'visitor';
     }
-    try { localStorage.setItem('doddz_user_role', role); } catch (_) {}
+    try {
+      localStorage.setItem('doddz_user_role', role);
+      if (category) localStorage.setItem('doddz_user_category', category);
+    } catch (_) {}
+
+    // لو التسجيل كان معلّق (تأكيد إيميل) → نشاطه يتسجل في Supabase دلوقتي
+    const Sections = window.SectionsStore || null;
+    if (Sections) {
+      const done = await Sections.completePendingRegistration();
+      if (done && !category) category = done.section || Sections.mySection();
+      else if (!category) { const me = await Sections.myProvider(); category = me?.section || null; }
+    }
 
     closeLogin();
-    if (role === 'visitor') {
+    const isStaff = ['seller', 'merchant', 'service_provider', 'admin'].includes(role);
+    if (!isStaff && !category) {
       notify('تم تسجيل الدخول كزائر — تقدر تتصفح وتشتري دلوقتي');
       window.DoddzAccount?.open?.();
       return;
@@ -872,6 +1016,7 @@
     }
     if (err) err.classList.remove('show');
     notify('تم حفظ الخدمات');
+    if (BarberStore.pushCatalogField) BarberStore.pushCatalogField(barber.id, { services: (result.barber || barber).services || [] });
     renderSellerBarberServicesEditor();
     if (typeof renderBarbersSection === 'function') renderBarbersSection();
   });
@@ -896,6 +1041,9 @@
     }
     if (err) err.classList.remove('show');
     notify('تم حفظ إعدادات الخدمة المنزلية');
+    if (BarberStore.pushCatalogField) {
+      BarberStore.pushCatalogField(barber.id, { homeService: (result.barber || barber).homeService });
+    }
     if (typeof renderBarbersSection === 'function') renderBarbersSection();
   });
 
@@ -912,7 +1060,6 @@
   $('#sf-offering-type')?.addEventListener('change', updateOfferingFields);
   initOfferingTypeSelect();
   updateOfferingFields();
-})();
 
 
   // صور بروفايل الحلاق (غلاف + صورة شخصية)
@@ -950,9 +1097,124 @@
       if (avFile) avatarUrl = await fileToDataUrl(avFile);
       if (cvFile) coverUrl = await fileToDataUrl(cvFile);
       const res = BarberStore.updateProfile(b.id, { avatarUrl, coverUrl, avatar: '' });
+      if (res.success && BarberStore.pushCatalogField) {
+        BarberStore.pushCatalogField(b.id, { avatarUrl, coverUrl });
+      }
       notify(res.success ? 'تم حفظ صور البروفايل' : (res.error || 'تعذر الحفظ'));
     } catch (err) {
       console.error(err);
       notify('تعذر حفظ الصور');
     }
   });
+
+
+  // ================================================================
+  // نشاطي — صف النشاط في جدول القسم (barber_profiles / carwash_profiles
+  //          / handmade_profiles / merchant_profiles) عن طريق SectionsStore
+  // ================================================================
+  function bizStatusLine(row) {
+    if (!row) return '';
+    const label = (window.SectionsStore && SectionsStore.section(row.__section || SectionsStore.mySection())) || {};
+    const map = {
+      pending:  'نشاطك في قسم ' + (label.label || '') + ' «قيد مراجعة الإدارة» — شغال عندك دلوقتي وبيظهر للعملاء بعد الاعتماد.',
+      approved: 'نشاطك معتمد في قسم ' + (label.label || '') + ' وبيظهر للعملاء على الموقع.',
+      rejected: 'تم رفض نشاطك في قسم ' + (label.label || '') + ' — عدّل البيانات وتواصل مع الإدارة.'
+    };
+    return map[row.status] || '';
+  }
+
+  function renderMyBiz() {
+    const S = window.SectionsStore;
+    const box = {
+      name: $('#sb-biz-name'), owner: $('#sb-biz-owner'), phone: $('#sb-biz-phone'),
+      gov: $('#sb-biz-gov'), area: $('#sb-biz-area'), address: $('#sb-biz-address'),
+      desc: $('#sb-biz-desc'), start: $('#sb-biz-start'), end: $('#sb-biz-end'),
+      slot: $('#sb-biz-slot'), logo: $('#sb-biz-logo'), services: $('#sb-biz-services'),
+      stats: $('#sb-biz-stats'), status: $('#sb-biz-status')
+    };
+    if (!box.name) return;
+    if (!S) { if (box.status) box.status.textContent = 'js/sections-data.js غير محمّل'; return; }
+    const me = S.myProviderInfo ? S.myProviderInfo() : null;
+    const row = me && me.row;
+    if (!row) {
+      box.stats.textContent = 'مفيش نشاط مرتبط بالحساب ده';
+      box.status.textContent = 'سجّل نشاطك من زر «حسابي» ← دخول كصاحب نشاط، وهيظهر هنا للتعديل.';
+      return;
+    }
+    box.stats.textContent = 'نشاطي في قسم ' + ((S.section(me.section) || {}).label || me.section);
+    box.status.textContent = bizStatusLine({ ...row, __section: me.section });
+    box.name.value  = row.name || '';
+    box.owner.value = row.owner_name || '';
+    box.phone.value = row.phone || '';
+    box.gov.value   = row.governorate || '';
+    box.area.value  = row.area || '';
+    box.address.value = row.address || '';
+    box.desc.value  = row.description || row.bio || '';
+    box.start.value = row.work_start != null ? row.work_start : 10;
+    box.end.value   = row.work_end != null ? row.work_end : 22;
+    box.slot.value  = row.slot_minutes != null ? row.slot_minutes : 30;
+    box.logo.value  = row.logo_url || row.avatar_url || '';
+    box.services.value = (Array.isArray(row.services) ? row.services : [])
+      .map(s => `${s.name || ''} | ${s.durationMin || s.duration || 30} | ${s.price || 0}`).join('\n');
+  }
+
+  function parseBizServices(text) {
+    return String(text || '').split('\n').map(line => line.trim()).filter(Boolean).map((line, i) => {
+      const parts = line.split('|').map(x => x.trim());
+      return {
+        id: 'svc_' + (i + 1),
+        name: parts[0] || ('خدمة ' + (i + 1)),
+        durationMin: Number(parts[1]) || 30,
+        price: Number(parts[2]) || 0,
+        description: parts[3] || ''
+      };
+    });
+  }
+
+  async function saveMyBiz() {
+    const S = window.SectionsStore;
+    const err = $('#sb-biz-errors');
+    if (err) { err.classList.remove('show'); err.innerHTML = ''; }
+    if (!S) return;
+    const name = ($('#sb-biz-name')?.value || '').trim();
+    if (!name) {
+      if (err) { err.innerHTML = '• اسم النشاط مطلوب'; err.classList.add('show'); }
+      return;
+    }
+    const fields = {
+      name,
+      owner_name: ($('#sb-biz-owner')?.value || '').trim() || null,
+      phone: ($('#sb-biz-phone')?.value || '').trim() || null,
+      governorate: ($('#sb-biz-gov')?.value || '').trim() || null,
+      area: ($('#sb-biz-area')?.value || '').trim() || null,
+      address: ($('#sb-biz-address')?.value || '').trim() || null,
+      description: ($('#sb-biz-desc')?.value || '').trim() || null,
+      work_start: Number($('#sb-biz-start')?.value) || 10,
+      work_end: Number($('#sb-biz-end')?.value) || 22,
+      slot_minutes: Number($('#sb-biz-slot')?.value) || 30,
+      logo_url: ($('#sb-biz-logo')?.value || '').trim() || null,
+      services: parseBizServices($('#sb-biz-services')?.value)
+    };
+    const btn = $('#sb-biz-save');
+    if (btn) { btn.disabled = true; btn.textContent = 'جارِ الحفظ...'; }
+    const r = await S.saveMyProvider(fields);
+    if (btn) { btn.disabled = false; btn.textContent = '💾 حفظ نشاطي'; }
+    if (!r.success) {
+      if (err) { err.innerHTML = '• ' + (r.error || 'تعذر الحفظ'); err.classList.add('show'); }
+      return;
+    }
+    if (S.mySection() === 'barbers' && typeof BarberStore !== 'undefined' && BarberStore.syncCatalogFromSupabase) {
+      await BarberStore.syncCatalogFromSupabase();
+      if (typeof renderBarbersSection === 'function') renderBarbersSection();
+    }
+    notify('تم حفظ بيانات نشاطك ✓');
+    renderMyBiz();
+  }
+
+  $('#seller-tab-biz')?.addEventListener('click', () => { switchTab('biz'); renderMyBiz(); });
+  $('#sb-biz-refresh')?.addEventListener('click', async () => {
+    if (window.SectionsStore) { await SectionsStore.myProvider(); }
+    renderMyBiz();
+  });
+  $('#sb-biz-save')?.addEventListener('click', saveMyBiz);
+})();

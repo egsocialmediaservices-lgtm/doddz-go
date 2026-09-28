@@ -53,6 +53,17 @@
     return full ? String(full).trim().split(' ')[0] : null;
   }
 
+  function categoryLabel(cat) {
+    if (!cat) return null;
+    const S = window.SectionsStore;
+    if (S && S.section) {
+      const sec = S.section(cat);
+      if (sec) return sec.label;
+    }
+    const fallback = { barbers: 'قصها', carwash: 'لمعها', handmade: 'انامل', merchants: 'كسبني' };
+    return fallback[cat] || null;
+  }
+
   function applyAuthUI() {
     const sub = $('#account-btn-sub');
     const label = $('#account-btn-label');
@@ -66,7 +77,9 @@
 
     // الأدمن بس اللي يشوف لوحة الأدمن — باقي الحسابات الإدارية لها لوحة البائع
     const role = state.user ? (state.role || localStorage.getItem('doddz_user_role') || 'visitor') : null;
-    const isStaff = !!role && STAFF_ROLES.includes(role);
+    // النشاط في قسم (profiles.category) = صاحب نشاط، حتى لو الدور visitor
+    const category = state.user ? (state.profile?.category || localStorage.getItem('doddz_user_category') || null) : null;
+    const isStaff = (!!role && STAFF_ROLES.includes(role)) || !!category;
     const isAdmin = role === 'admin';
 
     const sellerFab = $('#seller-fab');
@@ -79,9 +92,28 @@
     if (staffNav?.hidden && $('.account-nav-btn.active') === staffNav) switchTab('orders');
 
     const sellerBtn = $('#acc-open-seller');
-    if (sellerBtn) sellerBtn.hidden = !isStaff;
+    if (sellerBtn) {
+      sellerBtn.hidden = !isStaff;
+      const lbl = categoryLabel(category);
+      sellerBtn.textContent = lbl ? `دخول لوحة ${lbl}` : 'دخول لوحة البائع';
+    }
     const adminBtn = $('#acc-open-admin');
     if (adminBtn) adminBtn.hidden = !isAdmin;
+
+    const bizNote = $('#account-biz-note');
+    if (bizNote) {
+      if (category) {
+        const st = state.profile?.provider_status;
+        bizNote.hidden = false;
+        bizNote.textContent = `نشاطك مسجّل في قسم ${categoryLabel(category)}` +
+          (st === 'approved' ? ' — معتمد وظاهر للعملاء ✓'
+            : st === 'rejected' ? ' — مرفوض، عدّله من لوحة البائع'
+            : ' — قيد مراجعة الإدارة (شغال عندك، ويظهر للعملاء بعد الاعتماد)');
+      } else {
+        bizNote.hidden = true;
+        bizNote.textContent = '';
+      }
+    }
   }
 
   async function loadProfile() {
@@ -90,11 +122,21 @@
     try {
       const { data } = await client
         .from('profiles')
-        .select('role,display_name,phone,governorate,area,street,building,floor')
+        .select('role,display_name,phone,governorate,area,street,building,floor,category,provider_id')
         .eq('id', state.user.id)
         .maybeSingle();
       state.profile = data || null;
       state.role = data?.role || localStorage.getItem('doddz_user_role') || 'visitor';
+      if (data?.category) {
+        try { localStorage.setItem('doddz_user_category', data.category); } catch (_) {}
+      }
+      // حالة النشاط (pending/approved/rejected) من جدول القسم — للعرض في «حسابي»
+      if (data?.category && window.SectionsStore?.myProvider) {
+        try {
+          const me = await SectionsStore.myProvider();
+          if (me && me.row && state.profile) state.profile.provider_status = me.row.status;
+        } catch (_) {}
+      }
       if (data?.role) {
         try { localStorage.setItem('doddz_user_role', data.role); } catch (_) {}
       }

@@ -471,6 +471,7 @@ const ProductStore = (() => {
       sku: raw.sku,
       brand: raw.brand,
       ownerId: raw.owner_id,
+      providerId: raw.provider_id || null,
       contactPhone: raw.contact_phone,
       status: raw.status,
       createdAt: raw.created_at,
@@ -524,6 +525,9 @@ const ProductStore = (() => {
     };
 
     if (product.status !== undefined && product.status !== null) row.status = product.status;
+    // المنتج يتبع نشاط صاحبه في جدول القسم (barber_profiles/...).
+    // العمود بيتشحن بس لما موجود فعليًا — ما يكسرش الـINSERT قبل ترقية القاعدة.
+    if (product.providerId) row.provider_id = String(product.providerId);
     if (product.createdAt) row.created_at = product.createdAt;
     if (product.updatedAt) row.updated_at = product.updatedAt;
     return row;
@@ -1151,6 +1155,10 @@ function renderSection(sectionId, products) {
   container.innerHTML = sectionProducts.map(p =>
     p.source === 'merchant' ? renderMerchantCard(p) : renderCard(p)
   ).join('');
+  // كروت أنشطة الأقسام (من Supabase) بتُلزَّق بعد منتجات القسم نفسه
+  if (window.DoddzSectionsUI && ['carwash', 'handmade', 'merchants'].indexOf(sectionId) !== -1) {
+    setTimeout(() => { try { window.DoddzSectionsUI.renderSection(sectionId); } catch (_) {} }, 0);
+  }
 }
 /** ربط المفضلة الحقيقية */
 function toggleFav(el, event, id) {

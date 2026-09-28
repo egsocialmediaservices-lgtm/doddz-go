@@ -772,6 +772,7 @@
           <div class="account-form">
             <button type="button" class="account-btn" id="acc-open-seller">دخول لوحة البائع</button>
             <button type="button" class="account-btn secondary" id="acc-open-admin" hidden>دخول لوحة الأدمن (Product Manager)</button>
+            <p id="account-biz-note" hidden style="margin:0;font-size:12px;color:#6b6b7b;font-weight:700;line-height:1.6;background:#f6f7fb;border:1px solid #e6e8f0;border-radius:10px;padding:8px 10px;"></p>
             <p style="margin:0;font-size:11.5px;color:#8888aa;font-weight:700;line-height:1.6;">لوحة البائع (منتجاتي / إضافة منتج / حجوزاتي / خدماتي / الخدمة المنزلية) للتجار والحلّاقين. لوحة الأدمن بحساب role=admin بس. الزائر مالهوش صلاحية غير الشراء واستخدام الخدمات.</p>
           </div>
         </section>
@@ -810,6 +811,7 @@
         <button class="adm-tab" data-tab="orders" id="adm-tab-orders">الطلبات</button>
         <button class="adm-tab" data-tab="requests" id="adm-tab-requests">طلبات الانضمام</button>
         <button class="adm-tab" data-tab="barbers" id="adm-tab-barbers">الحلاقين</button>
+        <button class="adm-tab" data-tab="providers" id="adm-tab-providers">أنشطة الأقسام</button>
       </div>
 
       <!-- ===== LIST VIEW ===== -->
@@ -887,6 +889,37 @@
               </tr>
             </thead>
             <tbody id="adm-bookings-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== أنشطــة الأقســام (قصها / لمعها / انامل / كسبني) ===== -->
+      <div class="adm-view" id="adm-view-providers">
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="adm-providers-stats">كل الأنشطة المسجّلة في Supabase</span>
+          <select id="adm-providers-filter" class="adm-btn secondary" style="padding:6px 10px;">
+            <option value="">كل الأقسام</option>
+            <option value="barbers">قصها — صالونات</option>
+            <option value="carwash">لمعها — مغاسل</option>
+            <option value="handmade">انامل — هند ميد</option>
+            <option value="merchants">كسبني — متاجر</option>
+            <option value="pending">المنتظر مراجعته فقط</option>
+          </select>
+          <button type="button" class="adm-btn secondary" id="adm-providers-refresh">تحديث</button>
+        </div>
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th>النشاط</th>
+                <th>القسم</th>
+                <th>المنطقة</th>
+                <th>الموبايل</th>
+                <th>الحالة</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="adm-providers-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -1280,6 +1313,7 @@
         <button class="adm-tab" data-tab="barber-bookings" id="seller-tab-barber-bookings">حجوزاتي</button>
         <button class="adm-tab" data-tab="barber-services" id="seller-tab-barber-services">خدماتي</button>
         <button class="adm-tab" data-tab="barber-home" id="seller-tab-barber-home">الخدمة المنزلية</button>
+        <button class="adm-tab" data-tab="biz" id="seller-tab-biz">نشاطي</button>
       </div>
 
       <!-- ===== MY PRODUCTS ===== -->
@@ -1349,6 +1383,33 @@
         </div>
         <div class="adm-form-actions">
           <button type="button" class="adm-btn" id="seller-barber-save-home">💾 حفظ إعدادات المنزلي</button>
+        </div>
+      </div>
+
+      <!-- ===== MY BUSINESS (نشاطي — جدول القسم في Supabase) ===== -->
+      <div class="adm-view" id="seller-view-biz">
+        <div class="adm-errors" id="sb-biz-errors"></div>
+        <div class="adm-toolbar" style="margin-bottom:10px;">
+          <span class="adm-stats" id="sb-biz-stats">بيانات النشاط</span>
+          <button type="button" class="adm-btn secondary" id="sb-biz-refresh">تحديث</button>
+        </div>
+        <p id="sb-biz-status" style="font-size:12.5px;color:#6b6b7b;margin:0 0 10px;"></p>
+        <div class="adm-form-grid">
+          <div class="adm-field"><label>اسم النشاط *</label><input type="text" id="sb-biz-name"/></div>
+          <div class="adm-field"><label>اسم صاحب النشاط</label><input type="text" id="sb-biz-owner"/></div>
+          <div class="adm-field"><label>الموبايل</label><input type="tel" id="sb-biz-phone" placeholder="01xxxxxxxxx"/></div>
+          <div class="adm-field"><label>المحافظة</label><input type="text" id="sb-biz-gov" placeholder="القاهرة"/></div>
+          <div class="adm-field"><label>المنطقة</label><input type="text" id="sb-biz-area" placeholder="المعادي"/></div>
+          <div class="adm-field"><label>العنوان</label><input type="text" id="sb-biz-address"/></div>
+          <div class="adm-field full"><label>نبذة للعملاء</label><textarea id="sb-biz-desc" rows="2"></textarea></div>
+          <div class="adm-field"><label>بداية العمل (ساعة)</label><input type="number" id="sb-biz-start" min="0" max="23" value="10"/></div>
+          <div class="adm-field"><label>نهاية العمل (ساعة)</label><input type="number" id="sb-biz-end" min="1" max="23" value="22"/></div>
+          <div class="adm-field"><label>مدة الجلسة (دقيقة)</label><input type="number" id="sb-biz-slot" min="10" step="5" value="30"/></div>
+          <div class="adm-field"><label>رابط اللوجو/الصورة</label><input type="url" id="sb-biz-logo" placeholder="https://..."/></div>
+          <div class="adm-field full"><label>الخدمات (كل سطر: الاسم | المدة بالدقائق | السعر)</label><textarea id="sb-biz-services" rows="4" placeholder="غسيل كامل | 45 | 150"></textarea></div>
+        </div>
+        <div class="adm-form-actions" style="margin-top:12px;">
+          <button type="button" class="adm-btn" id="sb-biz-save">💾 حفظ نشاطي</button>
         </div>
       </div>
 
@@ -1425,16 +1486,18 @@
 <!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
-<script src="js/products-data.js"></script>
-<script src="js/barbers-data.js?v=20260926d"></script>
-<script src="js/barbers-ui.js"></script>
-<script src="js/cart.js?v=20260926d"></script>
+<script src="js/products-data.js?v=20260926e"></script>
+<script src="js/sections-data.js?v=20260926e"></script>
+<script src="js/barbers-data.js?v=20260926e"></script>
+<script src="js/barbers-ui.js?v=20260926e"></script>
+<script src="js/sections-ui.js?v=20260926e"></script>
+<script src="js/cart.js?v=20260926e"></script>
 <script src="js/wishlist.js"></script>
-<script src="js/account.js?v=20260926d"></script>
-<script src="js/admin.js?v=20260926d"></script>
-<script src="js/seller.js?v=20260926d"></script>
-<script src="js/i18n.js?v=20260926d"></script>
-<script src="js/site.js?v=20260926d"></script>
+<script src="js/account.js?v=20260926e"></script>
+<script src="js/admin.js?v=20260926e"></script>
+<script src="js/seller.js?v=20260926e"></script>
+<script src="js/i18n.js?v=20260926e"></script>
+<script src="js/site.js?v=20260926e"></script>
 <script src="js/search.js"></script>
 <script src="js/slider.js"></script>
 
