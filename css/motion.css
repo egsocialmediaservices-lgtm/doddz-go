@@ -1,0 +1,140 @@
+/* ============================================================
+   Doddz Go — Motion & 3D layer   (css/motion.css + js/motion.js)
+   ------------------------------------------------------------
+   * كل حالات الإخفاء مشروطة بـ html.mo-on اللي بيضيفها JS،
+     فالصفحة تفضل ظاهرة بالكامل لو الـJS مقفول أو محمّلش.
+   * الـtransform بتاع الكروت مركّب من متغيّرات (--mo-*) عشان
+     الـreveal + الـ3D tilt + الـhover lift يشتغلوا مع بعض
+     من غير ما يلغوا بعض.
+   * يحترم prefers-reduced-motion.
+   ============================================================ */
+
+/* ---------- 1) Scroll reveal (تدرّج عند النزول) ---------- */
+html.mo-on .mo {
+  --mo-y: 26px;
+  --mo-x: 0px;
+  --mo-o: 0;
+  --mo-s: .985;
+  --mo-rx: 0deg;
+  --mo-ry: 0deg;
+  --mo-lift: 0px;
+  opacity: var(--mo-o);
+  transform: perspective(1000px) rotateX(var(--mo-rx)) rotateY(var(--mo-ry))
+             translate3d(var(--mo-x), calc(var(--mo-y) + var(--mo-lift)), 0)
+             scale(var(--mo-s));
+  transition:
+    opacity .62s cubic-bezier(.22, .61, .36, 1) var(--mo-delay, 0ms),
+    transform .62s cubic-bezier(.22, .61, .36, 1) var(--mo-delay, 0ms),
+    border-color .2s, box-shadow .2s;
+}
+html.mo-on .mo.mo-from-side { --mo-x: 42px; }
+html.mo-on .mo.mo-from-left  { --mo-x: -42px; }
+html.mo-on .mo.mo-zoom       { --mo-y: 14px; --mo-s: .94; }
+
+html.mo-on .mo.mo-in {
+  --mo-o: 1;
+  --mo-y: 0px;
+  --mo-x: 0px;
+  --mo-s: 1;
+}
+
+/* ---------- 2) 3D tilt (الميل مع الماوس) ---------- */
+html.mo-on .mo.mo-tilting {
+  transition:
+    opacity .62s cubic-bezier(.22, .61, .36, 1),
+    transform .12s ease-out,
+    border-color .2s, box-shadow .2s;
+  z-index: 3;
+}
+html.mo-on .pcard.mo-in:hover,
+html.mo-on .big-banner.mo-in:hover,
+html.mo-on .side-banner.mo-in:hover { --mo-lift: -6px; }
+
+/* لمعة خفيفة بتتحرّك مع الماوس فوق الكارت */
+html.mo-on .mo-tint-host { position: relative; }
+html.mo-on .mo-tint {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .25s ease;
+  background: radial-gradient(340px circle at var(--mo-mx, 50%) var(--mo-my, 50%),
+              rgba(255, 255, 255, .22), rgba(255, 255, 255, 0) 62%);
+}
+html.mo-on .mo-tint-host:hover .mo-tint { opacity: 1; }
+
+/* ---------- 3) الهيرو: عمق 3D + حركة داخلية ---------- */
+html.mo-on .hero-slider { perspective: 1400px; transform-style: preserve-3d; }
+
+html.mo-on .slide.active .slide-text {
+  transform: translate3d(calc(var(--hero-x, 0) * 14px), calc(var(--hero-y, 0) * 10px), 40px);
+}
+html.mo-on .slide.active .slide-media img {
+  transform: translate3d(calc(var(--hero-x, 0) * -18px), calc(var(--hero-y, 0) * -12px), 0) scale(1.06);
+}
+html.mo-on .slide.active .slide-media img { animation: mo-kenburns 16s ease-in-out infinite alternate; }
+
+@keyframes mo-kenburns {
+  from { object-position: 52% 46%; }
+  to   { object-position: 48% 54%; }
+}
+
+/* ظهور متدرّج لعناصر نص السلايد */
+html.mo-on .slide.active .slide-text > * {
+  animation: mo-rise .68s cubic-bezier(.22, .61, .36, 1) both;
+}
+html.mo-on .slide.active .slide-text > :nth-child(1) { animation-delay: .06s; }
+html.mo-on .slide.active .slide-text > :nth-child(2) { animation-delay: .16s; }
+html.mo-on .slide.active .slide-text > :nth-child(3) { animation-delay: .28s; }
+html.mo-on .slide.active .slide-text > :nth-child(4) { animation-delay: .40s; }
+
+@keyframes mo-rise {
+  from { opacity: 0; transform: translateY(24px) rotateX(-8deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* البنرات الجانبية: طفو بطيء */
+html.mo-on .side-banner { animation: mo-float 7s ease-in-out infinite alternate; }
+html.mo-on .side-banner:nth-child(2) { animation-delay: -3.2s; }
+@keyframes mo-float {
+  from { transform: translateY(-4px); }
+  to   { transform: translateY(5px); }
+}
+
+/* ---------- 4) لمسات صغيرة: أيقونات البرومو والأزرار ---------- */
+html.mo-on .promo-icon { transition: transform .35s cubic-bezier(.22, .61, .36, 1); }
+html.mo-on .promo-item:hover .promo-icon { transform: translateY(-4px) rotate(-6deg) scale(1.12); }
+
+html.mo-on .slide-btn,
+html.mo-on .bb-btn,
+html.mo-on .row-see-all { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+html.mo-on .slide-btn:hover,
+html.mo-on .bb-btn:hover { transform: translateY(-2px) scale(1.03); }
+html.mo-on .slide-btn:active,
+html.mo-on .bb-btn:active { transform: translateY(0) scale(.98); }
+
+/* عنوان كل قسم ينزلق من جهة البداية (يشتغل في RTL وLTR) */
+html.mo-on .row-header.mo-in { --mo-x: 0px; }
+html.mo-on .section-row .row-header { --mo-x: 34px; }
+html.mo-on .section-row .row-header.mo-in { --mo-x: 0px; }
+
+/* شريط المنتجات: الكروت تظهر ورا بعض بتأخير متدرّج (--mo-delay بيحسبه JS) */
+
+/* ---------- 5) احترام تقليل الحركة ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html.mo-on .mo,
+  html.mo-on .mo.mo-in {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.mo-on .side-banner,
+  html.mo-on .slide.active .slide-text > *,
+  html.mo-on .slide.active .slide-media img {
+    animation: none !important;
+  }
+  html.mo-on .slide.active .slide-text,
+  html.mo-on .slide.active .slide-media img { transform: none !important; }
+  html.mo-on .mo-tint { display: none; }
+}

@@ -150,11 +150,36 @@
   function open() {
     const overlay = $('#account-overlay');
     if (!overlay || !state.user) return;
+    setGuestMode(false);
     renderHead();
     fillAddressForm();
     fillSettingsForm();
     state.ordersLoaded = false;
     loadOrders();
+    overlay.classList.add('open');
+  }
+
+  // ── وضع الزائر: تتبع الطلب + خدمة العملاء بدون تسجيل ──────────
+  function setGuestMode(on) {
+    const guestTabs = ['track', 'support'];
+    document.querySelectorAll('.account-nav-btn[data-account-tab]').forEach(btn => {
+      if (btn.dataset.accountTab === 'staff') return; // بتتحكم فيها applyAuthUI
+      btn.hidden = on ? !guestTabs.includes(btn.dataset.accountTab) : false;
+    });
+    const logoutBtn = $('#account-logout-btn');
+    if (logoutBtn) logoutBtn.hidden = !!on;
+  }
+
+  function openGuest(tab) {
+    const overlay = $('#account-overlay');
+    if (!overlay) return;
+    if (state.user) { open(); return; }
+    $('#account-user-name').textContent = 'زائر Doddz Go';
+    $('#account-user-email').textContent = 'وضع التتبع — بدون تسجيل';
+    $('#account-avatar').textContent = 'ز';
+    setGuestMode(true);
+    const target = (tab === 'track' || tab === 'support') ? tab : 'track';
+    switchTab(target);
     overlay.classList.add('open');
   }
 
@@ -497,6 +522,7 @@
 
   window.DoddzAccount = {
     open,
+    openGuest,
     close,
     isLoggedIn,
     displayName,

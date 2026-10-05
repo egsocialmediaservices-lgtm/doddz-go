@@ -599,6 +599,11 @@
     closeEntryChoice();
     showSignupForm();
   });
+  // زائر عنده طلب وعايز يتتبعه بدون تسجيل
+  $('#seller-entry-track-btn')?.addEventListener('click', () => {
+    closeEntryChoice();
+    if (window.DoddzAccount?.openGuest) window.DoddzAccount.openGuest('track');
+  });
   entryCancelBtn?.addEventListener('click', closeEntryChoice);
   entryOverlay?.addEventListener('click', (e) => { if (e.target === entryOverlay) closeEntryChoice(); });
 

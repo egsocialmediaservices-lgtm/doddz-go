@@ -102,7 +102,7 @@ select
   pg_get_functiondef(p.oid) as definition
 from pg_proc p
 join pg_namespace n on n.oid = p.pronamespace
-where n.nspname = 'public'
+where n.nspname = 'public' and p.prokind = 'f'   -- 'f' = دوال عادية (بيفشل على aggregates)
 order by p.proname;
 
 
@@ -153,41 +153,52 @@ order by c.relname, grantee, privilege_type;
 
 
 -- ── 11) عدّادات سريعة: كام صف في كل جدول (للتأكد من مكان الداتا)
-select 'products' as table_name, count(*) from public.products
-union all select 'orders', count(*) from public.orders
-union all select 'order_items', count(*) from public.order_items
-union all select 'profiles', count(*) from public.profiles
-union all select 'signup_requests', count(*) from public.signup_requests
-union all select 'barber_status', count(*) from public.barber_status
-union all select 'barber_bookings', count(*) from public.barber_bookings
-order by table_name;
+--     ديناميكي: بيقرأ من pg_stat_user_tables فمش بيفشل لو جدول
+--     مش موجود أو اتسبّب (زي barber_status / barber_bookings).
+--     ملاحظة: n_live_tup تقريبي (بيتنظّف مع autovacuum) — كافي للتأكد.
+select relname as table_name,
+       n_live_tup as approx_rows,
+       n_tup_ins  as inserts_total,
+       n_tup_upd  as updates_total,
+       n_tup_del  as deletes_total,
+       last_vacuum,
+       last_autovacuum
+from pg_stat_user_tables
+where schemaname = 'public'
+order by relname;
 
 
 -- ================================================================
 -- 12) (اختياري) كل حاجة في خلية واحدة — أسهل حاجة للنسخ
---     شغّل الاستعلام ده لوحده (حدّد كل النص واعمل Run)، طلع عمود
---     live_schema فيه 4 صفوف — اضغط على الخلية → Copy → البسني
---     المحتوى أو احفظه في supabase/export/live-schema.txt
---     (القسم الأول public DDL بس، بدون أي دوال نظام).
+--     شغّل الاستعلام ده لوحده، يطلّع 4 صفوف (functions / policies /
+--     triggers / tables) — اضغط على الخلية → Copy → البسني المحتوى
+--     أو احفظه في supabase/export/live-schema.txt
+--     (DDL بتاع schema public بس، بدون أي دوال نظام).
+--
+--     ملاحظات صيغت بعد ما النسخة الأولى وقعت في الـEditor:
+--       * pg_proc مالهاش عمود proamid — الميلان على pg_am كان خطأ.
+--       * string_agg بترتّب داخليًا بـ (order by ...) مش بـ ORDER BY
+--         في آخر الاستعلام (الأخيرة بترمي خطأ GROUP BY).
+--       * unnest محتاج alias بعمود: unnest(x) r(rolid).
 -- ================================================================
 select 'functions' as part,
-       (select string_agg(pg_get_functiondef(p.oid), E';\n\n')
+       (select string_agg(pg_get_functiondef(p.oid), E';\n\n' order by p.proname)
           from pg_proc p
           join pg_namespace n on n.oid = p.pronamespace
-          join pg_am am on am.oid = p.proamid
-         where n.nspname = 'public' and am.amname = 'heap') as ddl
+         where n.nspname = 'public' and p.prokind = 'f') as ddl
 union all
 select 'policies',
        (select string_agg(
             'create policy ' || q.polname || ' on public.' || q.relname || ' ; -- ' ||
             q.cmd || ' to ' || q.roles || ' using ' || coalesce(q.using_txt,'null') ||
-            ' with check ' || coalesce(q.check_txt,'null'), E'\n')
+            ' with check ' || coalesce(q.check_txt,'null'), E'\n' order by q.polname)
           from (
             select pol.polname, cl.relname,
               case pol.polcmd when 'r' then 'select' when 'a' then 'insert'
                    when 'u' then 'update' when 'd' then 'delete' else 'all' end as cmd,
-              coalesce((select string_agg(ro.rolname, ',') from unnest(pol.polroles) rid
-                          join pg_roles ro on ro.oid = rid), 'public') as roles,
+              coalesce((select string_agg(ro.rolname, ',')
+                          from unnest(pol.polroles) as r(rolid)
+                          join pg_roles ro on ro.oid = r.rolid), 'public') as roles,
               pg_get_expr(pol.polqual, pol.polrelid)     as using_txt,
               pg_get_expr(pol.polwithcheck, pol.polrelid) as check_txt
             from pg_policy pol
@@ -197,7 +208,7 @@ select 'policies',
           ) q)
 union all
 select 'triggers',
-       (select string_agg(pg_get_triggerdef(t.oid), E';\n')
+       (select string_agg(pg_get_triggerdef(t.oid), E';\n' order by cl.relname, t.tgname)
           from pg_trigger t
           join pg_class cl on cl.oid = t.tgrelid
           join pg_namespace n on n.oid = cl.relnamespace
@@ -206,11 +217,12 @@ union all
 select 'tables',
        (select string_agg(
             cl.relname || ' (' ||
-            (select string_agg(a.attname || ' ' || format_type(a.atttypid, a.atttypmod), ', ')
-               from pg_attribute a
-              where a.attrelid = cl.oid and a.attnum > 0 and not a.attisdropped
-              order by a.attnum) || ') rls=' || cl.relrowsecurity, E'\n')
+            coalesce((select string_agg(a.attname || ' ' || format_type(a.atttypid, a.atttypmod), ', '
+                          order by a.attnum)
+                       from pg_attribute a
+                      where a.attrelid = cl.oid and a.attnum > 0 and not a.attisdropped), '')
+            || ') rls=' || cl.relrowsecurity,
+            E'\n' order by cl.relname)
           from pg_class cl
           join pg_namespace n on n.oid = cl.relnamespace
-         where n.nspname = 'public' and cl.relkind in ('r','p')
-         order by cl.relname);
+         where n.nspname = 'public' and cl.relkind in ('r','p'));

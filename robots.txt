@@ -1,0 +1,12 @@
+# Doddz Go — robots.txt
+# الموقع ساكن (HTML/CSS/JS) ومحتواه كله عام للفهرسة.
+
+User-agent: *
+Allow: /
+
+# ملفات تشغيل المشروع — لا داعي لفهرستها
+Disallow: /supabase/
+Disallow: /docs/
+Disallow: /js/supabase-client.js
+
+# لوحة الأدمن/الحساب نوافذ مش صفحات، فمفيش حاجة تُحجب غير الملفات فوق.

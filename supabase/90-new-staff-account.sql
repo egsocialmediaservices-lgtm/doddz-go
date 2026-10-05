@@ -23,7 +23,7 @@ do $$
 declare
   barber_email text := 'barber@example.com';   -- ← غيّره لإيميل الحساب اللي عملته
   barber_name  text := 'حلاق دودز';            -- ← الاسم الظاهر في اللوحة
-  barber_phone text := '010000000000';         -- ← رقم الحلاق (11 رقم يبدأ بـ 010)
+  barber_phone text := '01000000000';         -- ← رقم الحلاق (11 رقم يبدأ بـ 010 — قيد profiles_phone_check)
   v_uid uuid;
 begin
   select id into v_uid from auth.users where lower(email) = lower(barber_email) limit 1;

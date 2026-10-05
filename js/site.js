@@ -138,14 +138,17 @@ document.getElementById('support-chat-close')?.addEventListener('click', () => {
 
 if (new URLSearchParams(location.search).get('account') === '1') {
   document.addEventListener('DOMContentLoaded', () => {
-    const openEntry = () => document.getElementById('seller-entry-overlay')?.classList.add('open');
+    const openTrack = () => {
+      if (window.DoddzAccount?.openGuest) window.DoddzAccount.openGuest('track');
+      else document.getElementById('seller-entry-overlay')?.classList.add('open');
+    };
     if (window.DoddzAccount?.whenReady) {
       window.DoddzAccount.whenReady().then(() => {
         if (window.DoddzAccount.isLoggedIn()) window.DoddzAccount.open();
-        else openEntry();
+        else openTrack();
       });
     } else {
-      openEntry();
+      openTrack();
     }
     history.replaceState({}, '', location.pathname);
   });
