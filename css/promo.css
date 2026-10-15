@@ -17,7 +17,7 @@
   transition: border-color .15s, box-shadow .15s;
 }
 .promo-item:hover {
-  border-color: rgba(15, 118, 110, 0.3);
+  border-color: rgba(14, 116, 144, 0.3);
   box-shadow: var(--shadow-sm);
 }
 .promo-icon {

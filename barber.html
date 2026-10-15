@@ -4,29 +4,77 @@
   <meta charset="utf-8"/>
   <title>ملف الحلاق — Doddz Go</title>
   <meta name="description" content="احجز ميعادك مع حلاقين معتمدين في Doddz Go — قص، حلاقة، وعناية بالخدمة المنزلية، بمواعيد واضحة وأسعار معلنة."/>
-  <meta name="theme-color" content="#0B1220"/>
+  <meta name="theme-color" content="#05070D"/>
   <link rel="icon" href="images/logo.png" type="image/png"/>
   <link rel="apple-touch-icon" href="images/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/base.css"/>
-  <link rel="stylesheet" href="css/header.css"/>
-  <link rel="stylesheet" href="css/footer.css"/>
-  <link rel="stylesheet" href="css/barber.css"/>
-  <link rel="stylesheet" href="css/responsive.css"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261003c"/>
-  <script src="js/motion.js?v=20261003c" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/header.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261014g"/>
+  <script src="js/motion.js?v=20261014g" defer></script>
 </head>
 <body>
 
-<div class="top-bar">
-  <span class="top-bar-msg">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
-    <span>احجز حلاقك من Doddz Go</span>
-  </span>
-  <span><a href="index.html">العودة للمتجر</a></span>
-  <span>مواعيد واضحة · حلاقين معتمدين</span>
+<!-- TOP BAR — شريط أخبار متحرك -->
+<div class="top-bar" role="region" aria-label="إعلانات قصها">
+  <div class="ticker">
+    <div class="ticker-track">
+
+      <div class="ticker-group">
+        <span class="ticker-item top-bar-msg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+          <span>احجز حلاقك من Doddz Go</span>
+        </span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">مواعيد واضحة · حلاقين معتمدين</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">في الصالون أو عندك في البيت</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">الدفع بعد الخدمة</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item"><a href="index.html">العودة للمتجر</a></span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+      </div>
+
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item top-bar-msg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+          <span>احجز حلاقك من Doddz Go</span>
+        </span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">مواعيد واضحة · حلاقين معتمدين</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">في الصالون أو عندك في البيت</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">الدفع بعد الخدمة</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><a href="index.html" tabindex="-1">العودة للمتجر</a></span>
+        <span class="ticker-dot"></span>
+      </div>
+
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item top-bar-msg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
+          <span>احجز حلاقك من Doddz Go</span>
+        </span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">مواعيد واضحة · حلاقين معتمدين</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">في الصالون أو عندك في البيت</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">الدفع بعد الخدمة</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><a href="index.html" tabindex="-1">العودة للمتجر</a></span>
+        <span class="ticker-dot"></span>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <header>
@@ -87,6 +135,57 @@
           <h3>الخدمات والأسعار</h3>
           <div id="bp-services-list"></div>
         </div>
+
+        <!-- فريق المحل -->
+        <div class="bp-panel" id="bp-team-panel" hidden>
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.4"/><path d="M2.6 20a6.4 6.4 0 0 1 12.8 0"/><circle cx="17.6" cy="9.4" r="2.6"/><path d="M15.6 20a5.4 5.4 0 0 0 8 -4.6"/></svg>
+            فريق المحل
+          </h3>
+          <p id="bp-team-note" class="bp-panel-note">أشخاص المحل اللي ممكن تختار يحجزلك.</p>
+          <div class="bp-team" id="bp-team"></div>
+        </div>
+
+        <!-- مواعيد العمل -->
+        <div class="bp-panel" id="bp-hours-panel" hidden>
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 2"/></svg>
+            مواعيد الصالون
+          </h3>
+          <div class="bp-hours" id="bp-hours"></div>
+        </div>
+
+        <!-- الموقع -->
+        <div class="bp-panel" id="bp-loc-panel" hidden>
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-10.2A6.5 6.5 0 0 1 12 4.3a6.5 6.5 0 0 1 6.5 6.5C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.4"/></svg>
+            موقع الصالون
+          </h3>
+          <p id="bp-loc-address" class="bp-loc-address"></p>
+          <p id="bp-loc-note" class="bp-panel-note" hidden></p>
+          <a id="bp-loc-map" class="bp-map-btn" href="#" target="_blank" rel="noopener" hidden>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
+            افتح في الخرائط
+          </a>
+        </div>
+
+        <!-- ألبوم المكان -->
+        <div class="bp-panel" id="bp-gallery-panel" hidden>
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.4"/><circle cx="8.6" cy="10" r="1.6"/><path d="m4.5 17.5 5-5 4.2 4.2 2.6-2.4 3.2 3.2"/></svg>
+            صور من المكان
+          </h3>
+          <div class="bp-shots" id="bp-gallery"></div>
+        </div>
+
+        <!-- عينات الشغل -->
+        <div class="bp-panel" id="bp-samples-panel" hidden>
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3"/><path d="M8 12h8M8 16h5"/></svg>
+            عينات من الشغل
+          </h3>
+          <div class="bp-shots" id="bp-samples"></div>
+        </div>
         <div class="bp-panel" id="bp-home-panel" hidden>
           <h3>
           <svg class="barber-home-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg>
@@ -105,7 +204,7 @@
         <h3>حجز موعد</h3>
         <div class="bk-steps">
           <div class="bk-step active" data-step-ind="1">1. المكان</div>
-          <div class="bk-step" data-step-ind="2">2. الخدمة</div>
+          <div class="bk-step" data-step-ind="2">2. الخدمات</div>
           <div class="bk-step" data-step-ind="3">3. الموعد</div>
           <div class="bk-step" data-step-ind="4">4. بياناتك</div>
           <div class="bk-step" data-step-ind="5">5. تأكيد</div>
@@ -128,7 +227,13 @@
         </div>
 
         <div id="bk-step-2" hidden>
+          <p class="bk-hint">اختَر خدمة واحدة أو أكتر — المدة والسعر بيتجمعوا أوتوماتيك.</p>
           <div id="bk-services-options"></div>
+          <div class="bk-field" id="bk-member-field" hidden>
+            <label>اختَر الفني</label>
+            <div class="bk-members" id="bk-members"></div>
+          </div>
+          <div class="bk-picked" id="bk-picked" hidden></div>
           <div class="bk-actions">
             <button type="button" class="bk-btn secondary" id="bk-back-2">رجوع</button>
             <button type="button" class="bk-btn primary" id="bk-next-2" disabled>التالي</button>
@@ -141,7 +246,7 @@
             <input type="date" id="bk-date"/>
           </div>
           <div class="bk-field">
-            <label>الوقت المتاح</label>
+            <label>الوقت المتاح <span class="bk-slots-hint" id="bk-slots-hint"></span></label>
             <div class="bk-slots" id="bk-slots"></div>
           </div>
           <div class="bk-actions">
@@ -200,6 +305,15 @@
         </div>
       </div>
     </div>
+
+    <!-- معاينة الصورة بالحجم الكامل -->
+    <div class="bp-lightbox" id="bp-lightbox" hidden>
+      <button type="button" class="bp-lightbox-close" id="bp-lightbox-close" aria-label="إغلاق">✕</button>
+      <figure>
+        <img id="bp-lightbox-img" src="" alt=""/>
+        <figcaption id="bp-lightbox-cap"></figcaption>
+      </figure>
+    </div>
   </div>
 </div>
 
@@ -209,8 +323,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
-<script src="js/barbers-data.js?v=20260926e"></script>
-<script src="js/barber-page.js?v=20260926e"></script>
-<script src="js/i18n.js?v=20260926e"></script>
+<script src="js/barbers-data.js?v=20261014g"></script>
+<script src="js/barber-page.js?v=20261014g"></script>
+<script src="js/i18n.js?v=20261014g"></script>
 </body>
 </html>

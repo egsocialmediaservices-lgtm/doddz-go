@@ -90,7 +90,7 @@
   position: relative;
 }
 .pcard:hover {
-  border-color: rgba(15, 118, 110, 0.28);
+  border-color: rgba(14, 116, 144, 0.28);
   box-shadow: var(--shadow-md);
   transform: translateY(-4px);
 }
@@ -256,12 +256,12 @@
 }
 
 .pcard-btn-cart {
-  background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+  background: linear-gradient(135deg, var(--brand, #0E7490), #22B8CF) !important;
   color: #fff !important;
   border: 0 !important;
   border-radius: 12px !important;
   font-weight: 800 !important;
-  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.22);
+  box-shadow: 0 8px 18px rgba(14, 116, 144, 0.22);
 }
 .pcard-btn-cart:hover { filter: brightness(1.05); }
 .price-off {
@@ -306,7 +306,7 @@
   background: rgba(255,255,255,.55);
   box-shadow: 0 0 0 1px rgba(15,23,42,.15);
 }
-.pcard-dot.is-active { background: #0f766e; }
+.pcard-dot.is-active { background: var(--brand, #0E7490); }
 .pcard-gallery-fallback {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;

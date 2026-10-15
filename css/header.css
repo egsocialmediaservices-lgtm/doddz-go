@@ -1,33 +1,90 @@
 /* Header · Top bar · Nav — Premium marketplace chrome */
 
+/* ================================================================
+   البار العلوي = شريط أخبار (News ticker) بيتحرك زي شريط القنوات
+   ----------------------------------------------------------------
+   * ثلاث نسخ من نفس الرسائل عشان الشريط مايبقاش فيه فراغ أيّما
+     كان عرض الشاشة.
+   * الحركة لجهة اليمين = ترتيب القراءة في العربي (الكلمة الأولى
+     تظهر الأول)، فالمتفرج بيقراها من غير ما يلف راسه.
+   * الوقفة عند الـhover أو لما حد يفتح الكيبورد فوقه.
+   * بدون حركة تمامًا لمين يفضّل تقليل الحركة.
+   ================================================================ */
 .top-bar {
-  background: linear-gradient(90deg, #0B1220 0%, #0F172A 50%, #134E4A 100%);
-  color: rgba(255, 255, 255, 0.78);
+  background: linear-gradient(90deg, var(--void, #05070D) 0%, #0A1220 48%, var(--brand-deep, #155E75) 100%);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 12px;
   font-weight: 600;
-  padding: 9px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
   letter-spacing: 0.01em;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(103, 226, 240, 0.14);
 }
 .top-bar a {
-  color: #5EEAD4;
+  color: var(--accent, #67E2F0);
   font-weight: 800;
   transition: color .15s;
 }
-.top-bar a:hover { color: #99F6E4; }
+.top-bar a:hover { color: var(--accent-soft, #A5F3FC); }
+
+.ticker {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: tickerRun 18s linear infinite;
+  will-change: transform;
+}
+.ticker-group {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex: 0 0 auto;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+/* العلامة الماسية ما بين الرسائل */
+.ticker-dot {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg);
+  border-radius: 1px;
+  background: var(--accent, #67E2F0);
+  opacity: 0.5;
+}
+@keyframes tickerRun {
+  from { transform: translateX(0); }
+  /* 33.333% من عرض المسار = عرض نسخة واحدة بالظبط → loop بدون قفزة */
+  to   { transform: translateX(33.3333%); }
+}
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}
 
 header {
-  background: rgba(11, 18, 32, 0.96);
+  background: rgba(5, 7, 13, 0.96);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   padding: 0 20px;
   position: sticky;
   top: 0;
   z-index: 300;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(103, 226, 240, 0.14);
+  box-shadow: 0 10px 30px rgba(5, 7, 13, 0.35);
 }
 
 .header-main {
@@ -43,7 +100,7 @@ header {
 .logo-doddz {
   font-size: 25px;
   font-weight: 900;
-  color: #5EEAD4;
+  color: var(--accent, #67E2F0);
   font-family: var(--font-en);
 }
 .logo-go {
@@ -66,8 +123,8 @@ header {
   transition: box-shadow .2s, border-color .2s;
 }
 .search-bar:focus-within {
-  border-color: rgba(15, 118, 110, 0.5);
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15);
+  border-color: rgba(14, 116, 144, 0.55);
+  box-shadow: 0 0 0 4px rgba(14, 116, 144, 0.16), 0 10px 24px rgba(5, 7, 13, 0.10);
 }
 .search-bar input {
   flex: 1;
@@ -98,7 +155,7 @@ header {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230F766E' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230E7490' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: left 12px center;
   transition: background-color .15s, color .15s;
@@ -109,7 +166,7 @@ header {
 }
 .search-bar .search-cat:focus {
   background-color: #E2E8F0;
-  color: #0F766E;
+  color: var(--brand);
 }
 .search-bar .search-cat option {
   background: #F8FAFC;
@@ -238,14 +295,14 @@ header {
 #cart-total {
   font-weight: 800 !important;
   font-size: 12px !important;
-  color: var(--brand, #0f766e) !important;
+  color: var(--accent, #67E2F0) !important;
 }
 .cart-count {
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
   border-radius: 999px;
-  background: var(--brand, #0f766e);
+  background: var(--brand, #0E7490);
   color: #fff;
   font-size: 10px;
   font-weight: 800;
@@ -317,24 +374,35 @@ body.lang-en .hdr-btn .sub {
 }
 
 /* FABs بنفس ستايل الشات */
-.seller-fab,
 .adm-fab,
 .support-fab {
   width: 52px !important;
   height: 52px !important;
   border-radius: 50% !important;
-  border: 1px solid #e2e8f0 !important;
-  background: #fff !important;
-  color: #0f766e !important;
-  box-shadow: 0 8px 24px rgba(15,23,42,.12) !important;
+  border: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+  color: var(--brand) !important;
+  box-shadow: 0 8px 24px rgba(5,7,13,.14) !important;
 }
-.seller-fab:hover,
 .adm-fab:hover,
 .support-fab:hover {
-  background: #f0fdfa !important;
+  background: var(--brand-soft) !important;
   transform: scale(1.05);
 }
-.adm-fab { color: #0f766e !important; }
+.adm-fab { color: var(--brand) !important; }
+
+/* زرار «لوحة النشاط» بقى جوه البار العلوي جنب «حسابي» */
+.hdr-btn-seller .icon {
+  color: var(--accent, #67E2F0) !important;
+}
+.hdr-btn-seller .icon svg {
+  stroke: var(--accent, #67E2F0) !important;
+}
+.hdr-btn-seller:hover { background: rgba(103, 226, 240, 0.14) !important; }
+.hdr-btn-seller.is-on {
+  background: rgba(103, 226, 240, 0.10);
+  box-shadow: inset 0 0 0 1px rgba(103, 226, 240, 0.35);
+}
 
 /* أزرار باربر — نص أبيض واضح */
 .hdr-btn-light {
@@ -402,7 +470,7 @@ body.lang-en .hdr-btn .sub {
 .top-bar-support svg {
   flex-shrink: 0;
   opacity: 0.95;
-  color: #5EEAD4;
+  color: var(--accent, #67E2F0);
 }
 
 
@@ -416,12 +484,18 @@ body.lang-en .hdr-btn .sub {
   text-decoration: none;
   line-height: 0;
 }
+/* Brand logo — اللوجو الجديد المستخرج من الفيديو (فضي شفاف) */
 .site-logo {
   height: 42px;
   width: auto;
   max-width: 170px;
   object-fit: contain;
   display: block;
+  transition: transform .25s ease, filter .25s ease;
+}
+.logo-link:hover .site-logo {
+  transform: translateY(-1px) scale(1.03);
+  filter: drop-shadow(0 6px 18px rgba(103, 226, 240, 0.35));
 }
 .site-logo-footer {
   height: 38px;

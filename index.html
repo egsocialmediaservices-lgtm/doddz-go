@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <title>Doddz Go — سوقك الذكي للتسوق والخدمات في مصر</title>
   <meta name="description" content="Doddz Go: منتجات متنوعة بأسعار واضحة، حجز حلاقين في الصالون أو بالخدمة المنزلية (قصها)، مغاسل سيارات (لمعها)، شغل يدوي (انامل)، ومتاجر التجار (كسبني). الدفع عند الاستلام وتوصيل مجاني داخل المعادي."/>
-  <meta name="theme-color" content="#0B1220"/>
+  <meta name="theme-color" content="#05070D"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Doddz Go"/>
   <meta property="og:title" content="Doddz Go — سوقك الذكي للتسوق والخدمات"/>
@@ -17,35 +17,117 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
+  <!-- قرار المقدمة: هل الزائر ده شافها قبل كده؟ (قبل الرسم عشان مفيش وميض) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('doddz_intro_seen_v1') !== '1') {
+          document.documentElement.className += ' intro-on';
+        }
+      } catch (e) { document.documentElement.className += ' intro-on'; }
+    })();
+  </script>
+
   <!-- ===== CSS — كل ملف مسؤول عن جزء واحد فقط ===== -->
-  <link rel="stylesheet" href="css/base.css"/>
-  <link rel="stylesheet" href="css/header.css"/>
-  <link rel="stylesheet" href="css/hero.css"/>
-  <link rel="stylesheet" href="css/promo.css"/>
-  <link rel="stylesheet" href="css/products.css"/>
-  <link rel="stylesheet" href="css/courses.css"/>
-  <link rel="stylesheet" href="css/banners.css"/>
-  <link rel="stylesheet" href="css/footer.css"/>
-  <link rel="stylesheet" href="css/cart.css"/>
-  <link rel="stylesheet" href="css/checkout.css"/>
-  <link rel="stylesheet" href="css/account.css"/>
-  <link rel="stylesheet" href="css/admin.css"/>
-  <link rel="stylesheet" href="css/responsive.css"/>
-  <link rel="stylesheet" href="css/barber.css"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261003c"/>
-  <script src="js/motion.js?v=20261003c" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/header.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/hero.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/promo.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/products.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/courses.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/banners.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/account.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/admin.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/splash.css?v=20261014g"/>
+  <script src="js/motion.js?v=20261014g" defer></script>
+  <script src="js/splash.js?v=20261014g" defer></script>
   <style>.phase-later { display: none !important; }</style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-  <span>توصيل مجاني داخل المعادي</span>
-  <span><a href="#" id="top-register-visitor">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
-  <span class="top-bar-support">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
-    خدمة عملاء 24/7
-  </span>
+<!-- ================================================================
+     المقدمة (Intro) — لوجو Doddz Go ثلاثي الأبعاد من الفيديو.
+     بتظهر أول مرة لكل زائر بس (localStorage: doddz_intro_seen_v1)،
+     الحركة بتتعمل مرة واحدة وتثبت على آخر إطار، وأي ضغطة = دخول للموقع.
+     ================================================================ -->
+<div id="intro" role="dialog" aria-modal="true" aria-label="مقدمة Doddz Go">
+  <button type="button" class="intro-skip">
+    تخطي المقدمة
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>
+  </button>
+
+  <div class="intro-stage">
+    <span class="intro-halo" aria-hidden="true"></span>
+    <button type="button" class="intro-logo" aria-label="الدخول إلى موقع Doddz Go">
+      <video class="intro-media" src="images/doddz-intro.mp4" muted autoplay playsinline preload="auto" tabindex="-1" aria-hidden="true"></video>
+      <img class="intro-fallback" src="images/doddz-logo-white.png" alt="Doddz Go" width="1152" height="448" decoding="async"/>
+    </button>
+  </div>
+
+  <div class="intro-bar" aria-hidden="true"><i></i></div>
+</div>
+
+<!-- TOP BAR — شريط أخبار متحرك (ثلاث نسخ من نفس الرسائل عشان يفضل ممتد) -->
+<div class="top-bar" role="region" aria-label="إعلانات Doddz Go">
+  <div class="ticker">
+    <div class="ticker-track">
+
+      <div class="ticker-group">
+        <span class="ticker-item">توصيل مجاني داخل المعادي</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item"><a href="#" id="top-register-visitor" class="top-register-visitor">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item top-bar-support">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+          خدمة عملاء 24/7
+        </span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">الدفع عند الاستلام</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">قصها · لمعها · انامل · كسبني — كل خدماتك في مكان واحد</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+      </div>
+
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item">توصيل مجاني داخل المعادي</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><a href="#" class="top-register-visitor" tabindex="-1">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item top-bar-support">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+          خدمة عملاء 24/7
+        </span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">الدفع عند الاستلام</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">قصها · لمعها · انامل · كسبني — كل خدماتك في مكان واحد</span>
+        <span class="ticker-dot"></span>
+      </div>
+
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item">توصيل مجاني داخل المعادي</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><a href="#" class="top-register-visitor" tabindex="-1">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item top-bar-support">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+          خدمة عملاء 24/7
+        </span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">الدفع عند الاستلام</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">قصها · لمعها · انامل · كسبني — كل خدماتك في مكان واحد</span>
+        <span class="ticker-dot"></span>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- HEADER -->
@@ -95,6 +177,13 @@
         </span>
         <span class="label" id="account-btn-label">حسابي</span>
         <span class="sub" id="account-btn-sub">تسجيل دخول</span>
+      </button>
+      <button type="button" class="hdr-btn hdr-btn-seller" id="seller-fab" title="تسجيل / دخول تاجر أو مقدّم خدمة" aria-label="لوحة النشاط">
+        <span class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-4h16l1 4"/><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M12 13v4"/><path d="M8 13v4"/><path d="M16 13v4"/></svg>
+        </span>
+        <span class="label">نشاطي</span>
+        <span class="sub">تاجر / حلاق</span>
       </button>
       <button class="hdr-btn" id="fav-btn" onclick="openWishlist()">
         <span class="icon">
@@ -811,9 +900,7 @@
      PRODUCT MANAGER (Admin) — يقرأ ويكتب عن طريق ProductStore فقط.
      لا يلمس Cart System ولا renderCard() ولا تصميم المتجر.
      ================================================================ -->
-<button class="seller-fab" id="seller-fab" title="تسجيل / دخول تاجر أو مقدّم خدمة" aria-label="تاجر">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-4h16l1 4"/><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9z"/><path d="M12 13v4"/><path d="M8 13v4"/><path d="M16 13v4"/></svg>
-</button>
+<!-- زرار «نشاطي» اتنقل فوق في البار العلوي جنب «حسابي» (.hdr-btn-seller) -->
 <button type="button" class="support-fab" id="support-fab" title="خدمة العملاء" aria-label="خدمة العملاء">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
 </button>
@@ -1338,6 +1425,10 @@
         <button class="adm-tab" data-tab="add" id="seller-tab-add">إضافة منتج</button>
         <button class="adm-tab" data-tab="barber-bookings" id="seller-tab-barber-bookings">حجوزاتي</button>
         <button class="adm-tab" data-tab="barber-services" id="seller-tab-barber-services">خدماتي</button>
+        <button class="adm-tab" data-tab="barber-team" id="seller-tab-barber-team">فريق المحل</button>
+        <button class="adm-tab" data-tab="barber-gallery" id="seller-tab-barber-gallery">الصور</button>
+        <button class="adm-tab" data-tab="barber-hours" id="seller-tab-barber-hours">المواعيد</button>
+        <button class="adm-tab" data-tab="barber-location" id="seller-tab-barber-location">اللوكيشن</button>
         <button class="adm-tab" data-tab="barber-home" id="seller-tab-barber-home">الخدمة المنزلية</button>
         <button class="adm-tab" data-tab="biz" id="seller-tab-biz">نشاطي</button>
       </div>
@@ -1363,30 +1454,128 @@
 
       <div class="adm-view" id="seller-view-barber-services">
         <div class="adm-errors" id="seller-barber-services-errors"></div>
-        <p style="font-size:12.5px;font-weight:700;color:#6b6b7b;margin:0 0 10px;">عدّل خدماتك وأسعارها — تظهر فورًا في صفحة الحجز.</p>
+        <p class="sb-hint">عدّل خدماتك وأسعارها — تظهر فورًا في صفحة الحجز. الزبون يقدر يختار <strong>أكتر من خدمة</strong> في نفس الموعد.</p>
+        <div class="sb-preset-bar">
+          <select id="seller-barber-preset-select"></select>
+          <button type="button" class="adm-btn secondary" id="seller-barber-add-preset">➕ إضافة من القايمة الجاهزة</button>
+        </div>
         <div id="seller-barber-services-editor"></div>
         <div class="adm-form-actions" style="margin-top:12px;">
-          <button type="button" class="adm-btn secondary" id="seller-barber-add-service">إضافة خدمة</button>
+          <button type="button" class="adm-btn secondary" id="seller-barber-add-service">إضافة خدمة خاصة</button>
           <button type="button" class="adm-btn" id="seller-barber-save-services">حفظ الخدمات</button>
         </div>
       </div>
 
+      <!-- ===== BARBER: فريق المحل ===== -->
+      <div class="adm-view" id="seller-view-barber-team">
+        <div class="adm-errors" id="sb-team-errors"></div>
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="sb-team-stats">فريق الصالون</span>
+          <button type="button" class="adm-btn secondary" id="sb-team-refresh">تحديث</button>
+        </div>
+        <p class="sb-hint">اسم كل شخص في المحل + صورته + مسمه. الفريق ده بيظهر للزائر في صفحة الصالون، والزبون يقدر يختار الفني اللي عايز يحجز عنده.</p>
+        <div class="sb-team-list" id="sb-team-list"></div>
+
+        <div class="sb-card-title" id="sb-team-form-title">إضافة عضو جديد</div>
+        <div class="adm-form-grid">
+          <div class="adm-field"><label>اسم العضو *</label><input type="text" id="sb-team-name" maxlength="40" placeholder="مثال: مروان علي"/></div>
+          <div class="adm-field"><label>المسمى</label><input type="text" id="sb-team-title" maxlength="40" placeholder="فني حلاقة / متخصص استشوار"/></div>
+          <div class="adm-field full"><label>صورة العضو</label><input type="file" id="sb-team-photo" accept="image/*"/><span class="sb-upload-state" id="sb-team-photo-state"></span></div>
+          <div class="adm-field"><label class="adm-check"><input type="checkbox" id="sb-team-owner"/> صاحب الصالون</label></div>
+          <div class="adm-field"><label class="adm-check"><input type="checkbox" id="sb-team-active" checked/> يظهر للزوار</label></div>
+        </div>
+        <div class="adm-form-actions">
+          <button type="button" class="adm-btn secondary" id="sb-team-reset">إلغاء التعديل</button>
+          <button type="button" class="adm-btn" id="sb-team-save">➕ إضافة / حفظ</button>
+        </div>
+      </div>
+
+      <!-- ===== BARBER: الصور (بروفايل + غلاف + ألبوم + عينات) ===== -->
+      <div class="adm-view" id="seller-view-barber-gallery">
+        <div class="adm-errors" id="sb-media-errors"></div>
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="sb-media-stats">صور الصالون</span>
+          <button type="button" class="adm-btn secondary" id="sb-media-refresh">تحديث</button>
+        </div>
+        <p class="sb-hint">صورة البروفايل والغلاف، و<strong>٢٠ صورة</strong> لأجواء المكان، و<strong>٢٠ صورة عينات</strong> لشغلك. الصور بتترفع على Supabase Storage.</p>
+
+        <div class="sb-media-block">
+          <h4>بروفايل وغلاف</h4>
+          <div class="sb-hero-grid">
+            <div class="sb-hero-cell">
+              <span>صورة البروفايل</span>
+              <div class="sb-hero-prev" id="sb-prev-avatar"></div>
+              <input type="file" id="sb-avatar-input" accept="image/*"/>
+            </div>
+            <div class="sb-hero-cell">
+              <span>صورة الغلاف</span>
+              <div class="sb-hero-prev sb-hero-prev-wide" id="sb-prev-cover"></div>
+              <input type="file" id="sb-cover-input" accept="image/*"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-media-block">
+          <h4>ألبوم المكان <em id="sb-gallery-count">0/20</em></h4>
+          <input type="file" id="sb-gallery-input" accept="image/*" multiple/>
+          <span class="sb-upload-state" id="sb-gallery-state"></span>
+          <div class="sb-media-grid" id="sb-gallery-grid"></div>
+        </div>
+
+        <div class="sb-media-block">
+          <h4>عينات الشغل <em id="sb-sample-count">0/20</em></h4>
+          <input type="file" id="sb-sample-input" accept="image/*" multiple/>
+          <span class="sb-upload-state" id="sb-sample-state"></span>
+          <div class="sb-media-grid" id="sb-sample-grid"></div>
+        </div>
+      </div>
+
+      <!-- ===== BARBER: مواعيد كل يوم ===== -->
+      <div class="adm-view" id="seller-view-barber-hours">
+        <div class="adm-errors" id="sb-hours-errors"></div>
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="sb-hours-stats">مواعيد الصالون</span>
+          <button type="button" class="adm-btn secondary" id="sb-hours-refresh">تحديث</button>
+        </div>
+        <p class="sb-hint">افتح/اقفل كل يوم وحدّد بداية ونهاية العمل. المواعيد دي بتبني قايمة الأوقات في صفحة الحجز وبتظهر للزائر.</p>
+        <div class="sb-hours-head"><span>اليوم</span><span>مفتوح</span><span>من</span><span>إلى</span></div>
+        <div id="sb-hours-rows"></div>
+        <div class="adm-form-grid" style="margin-top:12px;">
+          <div class="adm-field"><label>مدة الجلسة (دقيقة)</label><input type="number" id="sb-hours-slot" min="10" max="120" step="5" value="30"/></div>
+          <div class="adm-field"><label>نسخ سريع</label><button type="button" class="adm-btn secondary" id="sb-hours-copy">انسخ السطر الأول لكل الأيام</button></div>
+        </div>
+        <div class="adm-form-actions">
+          <button type="button" class="adm-btn" id="sb-hours-save">💾 حفظ المواعيد</button>
+        </div>
+      </div>
+
+      <!-- ===== BARBER: اللوكيشن ===== -->
+      <div class="adm-view" id="seller-view-barber-location">
+        <div class="adm-errors" id="sb-loc-errors"></div>
+        <div class="adm-toolbar">
+          <span class="adm-stats" id="sb-loc-stats">موقع الصالون</span>
+          <button type="button" class="adm-btn secondary" id="sb-loc-refresh">تحديث</button>
+        </div>
+        <p class="sb-hint">العنوان والإحداثيات بيظهروا في صفحة الصالون مع زرار «افتح في الخرائط».</p>
+        <div class="adm-form-grid">
+          <div class="adm-field full"><label>العنوان *</label><input type="text" id="sb-loc-address" placeholder="الشارع، رقم العقار، المنطقة، المحافظة"/></div>
+          <div class="adm-field"><label>خط العرض (Latitude)</label><input type="text" id="sb-loc-lat" inputmode="decimal" placeholder="30.0024"/></div>
+          <div class="adm-field"><label>خط الطول (Longitude)</label><input type="text" id="sb-loc-lng" inputmode="decimal" placeholder="31.2912"/></div>
+          <div class="adm-field full"><label>رابط الخريطة (اختياري)</label><input type="url" id="sb-loc-map" placeholder="https://maps.google.com/?q=..."/></div>
+          <div class="adm-field full"><label>ملاحظة للزبون</label><input type="text" id="sb-loc-note" placeholder="علامة مميزة / الدور / جراج"/></div>
+        </div>
+        <div class="adm-form-actions">
+          <button type="button" class="adm-btn secondary" id="sb-loc-geo">📍 خد الإحداثيات من المتصفح</button>
+          <button type="button" class="adm-btn secondary" id="sb-loc-preview">🗺️ معاينة على الخريطة</button>
+          <button type="button" class="adm-btn" id="sb-loc-save">💾 حفظ اللوكيشن</button>
+        </div>
+        <div class="sb-loc-box" id="sb-loc-box"></div>
+      </div>
+
       <div class="adm-view" id="seller-view-barber-home">
         <div class="adm-errors" id="seller-barber-home-errors"></div>
+        <p class="sb-hint">صور البروفايل والغلاف بقت في تبويب <strong>«الصور»</strong> — بتترفع على Supabase Storage بروابط خفيفة.</p>
         <div class="adm-form-grid">
-          <div class="adm-field full">
-            <label>صورة الملف الشخصي (البروفايل)</label>
-            <input type="url" id="sb-avatar-url" placeholder="https://... صورة الحلاق أو الصالون"/>
-            <input type="file" id="sb-avatar-file" accept="image/*" style="margin-top:8px"/>
-          </div>
-          <div class="adm-field full">
-            <label>صورة الغلاف (Cover)</label>
-            <input type="url" id="sb-cover-url" placeholder="https://... صورة غلاف الصالون"/>
-            <input type="file" id="sb-cover-file" accept="image/*" style="margin-top:8px"/>
-          </div>
-          <div class="adm-field full">
-            <button type="button" class="adm-btn" id="sb-save-profile-photos">حفظ صور البروفايل</button>
-          </div>
           <div class="adm-field full">
             <label class="adm-check"><input type="checkbox" id="sb-home-enabled"/> تفعيل الخدمة المنزلية</label>
           </div>
@@ -1512,18 +1701,20 @@
 <!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
-<script src="js/products-data.js?v=20261003b"></script>
-<script src="js/sections-data.js?v=20261003b"></script>
-<script src="js/barbers-data.js?v=20261003b"></script>
-<script src="js/barbers-ui.js?v=20261003b"></script>
-<script src="js/sections-ui.js?v=20261003b"></script>
-<script src="js/cart.js?v=20261003b"></script>
+<script src="js/products-data.js?v=20261014g"></script>
+<script src="js/sections-data.js?v=20261014g"></script>
+<script src="js/barbers-data.js?v=20261014g"></script>
+<script src="js/media-upload.js?v=20261014g"></script>
+<script src="js/barbers-ui.js?v=20261014g"></script>
+<script src="js/sections-ui.js?v=20261014g"></script>
+<script src="js/cart.js?v=20261014g"></script>
 <script src="js/wishlist.js"></script>
-<script src="js/account.js?v=20261003b"></script>
-<script src="js/admin.js?v=20261003b"></script>
-<script src="js/seller.js?v=20261003b"></script>
-<script src="js/i18n.js?v=20261003b"></script>
-<script src="js/site.js?v=20261003b"></script>
+<script src="js/account.js?v=20261014g"></script>
+<script src="js/admin.js?v=20261014g"></script>
+<script src="js/seller.js?v=20261014g"></script>
+<script src="js/seller-barber.js?v=20261014g"></script>
+<script src="js/i18n.js?v=20261014g"></script>
+<script src="js/site.js?v=20261014g"></script>
 <script src="js/search.js"></script>
 <script src="js/slider.js"></script>
 

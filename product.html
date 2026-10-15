@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <title>تفاصيل المنتج — Doddz Go</title>
   <meta name="description" content="تفاصيل المنتج في Doddz Go: المواصفات، السعر، المخزون، والتقييمات — مع الدفع عند الاستلام وإمكانية التوصيل."/>
-  <meta name="theme-color" content="#0B1220"/>
+  <meta name="theme-color" content="#05070D"/>
   <link rel="icon" href="images/logo.png" type="image/png"/>
   <link rel="apple-touch-icon" href="images/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -12,26 +12,73 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
   <!-- ===== CSS — نفس ملفات الموقع الأساسية + ملف صفحة التفاصيل ===== -->
-  <link rel="stylesheet" href="css/base.css"/>
-  <link rel="stylesheet" href="css/header.css"/>
-  <link rel="stylesheet" href="css/footer.css"/>
-  <link rel="stylesheet" href="css/cart.css"/>
-  <link rel="stylesheet" href="css/product-details.css"/>
-  <link rel="stylesheet" href="css/checkout.css"/>
-  <link rel="stylesheet" href="css/responsive.css"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261003c"/>
-  <script src="js/motion.js?v=20261003c" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/header.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/product-details.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261014g"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261014g"/>
+  <script src="js/motion.js?v=20261014g" defer></script>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-  <span>توصيل مجاني داخل المعادي</span>
-  <span><a href="index.html?account=1" id="top-register-visitor">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
-  <span class="top-bar-support">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
-    خدمة عملاء 24/7
-  </span>
+<!-- TOP BAR — شريط أخبار متحرك -->
+<div class="top-bar" role="region" aria-label="إعلانات Doddz Go">
+  <div class="ticker">
+    <div class="ticker-track">
+
+      <div class="ticker-group">
+        <span class="ticker-item">توصيل مجاني داخل المعادي</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item"><a href="index.html?account=1" class="top-register-visitor">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item top-bar-support">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+          خدمة عملاء 24/7
+        </span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">الدفع عند الاستلام</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+        <span class="ticker-item">خصومات على الطلبات الأولى</span>
+        <span class="ticker-dot" aria-hidden="true"></span>
+      </div>
+
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item">توصيل مجاني داخل المعادي</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><a href="index.html?account=1" class="top-register-visitor" tabindex="-1">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item top-bar-support">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+          خدمة عملاء 24/7
+        </span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">الدفع عند الاستلام</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">خصومات على الطلبات الأولى</span>
+        <span class="ticker-dot"></span>
+      </div>
+
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item">توصيل مجاني داخل المعادي</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item"><a href="index.html?account=1" class="top-register-visitor" tabindex="-1">سجّل دلوقتي</a> واحصل على توصيل مجانًا</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item top-bar-support">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.7 2.34a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.74.34 1.53.57 2.34.7A2 2 0 0 1 22 16.92z"/></svg>
+          خدمة عملاء 24/7
+        </span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">الدفع عند الاستلام</span>
+        <span class="ticker-dot"></span>
+        <span class="ticker-item">خصومات على الطلبات الأولى</span>
+        <span class="ticker-dot"></span>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- HEADER -->
@@ -308,10 +355,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-client.js"></script>
 <script src="js/products-data.js"></script>
-<script src="js/cart.js?v=20260926e"></script>
+<script src="js/cart.js?v=20261014g"></script>
 <script src="js/wishlist.js"></script>
-<script src="js/i18n.js?v=20260926e"></script>
-<script src="js/site.js?v=20260926e"></script>
+<script src="js/i18n.js?v=20261014g"></script>
+<script src="js/site.js?v=20261014g"></script>
 <script src="js/product-details.js"></script>
 
 </body>

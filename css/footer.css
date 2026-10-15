@@ -1,6 +1,6 @@
 /* Footer */
 footer {
-  background: var(--ink);
+  background: linear-gradient(180deg, var(--ink) 0%, var(--void, #05070D) 100%);
   color: rgba(255, 255, 255, 0.72);
   margin-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -13,7 +13,7 @@ footer {
   gap: 36px;
   padding: 48px 20px 40px;
 }
-.footer-brand .logo-doddz { color: #5EEAD4; font-size: 22px; }
+.footer-brand .logo-doddz { color: var(--accent, #67E2F0); font-size: 22px; }
 .footer-brand .logo-go { color: #fff; font-size: 22px; }
 .footer-brand p {
   margin-top: 14px;
@@ -38,7 +38,7 @@ footer {
   color: rgba(255, 255, 255, 0.55);
   transition: color .15s;
 }
-.footer-col a:hover { color: #5EEAD4; }
+.footer-col a:hover { color: var(--accent, #67E2F0); }
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -56,4 +56,17 @@ footer {
   max-width: 180px;
   object-fit: contain;
   border-radius: 8px;
+}
+
+/* ================================================================
+   الفوتر لازم يتلوّى لوحده — صفحة policies.html بتحمّل footer.css
+   بس من غير responsive.css، فكانت أعمدة الفوتر الأربعة بتعمل
+   سكرول أفقي على الموبايل.
+   ================================================================ */
+@media (max-width: 900px) {
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 28px; }
+}
+@media (max-width: 560px) {
+  .footer-top { grid-template-columns: 1fr; gap: 22px; padding: 34px 16px 28px; }
+  .footer-brand p { max-width: none; }
 }

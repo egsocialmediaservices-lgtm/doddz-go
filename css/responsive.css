@@ -29,9 +29,8 @@
 @media (max-width: 600px) {
   .top-bar {
     font-size: 11px;
-    padding: 7px 12px;
-    overflow-x: auto;
-    gap: 12px;
+    padding: 7px 0;
+    overflow: hidden;
   }
   header { padding: 0 12px; }
   .content { padding: 14px 12px 32px; }
@@ -172,13 +171,10 @@ img, video, canvas, svg {
 
   .top-bar {
     font-size: 11.5px;
-    padding: 8px 12px;
-    gap: 14px;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none;
+    padding: 8px 0;
+    overflow: hidden;
   }
-  .top-bar::-webkit-scrollbar { display: none; }
+  .ticker-track { animation-duration: 15s; }
 
   header {
     padding: 0 12px;
@@ -328,7 +324,6 @@ img, video, canvas, svg {
   }
 
   /* FABs */
-  .seller-fab,
   .adm-fab,
   .support-fab {
     width: 48px !important;
@@ -336,8 +331,10 @@ img, video, canvas, svg {
     left: 12px !important;
   }
   .support-fab { bottom: 124px !important; }
-  .seller-fab { bottom: 68px !important; }
   .adm-fab { bottom: 12px !important; }
+
+  /* زرار لوحة النشاط في البار: على الموبايل أيقونة + كلمة مختصرة بدون سطر تاني */
+  .hdr-btn-seller .sub { display: none !important; }
 
   .support-chat {
     left: 12px !important;
@@ -519,7 +516,7 @@ html, body {
 
 /* Landscape phones */
 @media (max-height: 480px) and (orientation: landscape) {
-  .top-bar { display: none; }
+  .top-bar { display: flex; padding: 5px 0; font-size: 11px; }
   .header-main { height: 52px; }
   .nav-bar { top: 52px; }
   .hero-slider, .slide.active { min-height: 180px !important; }
@@ -694,4 +691,45 @@ html, body {
   .logo-link { margin-inline-end: 2px; }
   .header-actions { gap: 2px; }
   .top-bar { gap: 10px; }
+}
+
+/* ================================================================
+   الشاشات الضيقة (موبايل ≤ 560px): البار العلوي بيبقى صفّين
+   صف: اللوجو + الأزرار — وصف: البحث بعرض كامل.
+   ده حل مشكلة إن شريط البحث كان بينضغط لـ 25px بعد ما اتضاف زرار «نشاطي».
+   ================================================================ */
+@media (max-width: 560px) {
+  :root { --header-h: 112px; }
+
+  .header-main {
+    height: var(--header-h);
+    flex-wrap: wrap;
+    align-content: center;
+    row-gap: 9px;
+    column-gap: 8px;
+    padding-block: 9px;
+  }
+  .search-bar {
+    order: 4;
+    flex: 1 1 100%;
+    height: 42px;
+  }
+  .logo-link { order: 1; }
+  .header-actions { order: 2; margin-inline-start: auto; }
+  .lang-toggle { order: 3; }
+
+  /* اللوجو القديم أعرض (نسبته 3.3:1) فمقاسه بيتقفل من العرض */
+  .site-logo { height: 28px; max-width: 92px; }
+  .hdr-btn { min-width: 46px !important; padding: 4px 3px !important; gap: 2px; }
+  .hdr-btn .label { font-size: 10px !important; }
+  .hdr-btn .sub { font-size: 9.5px !important; }
+  .hdr-btn .icon svg { width: 19px; height: 19px; }
+}
+
+@media (max-width: 380px) {
+  :root { --header-h: 108px; }
+  header { padding-inline: 12px; }
+  .hdr-btn { min-width: 42px !important; }
+  .hdr-btn .sub { display: none !important; }
+  .site-logo { height: 26px; max-width: 86px; }
 }

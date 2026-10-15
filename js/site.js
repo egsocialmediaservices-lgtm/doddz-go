@@ -155,15 +155,15 @@ if (new URLSearchParams(location.search).get('account') === '1') {
 }
 
 
-document.getElementById('top-register-visitor')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  const signup = document.getElementById('seller-signup-overlay');
-  const type = document.getElementById('ss-type');
-  if (type) type.value = 'visitor';
-  if (signup) {
-    signup.classList.add('open');
-    // hide business fields optional - leave as is
-  } else {
-    document.getElementById('seller-entry-overlay')?.classList.add('open');
-  }
+// شريط الأخبار العلوي بيكرر نفس الرسالة أكتر من مرة → كل النسخ بنفس السلوك
+document.querySelectorAll('.top-register-visitor').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    const signup = document.getElementById('seller-signup-overlay');
+    const entry = document.getElementById('seller-entry-overlay');
+    if (!signup && !entry) return;   // الصفحة ملهاش نموذج تسجيل → السيّب اللينك يمشي
+    e.preventDefault();
+    const type = document.getElementById('ss-type');
+    if (type) type.value = 'visitor';
+    (signup || entry).classList.add('open');
+  });
 });

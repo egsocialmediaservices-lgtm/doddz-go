@@ -22,7 +22,7 @@
   background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 50%, #FDE68A 100%);
 }
 .bb-coral, .big-banner:not(.bb-yellow) {
-  background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 45%, #99F6E4 100%);
+  background: linear-gradient(135deg, var(--brand-soft, #ECFEFF) 0%, #CFFAFE 45%, var(--accent-soft, #A5F3FC) 100%);
 }
 .bb-text { max-width: 70%; z-index: 1; }
 .bb-tag {

@@ -43,6 +43,11 @@ delete from public.orders
 delete from public.barber_bookings
  where customer_phone in ('01012345678') and customer_name = 'زائر الحجز';
 
+--    حجوزات اختبار «قصها» (مرحلة ١: أكتر من خدمة + فني + التوازى بين الفنيين)
+delete from public.barber_bookings
+ where customer_phone in ('01000000002', '01000000003', '01000000004')
+   and customer_name in ('تجربة SQL', 'تجربة تكرار', 'تجربة توازي');
+
 -- 3) إرجاع المخزون: كان 40 قبل أول طلب اختبار (بعدين اتخصم 6 units)
 --    ⚠️ لو كنت عدّلت المخزون يدويًا في الفترة دي، حط الرقم الصح بدل 40
 --    حارس المنتجات بيرفض أي تحديث مباشر من SQL Editor، فبنقفله بالاسم

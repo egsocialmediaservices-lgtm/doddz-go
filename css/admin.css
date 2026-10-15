@@ -1,25 +1,7 @@
 /* نافذة إدارة المنتجات */
-.seller-fab {
-  position: fixed;
-  left: 18px;
-  bottom: 80px;
-  z-index: 4000;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 1px solid #ececf2;
-  background: #1c1c2e;
-  color: #fff;
-  font-size: 22px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0,0,0,.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform .15s;
-}
-.seller-fab:hover { transform: scale(1.06); }
-.seller-fab svg, .adm-fab svg { display: block; }
+/* ملاحظة: زرار «لوحة النشاط» بقى جوه البار العلوي (.hdr-btn-seller) جنب «حسابي»
+   وقواعده في header.css — الكلاس القديم .seller-fab لسه متعرّف هناك كمرجع. */
+.adm-fab svg { display: block; }
 .adm-fab {
   display: flex;
   align-items: center;
@@ -223,7 +205,7 @@ table.adm-table tr:last-child td { border-bottom:none; }
 }
 .adm-image-preview.primary img {
   border-color: var(--brand, #0f766e);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.15);
 }
 .adm-image-primary {
   display: flex;
@@ -507,4 +489,203 @@ table.adm-table tr:last-child td { border-bottom:none; }
 #seller-signup-overlay .adm-btn {
   padding: 9px 12px !important;
   font-size: 13px !important;
+}
+
+/* ================================================================
+   لوحة صاحب الصالون: فريق المحل · الصور · المواعيد · اللوكيشن
+   (js/seller-barber.js + تبويبات index.html)
+================================================================ */
+.sb-hint {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b6b7b;
+  line-height: 1.7;
+}
+
+.sb-card-title {
+  margin: 16px 0 8px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0e7490;
+}
+
+.sb-upload-state {
+  display: inline-block;
+  margin-inline-start: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #0e7490;
+}
+
+/* ── الفريق ───────────────────────────────────────────────── */
+.sb-team-list { display: flex; flex-direction: column; gap: 8px; }
+
+.sb-team-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #e6e6ef;
+  border-radius: 12px;
+  background: #fff;
+}
+.sb-team-card.off { opacity: 0.6; background: #fafafd; }
+.sb-team-card.owner { border-color: #67e2f0; box-shadow: inset 3px 0 0 #0e7490; }
+
+.sb-team-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sb-team-info strong { font-size: 13.5px; color: #2c2c38; }
+.sb-team-info span { font-size: 11.5px; font-weight: 700; color: #7b7b8c; }
+
+.sb-team-actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.sb-team-actions .adm-btn { padding: 5px 8px; font-size: 11px; }
+
+.sb-thumb-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #eef2f4;
+  color: #0e7490;
+  font-weight: 800;
+  flex: none;
+}
+.sb-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.sb-thumb-empty { font-size: 17px; }
+
+/* ── الصور ────────────────────────────────────────────────── */
+.sb-media-block {
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 1px solid #e6e6ef;
+  border-radius: 12px;
+  background: #fbfcfd;
+}
+.sb-media-block h4 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #2c2c38;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sb-media-block h4 em {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 800;
+  color: #0e7490;
+  background: #e6f7fb;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.sb-media-block input[type="file"] { font-size: 12px; width: 100%; }
+
+.sb-hero-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
+.sb-hero-cell { display: flex; flex-direction: column; gap: 8px; font-size: 11.5px; font-weight: 800; color: #6b6b7b; }
+.sb-hero-prev {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  border: 1px dashed #cfd8dc;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.sb-hero-prev img { width: 100%; height: 100%; object-fit: cover; }
+.sb-hero-prev-wide img { aspect-ratio: 16 / 6; }
+.sb-no-img { font-size: 11.5px; color: #a0a0ae; font-weight: 700; }
+
+.sb-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.sb-media-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid #e6e6ef;
+  border-radius: 12px;
+  background: #fff;
+}
+.sb-media-card.off { opacity: 0.62; }
+.sb-media-img { position: relative; aspect-ratio: 4 / 3; border-radius: 9px; overflow: hidden; background: #eef2f4; }
+.sb-media-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sb-media-flag {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: 6px;
+  background: rgba(5, 7, 13, 0.78);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+.sb-media-caption { font-size: 11.5px; padding: 5px 7px; border: 1px solid #e2e2ec; border-radius: 8px; }
+.sb-media-btns { display: flex; gap: 5px; }
+.sb-media-btns .adm-btn { flex: 1; padding: 5px 6px; font-size: 11px; }
+
+/* ── المواعيد ─────────────────────────────────────────────── */
+.sb-hours-head {
+  display: grid;
+  grid-template-columns: 1.6fr .8fr 1fr 1fr;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #8b8b9c;
+  padding: 0 4px 6px;
+}
+.sb-hour-row {
+  display: grid;
+  grid-template-columns: 1.6fr .8fr 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 4px;
+  border-bottom: 1px solid #f0f0f6;
+}
+.sb-hour-row.closed { background: #fafafc; color: #a0a0ae; }
+.sb-hour-day { font-size: 12.5px; font-weight: 800; }
+.sb-hour-check { display: flex; justify-content: center; }
+.sb-hour-time select { width: 100%; padding: 6px; font-size: 12px; border: 1px solid #e2e2ec; border-radius: 8px; }
+
+/* ── اللوكيشن ─────────────────────────────────────────────── */
+.sb-loc-box {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px dashed #cfd8dc;
+  border-radius: 10px;
+  background: #fbfcfd;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.sb-loc-box a { color: #0e7490; text-decoration: none; }
+.sb-loc-box a:hover { text-decoration: underline; }
+
+/* ── قايمة الخدمات الجاهزة ────────────────────────────────── */
+.sb-preset-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #e6e6ef;
+  border-radius: 12px;
+  background: #f7fbfc;
+}
+.sb-preset-bar select { flex: 1; min-width: 190px; padding: 7px; font-size: 12.5px; border: 1px solid #dfe4e8; border-radius: 9px; }
+.svc-row-tools { display: flex; justify-content: flex-end; }
+
+@media (max-width: 640px) {
+  .sb-hero-grid { grid-template-columns: 1fr; }
+  .sb-team-card { flex-wrap: wrap; }
+  .sb-team-actions { width: 100%; justify-content: flex-start; }
 }

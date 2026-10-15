@@ -43,8 +43,6 @@
   const logoutBtn      = $('#seller-logout-btn');
   const tabMine        = $('#seller-tab-mine');
   const tabAdd         = $('#seller-tab-add');
-  const viewMine       = $('#seller-view-mine');
-  const viewAdd        = $('#seller-view-add');
   const statsEl        = $('#seller-stats');
   const refreshBtn     = $('#seller-refresh-btn');
   const productsListEl = $('#seller-products-list');
@@ -62,6 +60,7 @@
   let currentProviderType = null;
   let currentCategory = null;      // barbers | carwash | handmade | merchants
   let currentProviderId = null;    // معرّف صف النشاط في جدول القسم
+  let sellerActiveTab = null;      // آخر تاب اتفتح (لتبديل لوحي لملف seller-barber.js)
 
   function getClient() {
     return (typeof window !== 'undefined' && window.supabaseClient) ? window.supabaseClient : null;
@@ -129,16 +128,25 @@
 
   /** تابات «حجوزاتي / خدماتي / الخدمة المنزلية» لأصحاب قسم قصها بس،
    *  و«نشاطي» لأي حساب ليه نشاط في قسم. */
+  const BARBER_TABS = [
+    'barber-bookings', 'barber-services', 'barber-team',
+    'barber-gallery', 'barber-hours', 'barber-location', 'barber-home'
+  ];
+
   function applySectionTabs() {
     const isBarber = currentCategory === 'barbers';
-    const barberOnly = [$('#seller-tab-barber-bookings'), $('#seller-tab-barber-services'), $('#seller-tab-barber-home')];
-    barberOnly.forEach(el => { if (el) el.hidden = !isBarber; });
+    BARBER_TABS.forEach(name => {
+      const el = $('#seller-tab-' + name);
+      if (el) el.hidden = !isBarber;
+    });
     const bizTab = $('#seller-tab-biz');
     if (bizTab) bizTab.hidden = !currentProviderId;
+    // التابات بتكتشف نفسها في switchTab — لو التاب النشط بقى مقفول نرجع لمنتجاتي
     if (!isBarber && panelOverlay?.classList.contains('open')) {
       const active = document.querySelector('.adm-tab.active');
-      if (active && active.dataset.tab === 'barber-bookings') { switchTab('mine'); loadMyProducts(); }
+      if (active && BARBER_TABS.includes(active.dataset.tab)) { switchTab('mine'); loadMyProducts(); }
     }
+    window.DoddzSeller?.onSectionChange?.();
   }
 
   async function fetchProviderType() {
@@ -153,31 +161,25 @@
     currentProviderType = data?.provider_type || null;
   }
 
+  /**
+   * التبديل بين التابات — بيكتشف التابات الموجودة في الـDOM بدل قايمة ثابتة،
+   * فإضافة تاب جديد (فريق المحل / الصور / المواعيد / اللوكيشن) ما تحتاجش تعديل هنا.
+   * التاب المخفي (hidden) ما بيتفعّlesh، ولو اتطلب نرجع لـ«منتجاتي».
+   */
   function switchTab(tab) {
-    const tabs = {
-      mine: $('#seller-tab-mine'),
-      add: $('#seller-tab-add'),
-      'barber-bookings': $('#seller-tab-barber-bookings'),
-      'barber-services': $('#seller-tab-barber-services'),
-      'barber-home': $('#seller-tab-barber-home'),
-      biz: $('#seller-tab-biz')
-    };
-    const views = {
-      mine: viewMine,
-      add: viewAdd,
-      'barber-bookings': $('#seller-view-barber-bookings'),
-      'barber-services': $('#seller-view-barber-services'),
-      'barber-home': $('#seller-view-barber-home'),
-      biz: $('#seller-view-biz')
-    };
-    // الأقسام المخفية ما تتفعّlesh — لو المستخدم طلب تاب مقفول نرجع لمنتجاتي
-    if (!tabs[tab]) tab = 'mine';
-    Object.keys(tabs).forEach(k => {
-      if (tabs[k]) tabs[k].classList.toggle('active', k === tab);
-    });
-    Object.keys(views).forEach(k => {
-      if (views[k]) views[k].classList.toggle('active', k === tab);
-    });
+    const btns = [...document.querySelectorAll('#seller-overlay .adm-tab[data-tab]')];
+    if (!btns.length) return;
+    const available = btns.filter(b => !b.hidden).map(b => b.dataset.tab);
+    if (!available.includes(tab)) tab = available.includes('mine') ? 'mine' : available[0];
+
+    btns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('#seller-overlay .adm-view')
+      .forEach(v => v.classList.toggle('active', v.id === 'seller-view-' + tab));
+
+    if (tab && tab !== sellerActiveTab) {
+      sellerActiveTab = tab;
+      window.dispatchEvent(new CustomEvent('doddz:seller-tab', { detail: { tab } }));
+    }
   }
 
   function resolveMyBarber() {
@@ -190,6 +192,35 @@
     const approved = BarberStore.getApproved();
     return approved[0] || null;
   }
+
+  /**
+   * نسخة صارمة لتبويبات الفريق/الصور/المواعيد/اللوكيشن:
+   * لازم الملف يكون مربوط بالحساب الحالي (userId) أو بصف النشاط بتاع القسم.
+   * من غير كده ممكن صاحب صالون يعدّل صالون تاني بالغلط.
+   */
+  function resolveOwnedBarber() {
+    if (typeof BarberStore === 'undefined') return null;
+    if (currentUserId) {
+      const byUser = BarberStore.getByUserId(currentUserId);
+      if (byUser) return byUser;
+    }
+    if (currentProviderId) {
+      const byProvider = BarberStore.getById(currentProviderId);
+      if (byProvider) return byProvider;
+    }
+    return null;
+  }
+
+  // ── سياق البائع الحي لملف js/seller-barber.js ─────────────────
+  window.DoddzSeller = {
+    getUserId:      () => currentUserId,
+    getProviderId:  () => currentProviderId,
+    getCategory:    () => currentCategory,
+    getBarber:      resolveOwnedBarber,
+    isBarberOwner:  () => currentCategory === 'barbers' && !!resolveOwnedBarber(),
+    notify:         notify,
+    onSectionChange: null   // seller-barber.js بيحدّفه لو التحق متأخر
+  };
 
   async function renderSellerBarberBookings() {
     const listEl = $('#seller-barber-bookings-list');
@@ -216,23 +247,61 @@
       const cls = bk.status === 'pending' ? 'pending' : bk.status === 'confirmed' ? 'delivered' : 'cancelled';
       const label = bk.status === 'pending' ? 'قيد التأكيد' : bk.status === 'confirmed' ? 'مؤكد' : 'ملغي';
       const total = bk.totalPrice != null ? bk.totalPrice : bk.price;
+      const svc = (bk.serviceNames && bk.serviceNames.length)
+        ? bk.serviceNames.join('، ')
+        : (bk.serviceName || '—');
+      const tech = bk.memberName ? ' · الفني: ' + bk.memberName : '';
+      const dur = bk.durationMin ? ' · ' + bk.durationMin + ' د' : '';
       return `<div class="adm-order-card">
         <div class="adm-order-head">
           <div class="adm-order-head-main">
-            <strong>${bk.customerName}</strong>
-            <span class="adm-order-date">${bk.date} ${bk.time} · ${loc} · ${bk.serviceName}</span>
-            <span class="adm-order-date">${bk.customerPhone}${bk.address ? ' · ' + bk.address : ''} · ${Number(total || 0).toLocaleString()} ج</span>
+            <strong>${attr(bk.customerName)}</strong>
+            <span class="adm-order-date">${bk.date} ${bk.time} · ${loc} · ${attr(svc)}${attr(dur + tech)}</span>
+            <span class="adm-order-date">${attr(bk.customerPhone)}${bk.address ? ' · ' + attr(bk.address) : ''} · ${Number(total || 0).toLocaleString()} ج</span>
           </div>
           <div class="adm-order-head-side">
             <span class="adm-order-badge ${cls}">${label}</span>
           </div>
         </div>
         <div class="adm-row-actions" style="padding:8px 12px;">
-          ${bk.status === 'pending' ? `<button type="button" class="adm-btn" data-sb-confirm="${bk.id}">تأكيد</button>` : ''}
-          ${bk.status !== 'cancelled' ? `<button type="button" class="adm-btn secondary" data-sb-cancel="${bk.id}">إلغاء</button>` : ''}
+          ${bk.status === 'pending' ? `<button type="button" class="adm-btn" data-sb-confirm="${attr(bk.id)}">تأكيد</button>` : ''}
+          ${bk.status !== 'cancelled' ? `<button type="button" class="adm-btn secondary" data-sb-cancel="${attr(bk.id)}">إلغاء</button>` : ''}
         </div>
       </div>`;
     }).join('');
+  }
+
+  /** تنقيم آمن للقيم جوه attributes HTML (أسماء الخدمات possible فيها quotes) */
+  function attr(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /** تصنيفات الخدمات: عناية بالشعر / بالذقن / بالبشرة + أخرى — من قايمة BarberStore */
+  function serviceCategoryOptions(selected) {
+    const presets = (typeof BarberStore !== 'undefined' && BarberStore.SERVICE_PRESETS) || [];
+    const sel = String(selected || '');
+    const opts = ['<option value="">بدون تصنيف</option>'];
+    presets.forEach(g => opts.push(`<option value="${attr(g.key)}"${g.key === sel ? ' selected' : ''}>${attr(g.label)}</option>`));
+    opts.push(`<option value="other"${sel === 'other' ? ' selected' : ''}>أخرى</option>`);
+    return opts.join('');
+  }
+
+  function serviceRow(data) {
+    const d = data || {};
+    return `
+      <div class="adm-form-grid" data-svc-row style="margin-bottom:10px;border:1px solid #eee;border-radius:10px;padding:10px;">
+        <div class="adm-field"><label>الاسم</label><input type="text" data-svc-name value="${attr(d.name || '')}"/></div>
+        <div class="adm-field"><label>المدة (د)</label><input type="number" data-svc-duration min="5" value="${attr(d.durationMin || 30)}"/></div>
+        <div class="adm-field"><label>السعر</label><input type="number" data-svc-price min="0" value="${attr(d.price || 100)}"/></div>
+        <div class="adm-field"><label>التصنيف</label><select data-svc-cat>${serviceCategoryOptions(d.category)}</select></div>
+        <div class="adm-field full"><label>وصف</label><input type="text" data-svc-desc value="${attr(d.description || '')}"/></div>
+        <div class="adm-field full svc-row-tools">
+          <button type="button" class="adm-btn secondary danger" data-svc-del>🗑️ حذف الخدمة</button>
+        </div>
+        <input type="hidden" data-svc-id value="${attr(d.id || ('s_' + Date.now() + '_' + Math.floor(Math.random() * 1000)))}"/>
+      </div>`;
   }
 
   function renderSellerBarberServicesEditor() {
@@ -244,16 +313,40 @@
       return;
     }
     const services = barber.services || [];
-    box.innerHTML = services.map((s, i) => `
-      <div class="adm-form-grid" data-svc-row style="margin-bottom:10px;border:1px solid #eee;border-radius:10px;padding:10px;">
-        <div class="adm-field"><label>الاسم</label><input type="text" data-svc-name value="${s.name || ''}"/></div>
-        <div class="adm-field"><label>المدة (د)</label><input type="number" data-svc-duration min="5" value="${s.durationMin || 30}"/></div>
-        <div class="adm-field"><label>السعر</label><input type="number" data-svc-price min="0" value="${s.price || 0}"/></div>
-        <div class="adm-field"><label>وصف</label><input type="text" data-svc-desc value="${s.description || ''}"/></div>
-        <input type="hidden" data-svc-id value="${s.id || ('s'+(i+1))}"/>
-      </div>
-    `).join('') || '<div class="adm-empty">لا توجد خدمات</div>';
+    box.innerHTML = services.map((s, i) => serviceRow({
+      name: s.name, durationMin: s.durationMin || 30, price: s.price || 0,
+      description: s.description, category: s.category,
+      id: s.id || ('s' + (i + 1))
+    })).join('') || '<div class="adm-empty">لا توجد خدمات</div>';
+    renderServicePresetPicker();
   }
+
+  /** قايمة جاهزة (قص شعر، ذقن، استشوار، عناية بالبشرة...) — البائع يختار ويضيفها لخدماته */
+  function renderServicePresetPicker() {
+    const sel = $('#seller-barber-preset-select');
+    if (!sel || typeof BarberStore === 'undefined') return;
+    const presets = BarberStore.SERVICE_PRESETS || [];
+    const existing = new Set(((resolveMyBarber() || {}).services || []).map(s => String(s.name || '').trim()));
+    sel.innerHTML = '<option value="">— اختَر خدمة جاهزة —</option>' + presets.map(g => `
+      <optgroup label="${attr(g.label)}">
+        ${g.items.map(it => `<option value="${attr(g.key)}|${attr(it.name)}|${it.durationMin}|${it.price}"${existing.has(it.name) ? ' disabled' : ''}>${attr(it.name)} · ${it.durationMin} د · ${it.price} ج${existing.has(it.name) ? ' (مضافة)' : ''}</option>`).join('')}
+      </optgroup>
+    `).join('');
+  }
+
+  function addPresetService() {
+    const sel = $('#seller-barber-preset-select');
+    const box = $('#seller-barber-services-editor');
+    if (!sel || !box || !sel.value) { notify('اختَر خدمة من القايمة الجاهزة الأول'); return; }
+    const [cat, name, dur, price] = sel.value.split('|');
+    if (box.querySelector('.adm-empty')) box.innerHTML = '';
+    box.insertAdjacentHTML('beforeend', serviceRow({
+      name, durationMin: Number(dur) || 30, price: Number(price) || 0, category: cat, description: ''
+    }));
+    sel.value = '';
+    notify('اتضافت «' + name + '» — دوسي حفظ الخدمات');
+  }
+
 
   function loadSellerBarberHomeForm() {
     const barber = resolveMyBarber();
@@ -964,6 +1057,14 @@
   $('#seller-tab-barber-services')?.addEventListener('click', () => { switchTab('barber-services'); renderSellerBarberServicesEditor(); });
   $('#seller-tab-barber-home')?.addEventListener('click', () => { switchTab('barber-home'); loadSellerBarberHomeForm(); });
 
+  // باقي التابات (فريق المحل / الصور / المواعيد / اللوكيشن) — منطقها في js/seller-barber.js
+  // وبيسمع حدث doddz:seller-tab عشان يبنّي المحتوى.
+  const HANDLED_TABS = ['mine', 'add', 'barber-bookings', 'barber-services', 'barber-home', 'biz'];
+  document.querySelectorAll('#seller-overlay .adm-tab[data-tab]').forEach(btn => {
+    if (HANDLED_TABS.includes(btn.dataset.tab)) return;
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
   $('#seller-barber-bookings-refresh')?.addEventListener('click', renderSellerBarberBookings);
   $('#seller-barber-bookings-list')?.addEventListener('click', async (e) => {
     const conf = e.target.closest('[data-sb-confirm]');
@@ -985,18 +1086,18 @@
   $('#seller-barber-add-service')?.addEventListener('click', () => {
     const box = $('#seller-barber-services-editor');
     if (!box) return;
-    const div = document.createElement('div');
-    div.className = 'adm-form-grid';
-    div.setAttribute('data-svc-row', '');
-    div.style.cssText = 'margin-bottom:10px;border:1px solid #eee;border-radius:10px;padding:10px;';
-    div.innerHTML = `
-      <div class="adm-field"><label>الاسم</label><input type="text" data-svc-name value=""/></div>
-      <div class="adm-field"><label>المدة (د)</label><input type="number" data-svc-duration min="5" value="30"/></div>
-      <div class="adm-field"><label>السعر</label><input type="number" data-svc-price min="0" value="100"/></div>
-      <div class="adm-field"><label>وصف</label><input type="text" data-svc-desc value=""/></div>
-      <input type="hidden" data-svc-id value="s_${Date.now()}"/>
-    `;
-    box.appendChild(div);
+    if (box.querySelector('.adm-empty')) box.innerHTML = '';
+    box.insertAdjacentHTML('beforeend', serviceRow({}));
+    box.lastElementChild?.querySelector('[data-svc-name]')?.focus();
+  });
+  $('#seller-barber-add-preset')?.addEventListener('click', addPresetService);
+  $('#seller-barber-services-editor')?.addEventListener('click', (e) => {
+    const del = e.target.closest('[data-svc-del]');
+    if (!del) return;
+    const row = del.closest('[data-svc-row]');
+    const name = row?.querySelector('[data-svc-name]')?.value || 'هذه الخدمة';
+    if (!confirm('تحذف «' + name + '» من قايمة خدماتك؟')) return;
+    row.remove();
   });
 
   $('#seller-barber-save-services')?.addEventListener('click', () => {
@@ -1012,7 +1113,8 @@
       name: row.querySelector('[data-svc-name]')?.value,
       durationMin: row.querySelector('[data-svc-duration]')?.value,
       price: row.querySelector('[data-svc-price]')?.value,
-      description: row.querySelector('[data-svc-desc]')?.value
+      description: row.querySelector('[data-svc-desc]')?.value,
+      category: row.querySelector('[data-svc-cat]')?.value || ''
     }));
     const result = BarberStore.updateServices(barber.id, services);
     if (!result.success) {
@@ -1067,50 +1169,8 @@
   updateOfferingFields();
 
 
-  // صور بروفايل الحلاق (غلاف + صورة شخصية)
-  async function fileToDataUrl(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  document.getElementById('sb-save-profile-photos')?.addEventListener('click', async () => {
-    if (typeof BarberStore === 'undefined') return;
-    const barberId = localStorage.getItem('doddz_barber_id') || (typeof currentBarberId !== 'undefined' ? currentBarberId : null);
-    // try resolve barber linked to user email/name
-    let b = null;
-    if (currentUserId && BarberStore.getByUserId) {
-      b = BarberStore.getByUserId(currentUserId);
-    }
-    if (!b && barberId && BarberStore.getById) b = BarberStore.getById(barberId);
-    if (!b && BarberStore.getAll) {
-      const list = BarberStore.getAll() || [];
-      b = list.find(x => x.status === 'approved') || list[0];
-    }
-    if (!b) {
-      notify('لا يوجد بروفايل حلاق مرتبط');
-      return;
-    }
-    let avatarUrl = document.getElementById('sb-avatar-url')?.value?.trim() || b.avatarUrl || '';
-    let coverUrl = document.getElementById('sb-cover-url')?.value?.trim() || b.coverUrl || '';
-    const avFile = document.getElementById('sb-avatar-file')?.files?.[0];
-    const cvFile = document.getElementById('sb-cover-file')?.files?.[0];
-    try {
-      if (avFile) avatarUrl = await fileToDataUrl(avFile);
-      if (cvFile) coverUrl = await fileToDataUrl(cvFile);
-      const res = BarberStore.updateProfile(b.id, { avatarUrl, coverUrl, avatar: '' });
-      if (res.success && BarberStore.pushCatalogField) {
-        BarberStore.pushCatalogField(b.id, { avatarUrl, coverUrl });
-      }
-      notify(res.success ? 'تم حفظ صور البروفايل' : (res.error || 'تعذر الحفظ'));
-    } catch (err) {
-      console.error(err);
-      notify('تعذر حفظ الصور');
-    }
-  });
+  // صور البروفايل/الغلاف والفريق والألبوم كلها اتنقلت لتبويب «الصور»
+  // في js/seller-barber.js — وبتترفع على Supabase Storage بدل base64 الثقيل.
 
 
   // ================================================================
