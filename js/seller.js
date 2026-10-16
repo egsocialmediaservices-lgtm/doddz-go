@@ -187,10 +187,32 @@
     if (currentUserId) {
       const byUser = BarberStore.getByUserId(currentUserId);
       if (byUser) return byUser;
+      if (currentProviderId) {
+        const byProvider = BarberStore.getById(String(currentProviderId));
+        if (byProvider) return byProvider;
+      }
+      // فيه حساب مسجّل بس مافيش صالون مربوط بيه — ما نرجعش صالون عشوائي
+      // (لازم كمان ما يمسحش بيانات صالون تاني بالغلط).
+      if (currentCategory === 'barbers' || currentProviderId) return null;
     }
-    // لو مفيش ربط userId: أول حلاق معتمد (تجربة محلية)
+    // من غير تسجيل دخول: أول حلاق معتمد (تجربة محلية على الجهاز)
     const approved = BarberStore.getApproved();
     return approved[0] || null;
+  }
+
+  /** الحلاق اللي اللوحة دي بتعدّله: المربوط بالحساب أولًا، وبعدها الوضع المحلي */
+  function panelBarber() {
+    return resolveOwnedBarber() || resolveMyBarber();
+  }
+
+  /** رسالة دقيقة بدل «لا يوجد ملف حلاق» المبهمة */
+  function missingBarberText() {
+    if (!currentUserId) return 'سجّلي دخول بحساب صاحب الصالون الأول.';
+    if (currentCategory && currentCategory !== 'barbers') {
+      const label = (window.SectionsStore && SectionsStore.SECTIONS && SectionsStore.SECTIONS[currentCategory] && SectionsStore.SECTIONS[currentCategory].label) || currentCategory;
+      return 'حسابك مسجّل في قسم «' + label + '» مش «قصها».';
+    }
+    return 'لسه مفيش ملف صالون مربوط بحسابك في «قصها» — اعملي طلب انضمام واختاري قسم قصها، وبعد اعتماد الأدمن تظهر بيانات الصالون هنا.';
   }
 
   /**
@@ -205,30 +227,60 @@
       if (byUser) return byUser;
     }
     if (currentProviderId) {
-      const byProvider = BarberStore.getById(currentProviderId);
+      const byProvider = BarberStore.getById(String(currentProviderId));
       if (byProvider) return byProvider;
     }
     return null;
   }
 
+  /**
+   * نفس resolveOwnedBarber بس بيعيد سحب الكتالوج من السحابة لو الصف مش موجود
+   * محليًا (مثلاً التسجيل اتعمل من جهاز تاني، أو اللوحة اتفتحت قبل أول مزامنة).
+   */
+  async function ensureOwnedBarber() {
+    const direct = resolveOwnedBarber();
+    if (direct) return direct;
+    if (!currentProviderId && window.SectionsStore?.myProvider) {
+      try {
+        const me = await window.SectionsStore.myProvider(true);
+        if (me && me.row) {
+          currentCategory = me.section;
+          currentProviderId = me.row.id || null;
+          if (!currentUserId) currentUserId = me.row.user_id || null;
+        }
+      } catch (_) {}
+    }
+    if (typeof BarberStore !== 'undefined' && BarberStore.syncCatalogFromSupabase) {
+      try { await BarberStore.syncCatalogFromSupabase(); } catch (_) {}
+    }
+    return resolveOwnedBarber();
+  }
+
   // ── سياق البائع الحي لملف js/seller-barber.js ─────────────────
-  window.DoddzSeller = {
+  // Object.assign بدل = : سطر تصدير الواجهة كان بيتعاد في آخر الملف
+  // (window.DoddzSeller = { open }) وبيمسح الدوال اللي قبله لو اتنفّذ وراه.
+  window.DoddzSeller = Object.assign(window.DoddzSeller || {}, {
     getUserId:      () => currentUserId,
     getProviderId:  () => currentProviderId,
     getCategory:    () => currentCategory,
     getBarber:      resolveOwnedBarber,
-    isBarberOwner:  () => currentCategory === 'barbers' && !!resolveOwnedBarber(),
+    ensureBarber:   ensureOwnedBarber,
+    isBarberOwner:  () => (currentCategory === 'barbers' || !!currentProviderId) && !!resolveOwnedBarber(),
     notify:         notify,
     onSectionChange: null   // seller-barber.js بيحدّفه لو التحق متأخر
-  };
+  });
 
   async function renderSellerBarberBookings() {
     const listEl = $('#seller-barber-bookings-list');
     const stats = $('#seller-barber-bookings-stats');
     if (!listEl || typeof BarberStore === 'undefined') return;
-    const barber = resolveMyBarber();
+    let barber = panelBarber();
+    if (!barber && currentUserId) {
+      barber = await ensureOwnedBarber();
+      if (barber) { renderSellerBarberBookings(); return; }   // نعيد الرسم بالبيانات الجديدة
+    }
     if (!barber) {
-      listEl.innerHTML = '<div class="adm-empty">لا يوجد ملف حلاق مرتبط بحسابك بعد. بعد موافقة الأدمن على طلب «حلاق» هيظهر هنا.</div>';
+      listEl.innerHTML = '<div class="adm-empty">' + missingBarberText() + '</div>';
       if (stats) stats.textContent = 'لا يوجد حلاق';
       return;
     }
@@ -307,9 +359,12 @@
   function renderSellerBarberServicesEditor() {
     const box = $('#seller-barber-services-editor');
     if (!box || typeof BarberStore === 'undefined') return;
-    const barber = resolveMyBarber();
+    const barber = panelBarber();
     if (!barber) {
-      box.innerHTML = '<div class="adm-empty">لا يوجد ملف حلاق مرتبط</div>';
+      box.innerHTML = '<div class="adm-empty">' + missingBarberText() + '</div>';
+      if (currentUserId) {
+        ensureOwnedBarber().then(b => { if (b) renderSellerBarberServicesEditor(); });
+      }
       return;
     }
     const services = barber.services || [];
@@ -326,7 +381,7 @@
     const sel = $('#seller-barber-preset-select');
     if (!sel || typeof BarberStore === 'undefined') return;
     const presets = BarberStore.SERVICE_PRESETS || [];
-    const existing = new Set(((resolveMyBarber() || {}).services || []).map(s => String(s.name || '').trim()));
+    const existing = new Set(((panelBarber() || {}).services || []).map(s => String(s.name || '').trim()));
     sel.innerHTML = '<option value="">— اختَر خدمة جاهزة —</option>' + presets.map(g => `
       <optgroup label="${attr(g.label)}">
         ${g.items.map(it => `<option value="${attr(g.key)}|${attr(it.name)}|${it.durationMin}|${it.price}"${existing.has(it.name) ? ' disabled' : ''}>${attr(it.name)} · ${it.durationMin} د · ${it.price} ج${existing.has(it.name) ? ' (مضافة)' : ''}</option>`).join('')}
@@ -349,8 +404,13 @@
 
 
   function loadSellerBarberHomeForm() {
-    const barber = resolveMyBarber();
-    if (!barber || typeof BarberStore === 'undefined') return;
+    const barber = panelBarber();
+    if (!barber || typeof BarberStore === 'undefined') {
+      if (!barber && currentUserId) {
+        ensureOwnedBarber().then(b => { if (b) loadSellerBarberHomeForm(); });
+      }
+      return;
+    }
     const hs = barber.homeService || {};
     const en = $('#sb-home-enabled');
     if (en) en.checked = !!hs.enabled;
@@ -681,7 +741,7 @@
 
   // ── Events ───────────────────────────────────────────────────
   sellerFab?.addEventListener('click', openFlow);
-  window.DoddzSeller = { open: openFlow };
+  window.DoddzSeller = Object.assign(window.DoddzSeller || {}, { open: openFlow });
 
   // شاشة الاختيار (دخول ولا طلب انضمام)
   entryLoginBtn?.addEventListener('click', () => {
@@ -1100,11 +1160,11 @@
     row.remove();
   });
 
-  $('#seller-barber-save-services')?.addEventListener('click', () => {
-    const barber = resolveMyBarber();
+  $('#seller-barber-save-services')?.addEventListener('click', async () => {
+    const barber = (currentUserId ? (await ensureOwnedBarber() || panelBarber()) : panelBarber());
     const err = $('#seller-barber-services-errors');
     if (!barber || typeof BarberStore === 'undefined') {
-      if (err) { err.innerHTML = '• لا يوجد ملف حلاق'; err.classList.add('show'); }
+      if (err) { err.innerHTML = '• ' + missingBarberText(); err.classList.add('show'); }
       return;
     }
     const rows = [...document.querySelectorAll('#seller-barber-services-editor [data-svc-row]')];
@@ -1128,11 +1188,11 @@
     if (typeof renderBarbersSection === 'function') renderBarbersSection();
   });
 
-  $('#seller-barber-save-home')?.addEventListener('click', () => {
-    const barber = resolveMyBarber();
+  $('#seller-barber-save-home')?.addEventListener('click', async () => {
+    const barber = (currentUserId ? (await ensureOwnedBarber() || panelBarber()) : panelBarber());
     const err = $('#seller-barber-home-errors');
     if (!barber || typeof BarberStore === 'undefined') {
-      if (err) { err.innerHTML = '• لا يوجد ملف حلاق'; err.classList.add('show'); }
+      if (err) { err.innerHTML = '• ' + missingBarberText(); err.classList.add('show'); }
       return;
     }
     const result = BarberStore.updateHomeService(barber.id, {

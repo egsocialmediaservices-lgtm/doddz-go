@@ -64,14 +64,54 @@
 
   /** الصالون بتاع الحساب الحالي بالظبط (لا يوجد رجوع لأول حلاق معتمد) */
   function myBarber() {
-    const s = S();
-    if (s && s.getBarber) return s.getBarber();
+    const s = S(), bs = B();
+    if (!bs) return null;
+    if (s && typeof s.getBarber === 'function') {
+      const b = s.getBarber();
+      if (b) return b;
+    }
+    // احتياطي بنفس الشرط، لو واجهة اللوحة اتحمّلت ناقصة أو getBarber رجّعت null
+    const uid = s && s.getUserId ? s.getUserId() : null;
+    if (uid && bs.getByUserId) { const byUser = bs.getByUserId(uid); if (byUser) return byUser; }
+    const pid = s && s.getProviderId ? s.getProviderId() : null;
+    if (pid && bs.getById) { const byId = bs.getById(String(pid)); if (byId) return byId; }
     return null;
+  }
+
+  /**
+   * myBarber() + إعادة سحب الكتالوج من السحابة لو الصف مش موجود محليًا.
+   * ده اللي بيربط حساب اتسجّل من جهاز تاني بأول فتح للوحة على الجهاز ده.
+   */
+  async function ensureBarber() {
+    const direct = myBarber();
+    if (direct) return direct;
+    const s = S();
+    if (s && typeof s.ensureBarber === 'function') {
+      const viaSeller = await s.ensureBarber();
+      if (viaSeller) return viaSeller;
+    }
+    return myBarber();
+  }
+
+  /** الرسالة بتقول بالضبط الناقص: دخول؟ قسم؟ ولا ملف صالون نفسه؟ */
+  function missingBarberReason() {
+    const s = S();
+    const uid = s && s.getUserId ? s.getUserId() : null;
+    if (!uid) return 'لازم تسجّلي دخول بحساب صاحب الصالون الأول.';
+    const cat = s && s.getCategory ? s.getCategory() : null;
+    const pid = s && s.getProviderId ? s.getProviderId() : null;
+    if (cat && cat !== 'barbers') {
+      const label = (window.SectionsStore && SectionsStore.SECTIONS && SectionsStore.SECTIONS[cat] && SectionsStore.SECTIONS[cat].label) || cat;
+      return 'حسابك ده مسجّل في قسم «' + label + '» مش «قصها» — التبويبات دي لأصحاب الصالونات بس.';
+    }
+    if (pid) return 'فيه نشاط مربوط بالحساب (رقم ' + pid + ') بس مش وصل لكتالوج «قصها» — دوسي «تحديث» أو اعملي ريفريش للصفحة.';
+    return 'لسه مفيش ملف صالون مربوط بحسابك في «قصها». اعملي طلب انضمام من «دخول/طلب انضمام» واختاري قسم قصها، والأدمن يعتمده هيظهر الفريق والصور والمواعيد هنا.';
   }
 
   function noBarberMessage(listEl) {
     if (listEl) {
-      listEl.innerHTML = '<div class="adm-empty">لسه مفيش ملف صالون مربوط بحسابك. بعد ما الأدمن يعتمد طلب «حلاق» هيظهر الفريق والصور والمواعيد هنا.</div>';
+      listEl.innerHTML = '<div class="adm-empty">' + esc(missingBarberReason()) +
+        ' <button type="button" class="adm-btn secondary" id="sb-retry-barber" style="margin-right:8px">إعادة المحاولة</button></div>';
     }
   }
 
@@ -116,7 +156,7 @@
     const stats = $('#sb-team-stats');
     const bs = B();
     if (!listEl) return;
-    const barber = myBarber();
+    const barber = await ensureBarber();
     if (!barber || !bs) { noBarberMessage(listEl); if (stats) stats.textContent = 'لا يوجد صالون'; return; }
 
     if (bs.refreshTeam) await bs.refreshTeam(barber.id);
@@ -148,8 +188,8 @@
   async function saveTeam() {
     if (busy) return;
     const bs = B();
-    const barber = myBarber();
-    if (!barber || !bs) { errBox('#sb-team-errors', 'لا يوجد ملف صالون مربوط بالحساب'); return; }
+    const barber = await ensureBarber();
+    if (!barber || !bs) { errBox('#sb-team-errors', missingBarberReason()); return; }
 
     const name = ($('#sb-team-name')?.value || '').trim();
     const title = ($('#sb-team-title')?.value || '').trim();
@@ -193,7 +233,7 @@
 
   async function moveTeam(id, dir) {
     const bs = B();
-    const barber = myBarber();
+    const barber = await ensureBarber();
     if (!bs || !bs.reorderTeam || !barber) return;
     const ids = bs.getTeam(barber.id, true).map(t => String(t.id));
     const i = ids.indexOf(String(id));
@@ -212,7 +252,7 @@
     $('#sb-team-reset')?.addEventListener('click', () => { resetTeamForm(); });
     $('#sb-team-list')?.addEventListener('click', async (e) => {
       const bs = B();
-      const barber = myBarber();
+      const barber = await ensureBarber();
       if (!bs || !barber) return;
       const editBtn = e.target.closest('[data-team-edit]');
       const delBtn = e.target.closest('[data-team-del]');
@@ -279,7 +319,7 @@
 
   async function renderMedia() {
     const bs = B();
-    const barber = myBarber();
+    const barber = await ensureBarber();
     setHeroPreviews(barber);
     if (!barber || !bs) {
       noBarberMessage($('#sb-gallery-grid'));
@@ -301,8 +341,8 @@
   /** رفع صورة البروفايل أو الغلاف وتخزين الرابط في البروفايل */
   async function uploadHero(kind, inputSel, stateLabel) {
     const bs = B();
-    const barber = myBarber();
-    if (!barber || !bs) { errBox('#sb-media-errors', 'لا يوجد ملف صالون مربوط بالحساب'); return; }
+    const barber = await ensureBarber();
+    if (!barber || !bs) { errBox('#sb-media-errors', missingBarberReason()); return; }
     const file = $(inputSel)?.files?.[0];
     if (!file) return;
     const up = window.DoddzMedia;
@@ -334,8 +374,8 @@
   /** رفع دفعة صور للألبوم أو العينات */
   async function uploadBatch(kind, inputSel, stateSel) {
     const bs = B();
-    const barber = myBarber();
-    if (!barber || !bs) { errBox('#sb-media-errors', 'لا يوجد ملف صالون مربوط بالحساب'); return; }
+    const barber = await ensureBarber();
+    if (!barber || !bs) { errBox('#sb-media-errors', missingBarberReason()); return; }
     const input = $(inputSel);
     const files = [...(input?.files || [])];
     if (!files.length) return;
@@ -385,7 +425,7 @@
 
   async function mediaAction(id, action, captionInput) {
     const bs = B();
-    const barber = myBarber();
+    const barber = await ensureBarber();
     if (!bs || !barber) return;
     const row = findMedia(bs, barber, id);
     if (!row) return;
@@ -438,7 +478,7 @@
 
   async function renderHours() {
     const bs = B();
-    const barber = myBarber();
+    const barber = await ensureBarber();
     const box = $('#sb-hours-rows');
     const stats = $('#sb-hours-stats');
     if (!box) return;
@@ -476,8 +516,8 @@
 
   async function saveHoursForm() {
     const bs = B();
-    const barber = myBarber();
-    if (!barber || !bs) { errBox('#sb-hours-errors', 'لا يوجد ملف صالون مربوط بالحساب'); return; }
+    const barber = await ensureBarber();
+    if (!barber || !bs) { errBox('#sb-hours-errors', missingBarberReason()); return; }
     const days = collectHours();
     const closedAll = days.every(d => !d.open);
     if (closedAll) { errBox('#sb-hours-errors', 'لازم يوم واحد على الأقل يكون مفتوح'); return; }
@@ -528,7 +568,7 @@
   ================================================================ */
   async function renderLocation() {
     const bs = B();
-    const barber = myBarber();
+    const barber = await ensureBarber();
     const stats = $('#sb-loc-stats');
     if (!barber || !bs) {
       if (stats) stats.textContent = 'لا يوجد صالون';
@@ -575,8 +615,8 @@
 
   async function saveLocationForm() {
     const bs = B();
-    const barber = myBarber();
-    if (!barber || !bs) { errBox('#sb-loc-errors', 'لا يوجد ملف صالون مربوط بالحساب'); return; }
+    const barber = await ensureBarber();
+    if (!barber || !bs) { errBox('#sb-loc-errors', missingBarberReason()); return; }
     const loc = readLocForm();
     errBox('#sb-loc-errors', '');
     const btn = $('#sb-loc-save');
@@ -584,7 +624,8 @@
     try {
       const res = await bs.saveLocation(barber.id, loc);
       if (!res.success) { errBox('#sb-loc-errors', res.error || 'تعذر حفظ اللوكيشن'); return; }
-      notify(res.offline ? 'اللوكيشن اتحفظ على الجهاز — اربطي نت للمزامنة' : 'تم حفظ موقع الصالون');
+      notify(res.offline ? 'اللوكيشن اتحفظ على الجهاز — اربطي نت للمزامنة'
+        : (res.cleared ? 'تم مسح عنوان الصالون' : 'تم حفظ موقع الصالون'));
       await renderLocation();
       if (typeof window.renderBarbersSection === 'function') window.renderBarbersSection();
     } finally {
@@ -640,7 +681,14 @@
   function boot() {
     if (!$('#seller-view-barber-team')) return;   // الصفحة دي مفيهاش لوحة بائع
     wireTeam(); wireMedia(); wireHours(); wireLocation();
-    document.addEventListener('doddz:seller-tab', (e) => {
+    // زرار «إعادة المحاولة» في رسالة «مفيش صالون مربوط» — بيسحب الكتالوج من السحابة
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#sb-retry-barber')) return;
+      render(currentTab || 'barber-team');
+    });
+    // الحدث بيتبعت على window (js/seller.js) — ف لازم الاستماع يكون على window،
+    // مش document (الحدث ما يوصلش لأسفل الشجرة).
+    window.addEventListener('doddz:seller-tab', (e) => {
       const tab = e.detail && e.detail.tab;
       currentTab = tab;
       if (tab === 'barber-team') resetTeamForm();

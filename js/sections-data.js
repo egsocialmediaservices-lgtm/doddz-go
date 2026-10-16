@@ -50,6 +50,22 @@
     return (typeof window !== 'undefined' && window.supabaseClient) || null;
   }
 
+  /**
+   * معرّف الحساب الحالي من جلسة Supabase.
+   * Form auth.getSession() بترجع { data: { session, error } } — فالـuser
+   * جوه session نفسها. (كانت بتتقرا data.user قبل كده ودايمًا undefined،
+   * وده كان مخلّي myProvider() ترجع null حتى للحساب اللي ليه نشاط مربوط.)
+   */
+  async function currentUid() {
+    const db = client();
+    if (!db) return null;
+    try {
+      const { data } = await db.auth.getSession();
+      const session = data && data.session;
+      return (session && session.user && session.user.id) || null;
+    } catch (_) { return null; }
+  }
+
   function section(code) {
     const key = normalizeSection(code);
     return key ? SECTIONS[key] : null;
@@ -125,13 +141,29 @@
   }
 
   // ── نشاط الحساب الحالي ───────────────────────────────────────
-  async function myProvider() {
+  /** القراءة من profiles (category + provider_id) — الاحتياطي لو user_id مش محطوط */
+  async function linkedFromProfile(uid) {
     const db = client();
     if (!db) return null;
     try {
-      const { data: sess } = await db.auth.getSession();
-      const uid = sess?.user?.id;
+      const { data: prof, error } = await db.from('profiles')
+        .select('category,provider_id').eq('id', uid).maybeSingle();
+      if (error || !prof || !prof.provider_id) return null;
+      const code = normalizeSection(prof.category);
+      if (!code) return null;
+      const { data: row } = await db.from(SECTIONS[code].table)
+        .select('*').eq('id', String(prof.provider_id)).maybeSingle();
+      return row ? { section: code, row } : null;
+    } catch (_) { return null; }
+  }
+
+  async function myProvider(force) {
+    const db = client();
+    if (!db) return null;
+    try {
+      const uid = await currentUid();
       if (!uid) { state.me = null; return null; }
+      if (state.me && !force && state.me.row && String(state.me.row.user_id || uid) === String(uid)) return state.me;
 
       const codes = Object.keys(SECTIONS);
       for (const code of codes) {
@@ -143,6 +175,13 @@
           try { localStorage.setItem('doddz_user_category', code); } catch (_) {}
           return state.me;
         }
+      }
+      // الربط ممكن يكون في profiles.provider_id بس (طلبات قديمة أو نقل من الأدمن)
+      const linked = await linkedFromProfile(uid);
+      if (linked) {
+        state.me = linked;
+        try { localStorage.setItem('doddz_user_category', linked.section); } catch (_) {}
+        return state.me;
       }
       state.me = null;
       return null;
@@ -213,11 +252,10 @@
     const db = client();
     if (!db) return null;
     try {
-      const { data: sess } = await db.auth.getSession();
-      const uid = sess?.user?.id;
+      const uid = await currentUid();
       if (!uid) return null;
 
-      const existing = await myProvider();
+      const existing = await myProvider(true);
       if (existing) return existing;
 
       let payload = pendingRegistration();
@@ -338,6 +376,7 @@
     SECTIONS,
     normalizeSection,
     section,
+    currentUid,
     load,
     loadAll,
     approved,

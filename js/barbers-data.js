@@ -1031,7 +1031,16 @@ const BarberStore = (() => {
     if (Number.isFinite(lat) && (lat < -90 || lat > 90)) return { success: false, error: 'خط العرض غير صحيح' };
     if (Number.isFinite(lng) && (lng < -180 || lng > 180)) return { success: false, error: 'خط الطول غير صحيح' };
     if (!location.address && !location.mapUrl && !Number.isFinite(lat)) {
-      return { success: false, error: 'اكتب العنوان أو حط رابط الخريطة' };
+      // فورم فاضي = مسح العنوان (مسموح بس لو فيه عنوان محفوظ فعلًا)
+      const had = b.location && (b.location.address || b.location.mapUrl || b.location.lat);
+      if (!had) return { success: false, error: 'اكتب العنوان أو حط رابط الخريطة' };
+      b.location = {};
+      persistBarbers();
+      announce('location', profileId);
+      if (!getSupabase()) return { success: true, location: {}, offline: true };
+      const cleared = await pushCatalogField(profileId, { location: {} });
+      if (!cleared.ok) return { success: false, error: cleared.error || 'تعذر حذف العنوان' };
+      return { success: true, location: {}, cleared: true };
     }
     b.location = location;
     if (location.address && !b.address) b.address = location.address;
