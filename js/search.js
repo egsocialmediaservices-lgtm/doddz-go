@@ -14,6 +14,9 @@
 
   let debounceTimer = null;
 
+  // أقسام الأنشطة الأربعة: كروتها أنشطة معتمدة (Supabase) مش منتجات
+  const ACTIVITY_SECTIONS = ['barbers', 'carwash', 'handmade', 'merchants'];
+
   function getProducts() {
     const all = (typeof ProductStore !== 'undefined') ? ProductStore.getAll() : PRODUCTS;
     return all.filter(p => (p.status || 'approved') === 'approved');
@@ -27,15 +30,30 @@
     });
   }
 
-  function renderResults(products, label) {
+  function renderResults(products, label, section) {
     resultsTitle.textContent = label;
-    resultsGrid.innerHTML = products.length
-      ? products.map(p => p.source === 'merchant' ? renderMerchantCard(p) : renderCard(p)).join('')
-      : `<div class="search-results-empty">مفيش نتائج مطابقة، جرّب كلمة تانية 🔍</div>`;
+    if (products.length) {
+      resultsGrid.innerHTML = products.map(p =>
+        p.source === 'merchant' ? renderMerchantCard(p) : renderCard(p)
+      ).join('');
+    } else {
+      resultsGrid.innerHTML = `<div class="search-results-empty">${emptyMessage(section)}</div>`;
+    }
 
     resultsRow.style.display = '';
     toggleStorefrontSections(true);
     resultsRow.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /** رسالة واضحة لما القسم لسه فاضي — أحسن من ما يختفي خالص */
+  function emptyMessage(section) {
+    const label = (section && typeof SECTION_LABELS_SITE !== 'undefined' && SECTION_LABELS_SITE[section])
+      ? SECTION_LABELS_SITE[section] : '';
+    const activity = ['barbers', 'carwash', 'handmade', 'merchants'].indexOf(section) !== -1;
+    if (!label) return 'مفيش نتائج مطابقة، جرّب كلمة تانية 🔍';
+    return activity
+      ? `لسه مفيش أنشطة معتمدة في قسم «${label}» — التسجيل متاح من زر «نشاطي»`
+      : `قسم «${label}» لسه مفيش فيه منتجات معتمدة — ضيفه من لوحة الأدمن وهيظهر هنا فورًا`;
   }
 
   // متاحة عالمياً عشان site.js يقفلها لما المستخدم يدوس على أي قسم من النافبار
@@ -64,6 +82,12 @@
       );
     }
     if (section) {
+      // أقسام الأنشطة بتتعرض في صفها على الرئيسية (مش منتجات)
+      if (ACTIVITY_SECTIONS.indexOf(section) !== -1 && !query) {
+        clearSearchResults();
+        if (typeof window.scrollToSection === 'function') window.scrollToSection(section);
+        return;
+      }
       products = products.filter(p => p.section === section);
     }
 
@@ -72,8 +96,15 @@
                 : query ? `نتائج البحث عن "${query}"`
                 : `كل منتجات ${sectionLabel}`;
 
-    renderResults(products, label);
+    renderResults(products, label, section);
   }
+
+  /** يفتح واجهة النتائج على قسم معيّن — بتُستعمل لما القسم يكون فاضي في الرئيسية */
+  window.DoddzOpenSectionResults = function openSectionResults(section) {
+    input.value = '';
+    catSel.value = section || '';
+    runSearch();
+  };
 
   input.addEventListener('input', () => {
     clearTimeout(debounceTimer);
@@ -91,10 +122,17 @@
   });
 
   // "عرض الكل" في أي قسم → يفتح نفس واجهة النتائج لكل منتجات القسم ده
+  // أقسام الأنشطة الأربعة (قصها/لمعها/انامل/كسبني) مش منتجات — بتعرض أنشطتها في صفها
   document.querySelectorAll('.row-see-all[data-section]').forEach(el => {
     el.addEventListener('click', () => {
+      const code = el.dataset.section;
+      if (ACTIVITY_SECTIONS.indexOf(code) !== -1) {
+        clearSearchResults();
+        if (typeof window.scrollToSection === 'function') window.scrollToSection(code);
+        return;
+      }
       input.value = '';
-      catSel.value = el.dataset.section;
+      catSel.value = code;
       runSearch();
     });
   });

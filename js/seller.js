@@ -72,12 +72,47 @@
   }
 
   // ── فتح التدفق: لو فيه جلسة شغالة يفتح اللوحة على طول، غير كده شاشة الدخول ──
+  const STAFF_ROLES = ['seller', 'merchant', 'service_provider', 'admin'];
+
+  /** الحساب ده صاحب نشاط ولا زائر؟ المصدر الرسمي جدول profiles — مش اللوكال ستوردج.
+   *  (لو فيه قيمة قديمة في اللوكال ستوردج من حساب تاني بنمسحها عشان متلخبطش الواجهة) */
+  async function isStaffAccount(userId) {
+    const client = getClient();
+    if (!client || !userId) return true; // مفيش كلاود: ما نمنعشحد
+    let row = null;
+    try {
+      const { data } = await client.from('profiles')
+        .select('role,category').eq('id', userId).maybeSingle();
+      row = data || null;
+    } catch (_) {
+      const role = localStorage.getItem('doddz_user_role') || '';
+      const cat  = localStorage.getItem('doddz_user_category') || '';
+      return STAFF_ROLES.includes(role) || !!cat;
+    }
+    const role = (row && row.role) || '';
+    const cat  = (row && row.category) || '';
+    try {
+      if (role) localStorage.setItem('doddz_user_role', role);
+      else localStorage.removeItem('doddz_user_role');
+      if (cat) localStorage.setItem('doddz_user_category', cat);
+      else localStorage.removeItem('doddz_user_category');
+    } catch (_) {}
+    return STAFF_ROLES.includes(role) || !!cat;
+  }
+
   async function openFlow() {
     const client = getClient();
     if (!client) { notify('تعذر الاتصال بالخادم، حاول تاني بعد قليل'); return; }
     const { data } = await client.auth.getSession();
     if (data?.session) {
       currentUserId = data.session.user.id;
+      // حساب الزائر مالهوش لوحة بائع — يقدر بس يقدّم طلب انضمام بقسم
+      const staff = await isStaffAccount(currentUserId);
+      if (!staff) {
+        notify('الحساب ده حساب زائر — مفيش لوحة بائع. اختار «تسجيل نشاط جديد» لو عايز تعرض نشاطك.');
+        showEntryChoice();
+        return;
+      }
       openPanel();
     } else {
       showEntryChoice();

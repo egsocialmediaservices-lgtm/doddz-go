@@ -1168,6 +1168,20 @@ function toggleFav(el, event, id) {
   }
 }
 
+/** صفوف الأقسام اللي ملهاش منتجات (ولا أنشطة) تختفي — عشان الرئيسية تفضل منسّقة
+    من غير مربعات فاضية. أي صف عليه data-keep-empty بيفضل ظاهر دايماً. */
+function updateEmptyRows() {
+  document.querySelectorAll('.section-row').forEach(row => {
+    if (row.id === 'search-results-row') return;
+    if (row.hasAttribute('data-keep-empty')) { row.hidden = false; return; }
+    const boxes = row.querySelectorAll('.products-scroll, .products-grid, .barbers-grid');
+    if (!boxes.length) return;
+    let n = 0;
+    boxes.forEach(b => { n += b.querySelectorAll(':scope > *').length; });
+    row.hidden = n === 0;
+  });
+}
+
 /** تشغيل كل الـ sections — يقرأ من ProductStore لو موجود، fallback للـ PRODUCTS */
 function initProducts() {
   const sections = [
@@ -1184,13 +1198,18 @@ function initProducts() {
     return st === 'approved' || st === 'active' || st === 'published';
   });
   sections.forEach(s => renderSection(s, approved));
+  updateEmptyRows();
 }
 
 // ── شغّل عند تحميل الصفحة ──
 document.addEventListener('DOMContentLoaded', () => {
   initProducts();
   initProductCardGalleries();
+  // أنشطة الأقسام (لمعها / انامل / كسبني) بتيجي من Supabase بعد شوية — نفحص الصفوف تاني
+  setTimeout(updateEmptyRows, 1500);
+  setTimeout(updateEmptyRows, 4000);
 });
+window.addEventListener('doddz:sections-rendered', () => updateEmptyRows());
 
 /** سلايد صور فرعية عند تمرير الماوس على كارت المنتج */
 function initProductCardGalleries() {

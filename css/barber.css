@@ -85,6 +85,21 @@
   padding: 12px;
   position: relative;
 }
+/* كفر الصالون (coverUrl) بيبان على الكارت نفسه قبل الدخول لصفحة الصالون */
+.barber-card-cover.has-cover {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.barber-card-cover.has-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5,7,13,.18) 0%, rgba(5,7,13,.05) 45%, rgba(5,7,13,.55) 100%);
+  pointer-events: none;
+}
+.barber-card-cover .barber-card-avatar { z-index: 1; }
+.barber-card-cover .barber-card-badge { z-index: 2; }
 .barber-card-avatar {
   width: 56px;
   height: 56px;
@@ -204,11 +219,11 @@
   z-index: 1;
 }
 .bp-header-info {
-  padding-top: 64px; /* الاسم جنب الصورة وتحت الكافر مش فوقه */
+  padding-top: 84px; /* الاسم ينزل تحت الغلاف تمامًا — ميبقاش مغطّي على صورة الكافر */
   min-width: 0;
 }
 .bp-header-body .bp-book-cta {
-  margin-top: 64px;
+  margin-top: 84px;
 }
 @media (max-width: 700px) {
   .bp-header-body {
@@ -219,7 +234,7 @@
     margin-top: 8px;
     width: 100%;
   }
-  .bp-header-info { padding-top: 56px; }
+  .bp-header-info { padding-top: 76px; }
 }
 
 .bp-avatar {
@@ -250,7 +265,27 @@
 }
 
 .bp-name { font-size: 22px; font-weight: 900; color: var(--ink); margin: 0 0 4px; }
-.bp-area { font-size: 13px; color: var(--ink-3); font-weight: 700; margin-bottom: 8px; }
+.bp-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.bp-area { font-size: 13px; color: var(--ink-3); font-weight: 700; margin-bottom: 0; }
+/* ميعاد النهاردة وشارة الخدمة المنزلية — فوق جنب الاسم */
+.bp-today-chip {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0e7490;
+  background: #ecfeff;
+  border: 1px solid #a5f3fc;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.bp-home-chip {
+  font-size: 12px;
+  font-weight: 800;
+  color: #e85d3b;
+  background: #fff4ef;
+  border: 1px solid #ffd6c8;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
 .bp-bio { font-size: 13.5px; color: var(--ink-2); font-weight: 600; line-height: 1.65; max-width: 520px; }
 .bp-stats { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
 .bp-stat {
@@ -585,6 +620,19 @@
   border-radius: 999px;
 }
 .bp-hour-foot { margin-top: 10px; font-size: 11.5px; font-weight: 700; color: var(--ink-3); }
+/* باقي الأيام مخفية ورا زرار — الزائر شايف النهاردة بس */
+.bp-hours-more { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.bp-hours-more > summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--ink-2);
+  list-style: none;
+}
+.bp-hours-more > summary::-webkit-details-marker { display: none; }
+.bp-hours-more > summary::before { content: "▾ "; color: var(--brand); }
+.bp-hours-more[open] > summary::before { content: "▴ "; }
+.bp-hours-more .bp-hours { margin-top: 10px; }
 
 /* ── الموقع ───────────────────────────────────────────────── */
 .bp-loc-address { margin: 0 0 8px; font-size: 13.5px; font-weight: 800; color: var(--ink); line-height: 1.7; }

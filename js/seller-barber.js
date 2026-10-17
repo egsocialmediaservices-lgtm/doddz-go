@@ -565,7 +565,11 @@
 
   /* ================================================================
      4) اللوكيشن
+     خط الطول والعرض مش معروضين لصاحب الصالون — الحقول لسه موجودة
+     (مخفية في index.html) عشان القيم اللي اتحفظت قبل كده ما تضيعش.
   ================================================================ */
+  const GEO_BTN_LABEL = '📍 حدّد موقعي على الخريطة';
+
   async function renderLocation() {
     const bs = B();
     const barber = await ensureBarber();
@@ -610,7 +614,7 @@
     const url = locMapUrl(loc);
     box.innerHTML = url
       ? '<a href="' + esc(url) + '" target="_blank" rel="noopener">🗺️ ' + esc(loc.address || (loc.lat + ',' + loc.lng)) + '</a>'
-      : '<span class="sb-no-img">اكتب عنوان أو خد الإحداثيات يظهر الرابط هنا</span>';
+      : '<span class="sb-no-img">اكتب العنوان — رابط الخريطة هيظهر هنا أوتوماتيك</span>';
   }
 
   async function saveLocationForm() {
@@ -639,24 +643,24 @@
     ['#sb-loc-address', '#sb-loc-lat', '#sb-loc-lng', '#sb-loc-map'].forEach(s => $(s)?.addEventListener('input', updateLocPreview));
     $('#sb-loc-preview')?.addEventListener('click', () => {
       const url = locMapUrl(readLocForm());
-      if (!url) { errBox('#sb-loc-errors', 'اكتب عنوان أو إحداثيات الأول'); return; }
+      if (!url) { errBox('#sb-loc-errors', 'اكتب العنوان الأول'); return; }
       window.open(url, '_blank', 'noopener');
     });
     $('#sb-loc-geo')?.addEventListener('click', () => {
-      if (!navigator.geolocation) { errBox('#sb-loc-errors', 'المتصفح ده مش بيدعم تحديد الموقع'); return; }
+      if (!navigator.geolocation) { errBox('#sb-loc-errors', 'المتصفح ده مش بيدعم تحديد الموقع — اكتب العنوان وكفاية'); return; }
       const btn = $('#sb-loc-geo');
       if (btn) { btn.disabled = true; btn.textContent = 'جاري التحديد...'; }
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           if ($('#sb-loc-lat')) $('#sb-loc-lat').value = pos.coords.latitude.toFixed(6);
           if ($('#sb-loc-lng')) $('#sb-loc-lng').value = pos.coords.longitude.toFixed(6);
-          if (btn) { btn.disabled = false; btn.textContent = '📍 خد الإحداثيات من المتصفح'; }
+          if (btn) { btn.disabled = false; btn.textContent = GEO_BTN_LABEL; }
           updateLocPreview();
-          notify('الإحداثيات اتحددت — احفظ');
+          notify('تم تحديد موقعك — دوسي حفظ اللوكيشن');
         },
         () => {
-          if (btn) { btn.disabled = false; btn.textContent = '📍 خد الإحداثيات من المتصفح'; }
-          errBox('#sb-loc-errors', 'متقدرناش نحدّد الموقع — اسمحي بالوصول أو اكتب الإحداثيات يدوي');
+          if (btn) { btn.disabled = false; btn.textContent = GEO_BTN_LABEL; }
+          errBox('#sb-loc-errors', 'متقدرناش نحدّد الموقع — اكتبّي العنوان بالظبط واحفظي، ده كفاية');
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );

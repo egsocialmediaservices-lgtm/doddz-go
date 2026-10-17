@@ -418,6 +418,22 @@
     ['استكشف', 'Explore'],
     ['Doddz Go', 'Doddz Go'],
 
+    /* عبارات صفحة الصالون الجديدة (كفر + منطقة + ميعاد اليوم + الحجز المنزلي) */
+    ['عرض الصالون والحجز', 'View salon & book'],
+    ['مواعيد باقي أيام الأسبوع', 'Hours for the rest of the week'],
+    ['الصالون مغلق النهاردة — اختَر يوم تاني من الحجز.',
+     'The salon is closed today — pick another day in the booking wizard.'],
+    ['المواعيد دي هي الأساس في بناء الأوقات المتاحة للحجز.',
+     'These hours drive the time slots offered in the booking wizard.'],
+    ['الصالون بيوصل لحد بيتك في المناطق المتاحة — اختَر «خدمة منزلية» في خطوة المكان من قايمة الحجز.',
+     'The salon comes to your home in the covered areas — choose “Home service” in the location step of the booking wizard.'],
+    ['رسوم الانتقال', 'Travel fee'],
+    ['الحلاق يجي لحد البيت', 'The barber comes to your home'],
+    ['خدمات متعددة', 'Multiple services'],
+    ['الحساب ده حساب زائر — مفيش لوحة بائع. اختار «تسجيل نشاط جديد» لو عايز تعرض نشاطك.',
+     'This is a customer account — no seller panel. Choose “Register a new business” to list your activity.'],
+    ['موقع الصالون', 'Salon location'],
+
     /* ============================================================
        قسم قصها — فريق المحل · الألبوم · المواعيد · اللوكيشن
        الحجز بأكثر من خدمة + اختيار الفني

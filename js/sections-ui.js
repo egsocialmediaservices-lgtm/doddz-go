@@ -115,12 +115,18 @@
     if (!el || !window.SectionsStore) return;
     let rows = [];
     try { rows = await SectionsStore.approved(code); } catch (_) { rows = []; }
-    if (!rows.length) { renderEmpty(code); return; }
+    if (!rows.length) { renderEmpty(code); announceRendered(); return; }
     mount(code, rows.map(r => card(r, code)).join(''));
+    announceRendered();
   }
 
   function renderAll() {
     SECTIONS.forEach(renderSection);
+  }
+
+  /** يبلّغ الواجهة إن محتوى الأقسام اتحدّث (تستخدمه products-data.js لإخفاء الصفوف الفاضية) */
+  function announceRendered() {
+    try { window.dispatchEvent(new Event('doddz:sections-rendered')); } catch (_) {}
   }
 
   document.addEventListener('DOMContentLoaded', () => {

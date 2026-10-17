@@ -47,6 +47,38 @@
     return !!(barber && barber.homeService && barber.homeService.enabled);
   }
 
+  /* المنطقة الحقيقية للصالون: المنطقة > المحافظة > أول منطقة منزلية > عنوان اللوكيشن
+     (من غير شرطة — لو مفيش منطقة مسجّلة السطر ده بيتخفي خالص) */
+  function areaText() {
+    if (!barber) return '';
+    const pool = [
+      barber.area,
+      barber.governorate,
+      (barber.homeService && Array.isArray(barber.homeService.areas) ? barber.homeService.areas[0] : ''),
+      (barber.location && barber.location.address) || ''
+    ];
+    for (const v of pool) {
+      const s = String(v || '').trim();
+      if (s) return s;
+    }
+    return '';
+  }
+
+  /* ميعاد النهاردة بس — يبان فوق جنب الاسم */
+  function todayHoursText() {
+    if (!barber || typeof BarberStore === 'undefined' || !BarberStore.dayHours) return '';
+    const day = new Date().getDay();          // 0 = الأحد
+    const label = (BarberStore.DAYS_AR && BarberStore.DAYS_AR[day]) ? BarberStore.DAYS_AR[day] : 'اليوم';
+    const d = BarberStore.dayHours(barber, day);
+    if (!d || !d.open) {
+      // الصالون مساعِد مواعيده بس مقفل النهاردة — نقولها بدل ما السطر يفضل فاضي
+      const anyOpen = BarberStore.hoursView ? BarberStore.hoursView(barber).some(x => x.open) : false;
+      return anyOpen ? '🕘 اليوم ' + label + ' · مغلق' : '';
+    }
+    const range = BarberStore.dayHoursLabel ? BarberStore.dayHoursLabel(barber, day) : '';
+    return '🕘 اليوم ' + label + (range ? ' · ' + range : '');
+  }
+
   function setStep(n) {
     step = n;
     for (let i = 1; i <= 5; i++) {
@@ -135,7 +167,7 @@
       }
     }
     $('bp-name').textContent = barber.name;
-    $('bp-area').textContent = barber.area || '—';
+    renderMetaRow();
     $('bp-bio').textContent = barber.bio || '';
     const ratingEl = $('bp-rating');
     if (ratingEl) {
@@ -151,9 +183,28 @@
     renderHoursPanel();
     renderLocationPanel();
     renderMediaPanels();
+    renderHomePanel();
     buildServiceOptions();
     buildMemberOptions();
     buildAreaSelect();
+  }
+
+  /* المنطقة + ميعاد النهاردة + شارة الخدمة المنزلية — فوق جنب الاسم */
+  function renderMetaRow() {
+    const area = $('bp-area');
+    if (area) {
+      const txt = areaText();
+      area.textContent = txt ? '📍 ' + txt : '';
+      area.hidden = !txt;
+    }
+    const today = $('bp-today');
+    if (today) {
+      const t = todayHoursText();
+      today.textContent = t;
+      today.hidden = !t;
+    }
+    const chip = $('bp-home-chip');
+    if (chip) chip.hidden = !homeEnabled();
   }
 
   function renderServicePanel() {
@@ -209,21 +260,37 @@
   }
 
   /* ── المواعيد ─────────────────────────────────────────────── */
+  /* الزائر شايف مواعيد النهاردة بس — باقي الأيام الاختياري تحت */
   function renderHoursPanel() {
     const panel = $('bp-hours-panel');
     const box = $('bp-hours');
+    const more = $('bp-hours-more');
+    const week = $('bp-hours-week');
     if (!panel || !box || !BarberStore.hoursView) { if (panel) panel.hidden = true; return; }
     const view = BarberStore.hoursView(barber);
     const anyOpen = view.some(d => d.open);
-    if (!anyOpen) { panel.hidden = true; box.innerHTML = ''; return; }
+    if (!anyOpen) {
+      panel.hidden = true;
+      box.innerHTML = '';
+      if (more) { more.hidden = true; if (week) week.innerHTML = ''; }
+      return;
+    }
     panel.hidden = false;
     const today = new Date().getDay();   // 0 = الأحد — نفس ترقيم الموقع
-    box.innerHTML = view.map(d => `
+    const line = (d) => `
       <div class="bp-hour-line${d.day === today ? ' today' : ''}${d.open ? '' : ' closed'}">
         <span class="bp-hour-day">${esc(d.label)}${d.day === today ? ' <em class="bp-today-tag">اليوم</em>' : ''}</span>
         <span class="bp-hour-time">${d.open ? esc(BarberStore.dayHoursLabel(barber, d.day)) : 'مغلق'}</span>
-      </div>
-    `).join('') + '<div class="bp-hour-foot">هذه المواعيد هي الأساس في بناء الأوقات المتاحة للحجز.</div>';
+      </div>`;
+    const t = view.find(d => d.day === today);
+    box.innerHTML = (t ? line(t) : '') +
+      '<div class="bp-hour-foot">' + (t && t.open ? 'المواعيد دي هي الأساس في بناء الأوقات المتاحة للحجز.' : 'الصالون مغلق النهاردة — اختَر يوم تاني من الحجز.') + '</div>';
+    const rest = view.filter(d => d.day !== today);
+    if (more && week) {
+      week.innerHTML = rest.map(line).join('');
+      more.hidden = false;
+      more.open = false;
+    }
   }
 
   /* ── اللوكيشن ─────────────────────────────────────────────── */
@@ -248,6 +315,51 @@
           : (loc.address ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc.address) : ''));
       link.hidden = !url;
       if (url) link.href = url;
+    }
+  }
+
+  /* ── الخدمة المنزلية ──────────────────────────────────────── */
+  /* أهم جزء: الزائر مش هيلاقي خيار «خدمة منزلية» غير لو الصالون فعّلها فعلًا.
+     قبل كده الزرار كان فاضل hidden في HTML مهما صاحب الصالون فعّل الخدمة. */
+  function renderHomePanel() {
+    const opt = $('bk-opt-home');
+    const on = homeEnabled();
+    if (opt) opt.hidden = !on;
+    if (!on) {
+      if (state.locationType === 'home') {
+        state.locationType = null;
+        if ($('bk-next-1')) $('bk-next-1').disabled = true;
+        document.querySelectorAll('[data-location]').forEach(el => el.classList.remove('selected'));
+      }
+    }
+    const hint = $('bk-home-option-hint');
+    if (hint && on) {
+      const hs = barber.homeService || {};
+      const parts = [];
+      if (Array.isArray(hs.areas) && hs.areas.length) parts.push('المناطق: ' + hs.areas.slice(0, 6).join('، '));
+      const fee = (Number(hs.travelFee) || 0) + (Number(hs.extraFee) || 0);
+      if (fee > 0) parts.push('رسوم الانتقال ' + money(fee) + ' ج.م');
+      hint.textContent = parts.length ? parts.join(' · ') : 'الحلاق يجي لحد البيت';
+    }
+
+    const panel = $('bp-home-panel');
+    if (!panel) return;
+    if (!on) { panel.hidden = true; return; }
+    panel.hidden = false;
+    const hs = barber.homeService || {};
+    const note = $('bp-home-note');
+    if (note) {
+      note.textContent = hs.note || 'الصالون بيوصل لحد بيتك في المناطق المتاحة — اختَر «خدمة منزلية» في خطوة المكان من قايمة الحجز.';
+    }
+    const meta = $('bp-home-meta');
+    if (meta) {
+      const rows = [];
+      if (Array.isArray(hs.areas) && hs.areas.length) {
+        rows.push('<div class="bp-stat">المناطق: ' + esc(hs.areas.join('، ')) + '</div>');
+      }
+      rows.push('<div class="bp-stat">رسوم الانتقال: ' + money(hs.travelFee) + ' ج.م</div>');
+      if (Number(hs.extraFee) > 0) rows.push('<div class="bp-stat">رسوم إضافية: ' + money(hs.extraFee) + ' ج.م</div>');
+      meta.innerHTML = rows.join('');
     }
   }
 
@@ -591,10 +703,12 @@
       return;
     }
 
+    renderMetaRow();
     renderTeamPanel();
     renderHoursPanel();
     renderLocationPanel();
     renderMediaPanels();
+    renderHomePanel();
     buildMemberOptions();
     if (step === 2) syncStep2();
   }

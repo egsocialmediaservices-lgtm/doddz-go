@@ -76,9 +76,18 @@
     }
 
     // الأدمن بس اللي يشوف لوحة الأدمن — باقي الحسابات الإدارية لها لوحة البائع
-    const role = state.user ? (state.role || localStorage.getItem('doddz_user_role') || 'visitor') : null;
+    // المصدر الرسمي = جدول profiles اللي سحبناه من السحابة. اللوكال ستوردج احتياطي
+    // للوقت اللي السحابة فيه مش رادة بس (أو لو الحساب جديد لسه ما اتقراش).
+    const cloudKnown = !!state.profile;
+    const role = state.user
+      ? ((cloudKnown ? (state.profile.role || 'visitor')
+          : (state.role || localStorage.getItem('doddz_user_role') || 'visitor')))
+      : null;
     // النشاط في قسم (profiles.category) = صاحب نشاط، حتى لو الدور visitor
-    const category = state.user ? (state.profile?.category || localStorage.getItem('doddz_user_category') || null) : null;
+    const category = state.user
+      ? (cloudKnown ? (state.profile.category || null)
+          : (state.profile?.category || localStorage.getItem('doddz_user_category') || null))
+      : null;
     const isStaff = (!!role && STAFF_ROLES.includes(role)) || !!category;
     const isAdmin = role === 'admin';
 
@@ -127,9 +136,13 @@
         .maybeSingle();
       state.profile = data || null;
       state.role = data?.role || localStorage.getItem('doddz_user_role') || 'visitor';
-      if (data?.category) {
-        try { localStorage.setItem('doddz_user_category', data.category); } catch (_) {}
-      }
+      // السحابة هي المصدر: نصحّح اللوكال ستوردج بدل ما نبني على قيمة قديمة من حساب تاني
+      try {
+        if (data?.category) localStorage.setItem('doddz_user_category', data.category);
+        else if (data) localStorage.removeItem('doddz_user_category');
+        if (data?.role) localStorage.setItem('doddz_user_role', data.role);
+        else if (data) localStorage.removeItem('doddz_user_role');
+      } catch (_) {}
       // حالة النشاط (pending/approved/rejected) من جدول القسم — للعرض في «حسابي»
       if (data?.category && window.SectionsStore?.myProvider) {
         try {
@@ -446,6 +459,7 @@
     }
     try {
       localStorage.removeItem('doddz_user_role');
+      localStorage.removeItem('doddz_user_category');   // عشان الحساب الجاي ما يورثش قسم الحساب القديم
       localStorage.removeItem('doddz_user_name');
       localStorage.removeItem('doddz_user_phone');
     } catch (_) {}

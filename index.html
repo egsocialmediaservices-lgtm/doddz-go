@@ -29,24 +29,24 @@
   </script>
 
   <!-- ===== CSS — كل ملف مسؤول عن جزء واحد فقط ===== -->
-  <link rel="stylesheet" href="css/base.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/header.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/hero.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/promo.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/products.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/courses.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/banners.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/cart.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/checkout.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/account.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/admin.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261016c"/>
-  <link rel="stylesheet" href="css/splash.css?v=20261016c"/>
-  <script src="js/motion.js?v=20261016c" defer></script>
-  <script src="js/splash.js?v=20261016c" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/header.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/hero.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/promo.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/products.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/courses.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/banners.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/account.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/admin.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261017f"/>
+  <link rel="stylesheet" href="css/splash.css?v=20261017f"/>
+  <script src="js/motion.js?v=20261017f" defer></script>
+  <script src="js/splash.js?v=20261017f" defer></script>
   <style>.phase-later { display: none !important; }</style>
 </head>
 <body>
@@ -150,7 +150,6 @@
         <option value="shoes">أحذية</option>
         <option value="watches">ساعات وإكسسوارات</option>
         <option value="home">المنزل</option>
-        <option value="pets">مستلزمات الحيوانات</option>
         <option value="toys">الألعاب</option>
         <option value="sports">الرياضة</option>
         <option value="beauty">الجمال والعناية</option>
@@ -215,7 +214,6 @@
     <div class="nav-item" data-section="shoes">أحذية</div>
     <div class="nav-item" data-section="watches">ساعات وإكسسوارات</div>
     <div class="nav-item" data-section="home">المنزل</div>
-    <div class="nav-item" data-section="pets">مستلزمات الحيوانات</div>
     <div class="nav-item" data-section="toys">الألعاب</div>
     <div class="nav-item" data-section="sports">الرياضة</div>
     <div class="nav-item" data-section="beauty">الجمال والعناية</div>
@@ -245,10 +243,10 @@
         <span class="sb-title">إلكترونيات</span>
         <span class="sb-sub">خصومات اليوم</span>
       </div>
-      <div class="side-banner sb-design" data-section="pets">
+      <div class="side-banner sb-design" data-section="beauty">
         <span class="sb-icon"></span>
-        <span class="sb-title">حيوانات</span>
-        <span class="sb-sub">+180 منتج</span>
+        <span class="sb-title">جمال وعناية</span>
+        <span class="sb-sub">منتجات مختارة</span>
       </div>
     </div>
 
@@ -357,17 +355,7 @@
     <div class="search-results-grid" id="search-results-grid"></div>
   </div>
 
-  <!-- SECTION: عروض مميزة -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> إلكترونيات وعروض</div>
-      <button class="row-see-all" data-section="sell">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-sell"></div>
-  </div>
-
-
-  <!-- SECTION: الحلاقين (Barber Marketplace P0) -->
+  <!-- ===== 1) قصها — الحلاقون المعتمدون (Barber Marketplace P0) ===== -->
   <div class="section-row" id="section-barbers">
     <div class="barber-hero">
       <div>
@@ -380,21 +368,37 @@
       <button type="button" class="barber-filter-chip active" data-filter="all">الكل</button>
       <button type="button" class="barber-filter-chip" data-filter="featured">مميز</button>
       <button type="button" class="barber-filter-chip" data-filter="home">خدمة منزلية</button>
-      <button type="button" class="barber-filter-chip" data-filter="المعادي">المعادي</button>
-      <button type="button" class="barber-filter-chip" data-filter="مدينة نصر">مدينة نصر</button>
-      <button type="button" class="barber-filter-chip" data-filter="التجمع">التجمع</button>
-      <button type="button" class="barber-filter-chip" data-filter="الزمالك">الزمالك</button>
+      <!-- رقائق المناطق بتتعمل أوتوماتيك من مناطق الصالونات المعتمدة (js/barbers-ui.js) -->
+      <span id="barber-area-chips" style="display:contents;"></span>
     </div>
     <div class="barbers-grid" id="barbers-grid"></div>
   </div>
 
-  <!-- SECTION: مستلزمات حيوانات -->
+  <!-- ===== 2) لمعها — مغاسل السيارات ===== -->
   <div class="section-row">
     <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> مستلزمات حيوانات</div>
-      <button class="row-see-all" data-section="pets">عرض الكل ←</button>
+      <div class="row-title"><span class="rt-icon"></span> لمعها — مغاسل السيارات</div>
+      <button class="row-see-all" data-section="carwash">عرض الكل ←</button>
     </div>
-    <div class="products-scroll" id="section-pets"></div>
+    <div class="products-scroll" id="section-carwash"></div>
+  </div>
+
+  <!-- ===== 3) كسبني — متاجر التجار ===== -->
+  <div class="section-row" style="background:linear-gradient(135deg,#1c1c2e,#2a2a3d); border:none;">
+    <div class="row-header">
+      <div class="row-title" style="color:#fff;"><span class="rt-icon"></span> كسبني - تجار</div>
+      <button class="row-see-all" data-section="merchants">كل التجار ←</button>
+    </div>
+    <div class="products-scroll" id="section-merchants"></div>
+  </div>
+
+  <!-- ===== 4) انامل — شغل هند ميد ===== -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> انامل — هند ميد</div>
+      <button class="row-see-all" data-section="handmade">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-handmade"></div>
   </div>
 
   <!-- BIG BANNERS -->
@@ -419,76 +423,18 @@
     </div>
   </div>
 
-  <!-- SECTION: المنزل -->
+  <!-- ============================================================
+       أقسام المنتجات — نفس ترتيب الشريط العلوي (NAV)
+       أي قسم ملوش منتجات معتمدة بيختفي أوتوماتيك (js/products-data.js)
+  ============================================================ -->
+
+  <!-- SECTION: عروض مميزة -->
   <div class="section-row">
     <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> المنزل</div>
-      <button class="row-see-all" data-section="home">عرض الكل ←</button>
+      <div class="row-title"><span class="rt-icon"></span> عروض مميزة</div>
+      <button class="row-see-all" data-section="sell">عرض الكل ←</button>
     </div>
-    <div class="products-scroll" id="section-home"></div>
-  </div>
-
-  <!-- SECTION: ملابس -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> أزياء</div>
-      <button class="row-see-all" data-section="fashion">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-fashion"></div>
-  </div>
-
-  <!-- SECTION: تكنولوجيا -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> موبايلات ولاب توب</div>
-      <button class="row-see-all" data-section="tech">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-tech"></div>
-  </div>
-
-  <!-- SECTION: قسم التجار — مرحلة لاحقة -->
-  <div class="section-row" style="background:linear-gradient(135deg,#1c1c2e,#2a2a3d); border:none;">
-    <div class="row-header">
-      <div class="row-title" style="color:#fff;"><span class="rt-icon"></span> كسبني</div>
-      <button class="row-see-all" data-section="merchants">كل التجار ←</button>
-    </div>
-    <div class="products-scroll" id="section-merchants"></div>
-  </div>
-
-  <!-- SECTION: الخدمات — مرحلة لاحقة -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> خدمات</div>
-      <button class="row-see-all" data-section="services">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-services"></div>
-  </div>
-
-  <!-- SECTION: لمعها -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> لمعها — مغاسل السيارات</div>
-      <button class="row-see-all" data-section="carwash">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-carwash"></div>
-  </div>
-
-  <!-- SECTION: انامل -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> انامل — هند ميد</div>
-      <button class="row-see-all" data-section="handmade">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-handmade"></div>
-  </div>
-
-  <!-- SECTION: الأطفال -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> الأطفال</div>
-      <button class="row-see-all" data-section="kids">عرض الكل ←</button>
-    </div>
-    <div class="products-scroll" id="section-kids"></div>
+    <div class="products-scroll" id="section-sell"></div>
   </div>
 
   <!-- SECTION: إلكترونيات -->
@@ -516,6 +462,114 @@
       <button class="row-see-all" data-section="laptops">عرض الكل ←</button>
     </div>
     <div class="products-scroll" id="section-laptops"></div>
+  </div>
+
+  <!-- SECTION: تكنولوجيا -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> تكنولوجيا</div>
+      <button class="row-see-all" data-section="tech">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-tech"></div>
+  </div>
+
+  <!-- SECTION: أزياء -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> أزياء</div>
+      <button class="row-see-all" data-section="fashion">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-fashion"></div>
+  </div>
+
+  <!-- SECTION: أحذية -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> أحذية</div>
+      <button class="row-see-all" data-section="shoes">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-shoes"></div>
+  </div>
+
+  <!-- SECTION: ساعات وإكسسوارات -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> ساعات وإكسسوارات</div>
+      <button class="row-see-all" data-section="watches">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-watches"></div>
+  </div>
+
+  <!-- SECTION: الجمال والعناية -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الجمال والعناية</div>
+      <button class="row-see-all" data-section="beauty">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-beauty"></div>
+  </div>
+
+  <!-- SECTION: المنزل -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> المنزل</div>
+      <button class="row-see-all" data-section="home">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-home"></div>
+  </div>
+
+  <!-- SECTION: الأطفال -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الأطفال</div>
+      <button class="row-see-all" data-section="kids">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-kids"></div>
+  </div>
+
+  <!-- SECTION: الألعاب -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الألعاب</div>
+      <button class="row-see-all" data-section="toys">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-toys"></div>
+  </div>
+
+  <!-- SECTION: الرياضة -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الرياضة</div>
+      <button class="row-see-all" data-section="sports">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-sports"></div>
+  </div>
+
+  <!-- SECTION: الكتب -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> الكتب</div>
+      <button class="row-see-all" data-section="books">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-books"></div>
+  </div>
+
+  <!-- SECTION: مستلزمات الحلاقة -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> مستلزمات حلاقة</div>
+      <button class="row-see-all" data-section="barber_supplies">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-barber_supplies"></div>
+  </div>
+
+  <!-- SECTION: خدمات -->
+  <div class="section-row">
+    <div class="row-header">
+      <div class="row-title"><span class="rt-icon"></span> خدمات</div>
+      <button class="row-see-all" data-section="services">عرض الكل ←</button>
+    </div>
+    <div class="products-scroll" id="section-services"></div>
   </div>
 
   <!-- SECTION: الأكثر مبيعاً -->
@@ -568,7 +622,7 @@
       <h4>الأقسام</h4>
       <ul>
         <li><a href="#" data-section="sell">عروض مميزة</a></li>
-        <li><a href="#" data-section="pets">مستلزمات حيوانات</a></li>
+        <li><a href="#" data-section="beauty">الجمال والعناية</a></li>
         <li><a href="#" data-section="home">المنزل والديكور</a></li>
         <li><a href="#" data-section="fashion">ملابس وأزياء</a></li>
         <li><a href="#" data-section="tech">تكنولوجيا</a></li>
@@ -1055,7 +1109,6 @@
                 <option value="أحذية">أحذية</option>
                 <option value="ساعات وإكسسوارات">ساعات وإكسسوارات</option>
                 <option value="المنزل">المنزل</option>
-                <option value="مستلزمات الحيوانات">مستلزمات الحيوانات</option>
                 <option value="الألعاب">الألعاب</option>
                 <option value="الرياضة">الرياضة</option>
                 <option value="الجمال والعناية">الجمال والعناية</option>
@@ -1080,7 +1133,6 @@
                 <option value="shoes">أحذية</option>
                 <option value="watches">ساعات وإكسسوارات</option>
                 <option value="home">المنزل</option>
-                <option value="pets">مستلزمات الحيوانات</option>
                 <option value="toys">الألعاب</option>
                 <option value="sports">الرياضة</option>
                 <option value="beauty">الجمال والعناية</option>
@@ -1556,16 +1608,17 @@
           <span class="adm-stats" id="sb-loc-stats">موقع الصالون</span>
           <button type="button" class="adm-btn secondary" id="sb-loc-refresh">تحديث</button>
         </div>
-        <p class="sb-hint">العنوان والإحداثيات بيظهروا في صفحة الصالون مع زرار «افتح في الخرائط».</p>
+        <p class="sb-hint">اكتب العنوان زي ما بتقوله للزبون بالظبط — هيظهر في صفحة الصالون مع زرار «افتح في الخرائط». <strong>خط الطول والعرض مش مطلوبين</strong>؛ لو دوس «حدّد موقعي» بيتحفظوا لوحدهم في الخلفية.</p>
         <div class="adm-form-grid">
           <div class="adm-field full"><label>العنوان *</label><input type="text" id="sb-loc-address" placeholder="الشارع، رقم العقار، المنطقة، المحافظة"/></div>
-          <div class="adm-field"><label>خط العرض (Latitude)</label><input type="text" id="sb-loc-lat" inputmode="decimal" placeholder="30.0024"/></div>
-          <div class="adm-field"><label>خط الطول (Longitude)</label><input type="text" id="sb-loc-lng" inputmode="decimal" placeholder="31.2912"/></div>
+          <!-- الإحداثيات مش معروضة لصاحب الصالون — بتتخزن بس لو المتصفح حدّدها -->
+          <div class="adm-field" style="display:none"><label>خط العرض (Latitude)</label><input type="text" id="sb-loc-lat" inputmode="decimal" placeholder="30.0024"/></div>
+          <div class="adm-field" style="display:none"><label>خط الطول (Longitude)</label><input type="text" id="sb-loc-lng" inputmode="decimal" placeholder="31.2912"/></div>
           <div class="adm-field full"><label>رابط الخريطة (اختياري)</label><input type="url" id="sb-loc-map" placeholder="https://maps.google.com/?q=..."/></div>
           <div class="adm-field full"><label>ملاحظة للزبون</label><input type="text" id="sb-loc-note" placeholder="علامة مميزة / الدور / جراج"/></div>
         </div>
         <div class="adm-form-actions">
-          <button type="button" class="adm-btn secondary" id="sb-loc-geo">📍 خد الإحداثيات من المتصفح</button>
+          <button type="button" class="adm-btn secondary" id="sb-loc-geo">📍 حدّد موقعي على الخريطة</button>
           <button type="button" class="adm-btn secondary" id="sb-loc-preview">🗺️ معاينة على الخريطة</button>
           <button type="button" class="adm-btn" id="sb-loc-save">💾 حفظ اللوكيشن</button>
         </div>
@@ -1654,7 +1707,6 @@
                 <option value="أحذية">أحذية</option>
                 <option value="ساعات وإكسسوارات">ساعات وإكسسوارات</option>
                 <option value="المنزل">المنزل</option>
-                <option value="مستلزمات الحيوانات">مستلزمات الحيوانات</option>
                 <option value="الألعاب">الألعاب</option>
                 <option value="الرياضة">الرياضة</option>
                 <option value="الجمال والعناية">الجمال والعناية</option>
@@ -1700,23 +1752,23 @@
 
 <!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js"></script>
-<script src="js/products-data.js?v=20261016c"></script>
-<script src="js/sections-data.js?v=20261016c"></script>
-<script src="js/barbers-data.js?v=20261016c"></script>
-<script src="js/media-upload.js?v=20261016c"></script>
-<script src="js/barbers-ui.js?v=20261016c"></script>
-<script src="js/sections-ui.js?v=20261016c"></script>
-<script src="js/cart.js?v=20261016c"></script>
-<script src="js/wishlist.js"></script>
-<script src="js/account.js?v=20261016c"></script>
-<script src="js/admin.js?v=20261016c"></script>
-<script src="js/seller.js?v=20261016c"></script>
-<script src="js/seller-barber.js?v=20261016c"></script>
-<script src="js/i18n.js?v=20261016c"></script>
-<script src="js/site.js?v=20261016c"></script>
-<script src="js/search.js"></script>
-<script src="js/slider.js"></script>
+<script src="js/supabase-client.js?v=20261017f"></script>
+<script src="js/products-data.js?v=20261017f"></script>
+<script src="js/sections-data.js?v=20261017f"></script>
+<script src="js/barbers-data.js?v=20261017f"></script>
+<script src="js/media-upload.js?v=20261017f"></script>
+<script src="js/barbers-ui.js?v=20261017f"></script>
+<script src="js/sections-ui.js?v=20261017f"></script>
+<script src="js/cart.js?v=20261017f"></script>
+<script src="js/wishlist.js?v=20261017f"></script>
+<script src="js/account.js?v=20261017f"></script>
+<script src="js/admin.js?v=20261017f"></script>
+<script src="js/seller.js?v=20261017f"></script>
+<script src="js/seller-barber.js?v=20261017f"></script>
+<script src="js/i18n.js?v=20261017f"></script>
+<script src="js/site.js?v=20261017f"></script>
+<script src="js/search.js?v=20261017f"></script>
+<script src="js/slider.js?v=20261017f"></script>
 
 </body>
 </html>

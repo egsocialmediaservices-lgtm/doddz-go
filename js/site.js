@@ -10,7 +10,6 @@ const SECTION_LABELS_SITE = {
   shoes: 'أحذية',
   watches: 'ساعات وإكسسوارات',
   home: 'المنزل',
-  pets: 'مستلزمات الحيوانات',
   toys: 'الألعاب',
   sports: 'الرياضة',
   beauty: 'الجمال والعناية',
@@ -47,24 +46,18 @@ function showToast(msg) {
 
 // ------------------------------------------------
 // التمرير لقسم معيّن في نفس الصفحة (بيراعي ارتفاع الهيدر الملتصق)
+// كل قسم بقى ليه صف خاص به في index.html — مفيش أي "مرادفات"
 // ------------------------------------------------
-const SECTION_SCROLL_ALIASES = {
-  electronics: 'sell',
-  mobiles: 'tech',
-  laptops: 'tech',
-  shoes: 'fashion',
-  watches: 'fashion',
-  sports: 'sell',
-  beauty: 'fashion',
-  books: 'home',
-  barber_supplies: 'sell'
-};
+function isSectionRowEmpty(sectionId) {
+  const box = document.getElementById('section-' + sectionId);
+  if (!box) return true;
+  const row = box.closest('.section-row') || box;
+  if (row.hidden) return true;
+  const holder = box.classList.contains('section-row') ? (box.querySelector('.barbers-grid, .products-scroll') || box) : box;
+  return holder.querySelectorAll(':scope > *').length === 0;
+}
 
 function scrollToSection(sectionId) {
-  if (SECTION_SCROLL_ALIASES[sectionId]) {
-    sectionId = SECTION_SCROLL_ALIASES[sectionId];
-  }
-
   // نلغي أي نتائج بحث مفتوحة عشان القسم الأصلي يبان
   if (typeof clearSearchResults === 'function') clearSearchResults();
 
@@ -74,6 +67,12 @@ function scrollToSection(sectionId) {
   }
   const target = document.getElementById('section-' + sectionId);
   if (!target) return;
+
+  // القسم فاضي (مفيش منتجات/أنشطة معتمدة) → واجهة النتائج بتعرض رسالة واضحة
+  if (isSectionRowEmpty(sectionId) && typeof window.DoddzOpenSectionResults === 'function') {
+    window.DoddzOpenSectionResults(sectionId);
+    return;
+  }
 
   const headerOffset = 112; // top-bar + header + nav-bar الملتصقين فوق
   const y = target.getBoundingClientRect().top + window.scrollY - headerOffset;
