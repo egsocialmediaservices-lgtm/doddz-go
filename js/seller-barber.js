@@ -668,13 +668,150 @@
   }
 
   /* ================================================================
+     طلب عمالة — صاحب الصالون يبيعته للإدارة (جدول staff_requests)
+     الأنواع: فني حلاقة / فني نظافة / كاشير / نظام كاشير.
+     الحالة والمالك بيتثبتوا في Supabase (تريجر + RPC)، والكود ده
+     بيبعت النوع والكمية والملاحظات بس.
+  ================================================================ */
+  const STAFF_KINDS = {
+    barber_tech:   'فني حلاقة',
+    cleaning_tech: 'فني نظافة',
+    cashier:       'كاشير',
+    pos_system:    'نظام كاشير'
+  };
+  const STAFF_STATUS = {
+    pending:  { label: 'في مراجعة الإدارة', cls: 'pending'   },
+    approved: { label: 'مقبول',             cls: 'delivered' },
+    rejected: { label: 'مرفوض',             cls: 'cancelled' },
+    done:     { label: 'تم التنفيذ',        cls: 'delivered' }
+  };
+  let staffKind = null;
+
+  function supa() { return window.supabaseClient || null; }
+
+  function pickStaffKind(kind) {
+    staffKind = kind;
+    document.querySelectorAll('#sb-staff-kinds .sb-staff-kind')
+      .forEach(b => b.classList.toggle('selected', b.dataset.staffKind === kind));
+    errBox('#sb-staff-errors', '');
+  }
+
+  function staffCardHtml(r) {
+    const meta = STAFF_STATUS[r.status] || STAFF_STATUS.pending;
+    const when = r.created_at ? new Date(r.created_at).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+    const place = [r.area, r.governorate].filter(Boolean).join(' · ');
+    return `<div class="adm-order-card">
+      <div class="adm-order-head">
+        <div class="adm-order-head-main">
+          <strong>${esc(STAFF_KINDS[r.kind] || r.kind)}${r.quantity > 1 ? ' × ' + r.quantity : ''}</strong>
+          <span class="adm-order-date">${esc(when)}${place ? ' · ' + esc(place) : ''}</span>
+          ${r.notes ? `<span class="adm-order-date">ملاحظات: ${esc(r.notes)}</span>` : ''}
+          ${r.admin_notes ? `<span class="adm-order-date">رد الإدارة: ${esc(r.admin_notes)}</span>` : ''}
+        </div>
+        <div class="adm-order-head-side">
+          <span class="adm-order-badge ${meta.cls}">${meta.label}</span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  async function renderStaffRequests() {
+    const listEl = $('#sb-staff-list');
+    const stats  = $('#sb-staff-stats');
+    if (!listEl) return;
+    const c = supa();
+    if (!c) { listEl.innerHTML = '<div class="adm-empty">الاتصال بالسحابة مقفول دلوقتي</div>'; return; }
+    const uid = (S() && S().getUserId) ? S().getUserId() : null;
+    if (!uid) { listEl.innerHTML = '<div class="adm-empty">سجّل دخولك الأول</div>'; return; }
+
+    listEl.innerHTML = '<div class="adm-empty">جارِ التحميل…</div>';
+    const { data, error } = await c
+      .from('staff_requests')
+      .select('id,kind,quantity,area,governorate,notes,admin_notes,status,created_at')
+      .eq('user_id', uid)
+      .order('created_at', { ascending: false })
+      .limit(30);
+
+    if (error) {
+      console.warn('[SellerBarber] staff_requests:', error);
+      listEl.innerHTML = '<div class="adm-empty">تعذر قراءة الطلبات — تأكد إن <b>supabase/10-staff-requests-and-reviews.sql</b> اتنفّذ في SQL Editor.</div>';
+      if (stats) stats.textContent = '';
+      return;
+    }
+    const rows = data || [];
+    const pending = rows.filter(r => r.status === 'pending').length;
+    if (stats) stats.textContent = `${rows.length} طلب · ${pending} في مراجعة الإدارة`;
+    listEl.innerHTML = rows.length
+      ? rows.map(staffCardHtml).join('')
+      : '<div class="adm-empty">لسه مفيش طلبات عمالة</div>';
+
+    // نكمّل الحقول من بيانات النشاط لو فاضية — الطلب يبقى سريع
+    const biz = (S() && S().getBarber) ? S().getBarber() : null;
+    if (biz) {
+      const gov = $('#sb-staff-gov'), area = $('#sb-staff-area'), phone = $('#sb-staff-phone');
+      if (gov && !gov.value) gov.value = biz.governorate || '';
+      if (area && !area.value) area.value = biz.area || '';
+      if (phone && !phone.value) phone.value = biz.phone || '';
+    }
+  }
+
+  async function submitStaffRequest() {
+    errBox('#sb-staff-errors', '');
+    const c = supa();
+    if (!c) return errBox('#sb-staff-errors', 'الاتصال بالسحابة مقفول دلوقتي — جرّب بعد شوية');
+    if (!staffKind) return errBox('#sb-staff-errors', 'اختَر الأول نوع الطلب: فني حلاقة أو فني نظافة أو كاشير أو نظام كاشير');
+
+    const qty  = Math.max(1, Math.min(20, Number($('#sb-staff-qty')?.value) || 1));
+    const btn  = $('#sb-staff-submit');
+    if (btn) { btn.disabled = true; btn.textContent = 'جارِ الإرسال…'; }
+
+    const { data, error } = await c.rpc('submit_staff_request', {
+      p_kind:        staffKind,
+      p_quantity:    qty,
+      p_notes:       ($('#sb-staff-notes')?.value || '').trim() || null,
+      p_area:        ($('#sb-staff-area')?.value || '').trim() || null,
+      p_governorate: ($('#sb-staff-gov')?.value || '').trim() || null,
+      p_phone:       ($('#sb-staff-phone')?.value || '').trim() || null
+    });
+
+    if (btn) { btn.disabled = false; btn.textContent = 'إرسال الطلب للإدارة'; }
+
+    if (error) {
+      console.warn('[SellerBarber] submit_staff_request:', error);
+      return errBox('#sb-staff-errors', error.message || 'تعذر إرسال الطلب — جرّب تاني');
+    }
+    if (data && data.success === false) {
+      return errBox('#sb-staff-errors', data.error || 'تعذر إرسال الطلب');
+    }
+
+    notify('تم إرسال الطلب للإدارة — هيتواصلوا معاك على ' + (($('#sb-staff-phone')?.value || '').trim() || 'رقمك المسجّل'));
+    pickStaffKind(null);
+    const notes = $('#sb-staff-notes'); if (notes) notes.value = '';
+    const q = $('#sb-staff-qty'); if (q) q.value = '1';
+    await renderStaffRequests();
+  }
+
+  function wireStaff() {
+    const box = $('#sb-staff-kinds');
+    if (!box) return;
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-staff-kind]');
+      if (!b) return;
+      pickStaffKind(b.dataset.staffKind === staffKind ? null : b.dataset.staffKind);
+    });
+    $('#sb-staff-submit')?.addEventListener('click', submitStaffRequest);
+    $('#sb-staff-refresh')?.addEventListener('click', renderStaffRequests);
+  }
+
+  /* ================================================================
      التشغيل
   ================================================================ */
   const RENDERERS = {
     'barber-team': renderTeam,
     'barber-gallery': renderMedia,
     'barber-hours': renderHours,
-    'barber-location': renderLocation
+    'barber-location': renderLocation,
+    'barber-staff': renderStaffRequests
   };
 
   function render(tab) {
@@ -684,7 +821,7 @@
 
   function boot() {
     if (!$('#seller-view-barber-team')) return;   // الصفحة دي مفيهاش لوحة بائع
-    wireTeam(); wireMedia(); wireHours(); wireLocation();
+    wireTeam(); wireMedia(); wireHours(); wireLocation(); wireStaff();
     // زرار «إعادة المحاولة» في رسالة «مفيش صالون مربوط» — بيسحب الكتالوج من السحابة
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#sb-retry-barber')) return;

@@ -207,25 +207,51 @@
     if (chip) chip.hidden = !homeEnabled();
   }
 
+  /* أكتر من 5 خدمات في القسم الواحد → أول 5 بس + زرار «المزيد»
+     عشان قايمة الخدمات ما تطوّلش صفحة الصالون وتاخّد مساحة من الصفحة.
+     الحالة المفتوحة بتفضل محفوظة حتى بعد إعادة الرسم (تعديل من اللوحة). */
+  const SVC_PREVIEW = 5;
+  const openSvcGroups = new Set();
+
+  function serviceRow(s) {
+    return `
+      <div class="bp-service">
+        <div>
+          <div class="bp-service-name">${esc(s.name)}</div>
+          <div class="bp-service-meta">${s.durationMin} دقيقة${s.description ? ' · ' + esc(s.description) : ''}</div>
+        </div>
+        <div class="bp-service-price">${money(s.price)} ج.م</div>
+      </div>
+    `;
+  }
+
   function renderServicePanel() {
     const list = $('bp-services-list');
     if (!list) return;
     const groups = groupedServices();
     if (!groups.length) { list.innerHTML = '<p style="color:#888">لا توجد خدمات</p>'; return; }
-    list.innerHTML = groups.map(g => `
-      <div class="bp-svc-group">
-        <div class="bp-svc-group-title">${esc(g.label)}</div>
-        ${g.items.map(s => `
-          <div class="bp-service">
-            <div>
-              <div class="bp-service-name">${esc(s.name)}</div>
-              <div class="bp-service-meta">${s.durationMin} دقيقة${s.description ? ' · ' + esc(s.description) : ''}</div>
-            </div>
-            <div class="bp-service-price">${money(s.price)} ج.م</div>
+    list.innerHTML = groups.map(g => {
+      const hiddenCount = Math.max(0, g.items.length - SVC_PREVIEW);
+      const isOpen = hiddenCount > 0 && openSvcGroups.has(g.key);
+      return `
+      <div class="bp-svc-group${isOpen ? ' open' : ''}" data-svc-group="${esc(g.key)}">
+        <div class="bp-svc-group-title">
+          <span>${esc(g.label)}</span>
+          <span class="bp-svc-count">${g.items.length}</span>
+        </div>
+        ${g.items.slice(0, SVC_PREVIEW).map(serviceRow).join('')}
+        ${hiddenCount ? `
+          <div class="bp-svc-rest"${isOpen ? '' : ' hidden'}>
+            ${g.items.slice(SVC_PREVIEW).map(serviceRow).join('')}
           </div>
-        `).join('')}
+          <button type="button" class="bp-svc-more" data-svc-more="${esc(g.key)}" aria-expanded="${isOpen ? 'true' : 'false'}">
+            ${isOpen ? 'عرض أقل' : 'المزيد (' + hiddenCount + ' خدمة)'}
+            <span class="bp-svc-more-arrow" aria-hidden="true">${isOpen ? '▲' : '▼'}</span>
+          </button>
+        ` : ''}
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   /* ── الفريق ───────────────────────────────────────────────── */
@@ -379,6 +405,267 @@
         </button>
       `).join('');
     });
+  }
+
+  /* ================================================================
+     تقييمات الزوار — provider_reviews
+     ----------------------------------------------------------------
+     * الزائر بيبعت تقييمه لدالة submit_provider_review → بيروح 'pending'.
+     * القايمة العامة بتتقرا من provider_approved_reviews (المعتمد بس).
+     * كل الصلاحيات في Supabase (RLS + SECURITY DEFINER) — المتصفح
+       بيعبّر عن النية بس، ومفيش أي قرار أمان هنا.
+     * لو الجدول لسه ما اتنفّذش (supabase/10-staff-requests-and-reviews.sql)
+       الصفحة تكمّل شغل عادي وتقول ملاحظة واضحة بدل ما تقع.
+  ================================================================ */
+  const REV_SECTION  = 'barbers';
+  const REV_PREVIEW  = 3;
+  let revRows        = [];      // المعتمدة
+  let revOpenAll     = false;
+  let revFormOpen    = false;
+  let revStarPick    = 0;
+  let revJustSent    = false;
+  let revTableReady  = true;    // false لو SQL لسه ما اتنفّذش
+  let authUser       = null;
+  let myReview       = null;
+
+  function supa() { return window.supabaseClient || null; }
+
+  function revError(msg) {
+    const el = $('bp-rev-error');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('show', !!msg);
+  }
+
+  function revDate(iso) {
+    if (!iso) return '';
+    try { return new Date(iso).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }); }
+    catch (_) { return ''; }
+  }
+
+  /* المتوسط والعدد: من عمودات النشاط المعتمدة، وبنتيجة القايمة لو هي الأحدث */
+  function renderReviewSummary() {
+    const el = $('bp-rev-summary');
+    if (!el) return;
+    const avg = Number(barber && barber.rating || 0);
+    const cnt = Math.max(Number(barber && barber.reviewsCount || 0), revRows.length);
+    if (!cnt) {
+      el.innerHTML = '<span class="bp-rev-sum-empty">لسه مفيش تقييمات معتمدة لهذا الصالون.</span>';
+      return;
+    }
+    el.innerHTML =
+      '<span class="bp-rev-sum-avg">' + starsHtml(avg) + '<b>' + avg.toFixed(1) + '</b></span>' +
+      '<span class="bp-rev-sum-count">بناءً على ' + cnt + ' تقييم معتمد من زوار Doddz Go</span>';
+  }
+
+  function renderReviewsList() {
+    const list = $('bp-rev-list');
+    if (!list) return;
+    if (!revRows.length) {
+      list.innerHTML = '<p class="bp-rev-empty">أول تقييم معتمد هيظهر هنا بعد مراجعة الإدارة.</p>';
+      return;
+    }
+    const hidden = Math.max(0, revRows.length - REV_PREVIEW);
+    const shown = revOpenAll ? revRows : revRows.slice(0, REV_PREVIEW);
+    list.innerHTML = shown.map(r => `
+      <div class="bp-rev-item">
+        <div class="bp-rev-head">
+          <span class="bp-rev-name">${esc(r.reviewer || 'زائر Doddz Go')}</span>
+          <span class="bp-rev-date">${esc(revDate(r.created_at))}</span>
+        </div>
+        <div class="bp-rev-line">${starsHtml(r.rating)}</div>
+        ${r.comment ? '<p class="bp-rev-comment">' + esc(r.comment) + '</p>' : ''}
+      </div>
+    `).join('') + (hidden ? `
+      <button type="button" class="bp-svc-more bp-rev-more" data-rev-more aria-expanded="${revOpenAll ? 'true' : 'false'}">
+        ${revOpenAll ? 'عرض أقل' : 'عرض كل التقييمات (' + revRows.length + ')'}
+        <span class="bp-svc-more-arrow" aria-hidden="true">${revOpenAll ? '▲' : '▼'}</span>
+      </button>
+    ` : '');
+  }
+
+  const MY_REVIEW_LABEL = {
+    pending:  'تقييمك وصل — قيد مراجعة الإدارة',
+    approved: 'تقييمك منشور ✓',
+    rejected: 'تقييمك اترفض — تقدر تعدّله وتبعت تاني'
+  };
+
+  function starPickerHtml() {
+    return [1, 2, 3, 4, 5].map(i =>
+      '<button type="button" class="bp-rev-star' + (i <= revStarPick ? ' on' : '') +
+      '" data-rev-star="' + i + '" aria-label="' + i + ' من 5">★</button>'
+    ).join('');
+  }
+
+  function renderReviewForm() {
+    const box = $('bp-rev-form');
+    if (!box) return;
+
+    // الزائر من غير حساب: الحقول محتاجة user_id، فالمنطق كله في Supabase
+    if (!authUser) {
+      box.innerHTML = `
+        <div class="bp-rev-gate">
+          <p class="bp-panel-note" style="margin:0 0 10px;">عشان نظهر تقييمات حقيقية بس، التقييم متاح للحسابات المسجّلة في Doddz Go.</p>
+          <a class="bk-btn primary bp-rev-login-link" href="index.html">سجّل دخولك من «حسابي» وارجع تقيم</a>
+        </div>`;
+      return;
+    }
+
+    // عنده مراجعة مسجّلة وهو مش في وضع التعديل → بطاقة حالته
+    if (!revFormOpen && myReview) {
+      box.innerHTML = `
+        <div class="bp-rev-mine ${esc(myReview.status)}">
+          <div class="bp-rev-mine-head">
+            <strong>${esc(MY_REVIEW_LABEL[myReview.status] || 'تقييمك مسجّل')}</strong>
+            ${starsHtml(myReview.rating)}
+          </div>
+          ${myReview.comment ? '<p class="bp-rev-comment">' + esc(myReview.comment) + '</p>' : ''}
+          ${myReview.admin_notes ? '<p class="bp-rev-note">رد الإدارة: ' + esc(myReview.admin_notes) + '</p>' : ''}
+          <button type="button" class="bp-rev-edit" id="bp-rev-edit">تعديل تقييمي</button>
+        </div>`;
+      return;
+    }
+
+    if (!revFormOpen) {
+      if (!revTableReady) { box.innerHTML = ''; return; }
+      box.innerHTML = '<button type="button" class="bp-svc-more bp-rev-open" id="bp-rev-open">＋ أضّف تقييمك وتجربتك مع الصالون</button>';
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="bp-rev-fields">
+        ${revJustSent ? '<p class="bp-rev-ok">تم إرسال تقييمك للإدارة — هيظهر هنا بعد الاعتماد ✓</p>' : ''}
+        <label class="bp-rev-label">تقييمك بالنجوم</label>
+        <div class="bp-rev-pick" id="bp-rev-pick">
+          ${starPickerHtml()}
+          <span class="bp-rev-pick-num" id="bp-rev-pick-num">${revStarPick ? revStarPick + ' / 5' : 'اختَر عدد النجوم'}</span>
+        </div>
+        <label class="bp-rev-label" for="bp-rev-comment">تعليقك (اختياري)</label>
+        <textarea id="bp-rev-comment" class="bp-rev-input" rows="3" maxlength="400" placeholder="مثال: قص ظريف والموعد اتلتزم بيه">${esc((myReview && myReview.comment) || '')}</textarea>
+        <div class="bp-rev-error" id="bp-rev-error"></div>
+        <div class="bk-actions">
+          <button type="button" class="bk-btn secondary" id="bp-rev-cancel">إلغاء</button>
+          <button type="button" class="bk-btn primary" id="bp-rev-send">إرسال للإدارة</button>
+        </div>
+        <p class="bp-rev-note">تقييمك بيروح للإدارة الأول وبعدين يظهر لكل الزوار. لو عدّلته بعد النشر بيرجع للمراجعة من أول.</p>
+      </div>`;
+  }
+
+  function refreshStarPickUi() {
+    document.querySelectorAll('#bp-rev-pick .bp-rev-star').forEach(el => {
+      el.classList.toggle('on', Number(el.dataset.revStar) <= revStarPick);
+    });
+    const num = $('bp-rev-pick-num');
+    if (num) num.textContent = revStarPick ? revStarPick + ' / 5' : 'اختَر عدد النجوم';
+  }
+
+  /* المعتمدة بس — ولو الجدول لسه ما اتعملش بنقفل التبويب بهدوء */
+  async function loadReviews() {
+    const list = $('bp-rev-list');
+    if (!list) return;
+    const c = supa();
+    if (!c) { list.innerHTML = '<p class="bp-rev-empty">السحابة مقفولة دلوقتي — جرّب بعد شوية.</p>'; return; }
+    list.innerHTML = '<p class="bp-rev-empty">جارِ تحميل التقييمات…</p>';
+    const { data, error } = await c.rpc('provider_approved_reviews', {
+      p_section: REV_SECTION, p_provider_id: String(barber.id)
+    });
+    if (error) {
+      console.warn('[BarberPage] provider_approved_reviews:', error);
+      revTableReady = false;
+      revRows = [];
+      list.innerHTML = '<p class="bp-rev-empty">التقييمات لسه متفعّلة في المشروع — شغّل <b>supabase/10-staff-requests-and-reviews.sql</b> في SQL Editor.</p>';
+      renderReviewSummary();
+      return;
+    }
+    revTableReady = true;
+    revRows = data || [];
+    renderReviewSummary();
+    renderReviewsList();
+  }
+
+  /* مراجعة الحساب الحالي (أي حالة) — عشان الزرار ميتكررش */
+  async function loadMyReview() {
+    const c = supa();
+    if (!c || !authUser || !revTableReady) { myReview = null; return; }
+    const { data, error } = await c
+      .from('provider_reviews')
+      .select('id,rating,comment,status,admin_notes,created_at')
+      .eq('section', REV_SECTION)
+      .eq('provider_id', String(barber.id))
+      .eq('user_id', authUser.id)
+      .maybeSingle();
+    if (error) {
+      console.warn('[BarberPage] my review:', error);
+      myReview = null;
+      return;
+    }
+    myReview = data || null;
+  }
+
+  async function submitReview() {
+    const c = supa();
+    if (!c) return revError('الاتصال بالسحابة مقفول دلوقتي — جرّب بعد شوية');
+    if (!revStarPick) return revError('اختَر عدد النجوم الأول');
+    const comment = ($('bp-rev-comment') ? $('bp-rev-comment').value : '').trim();
+    const btn = $('bp-rev-send');
+    if (btn) { btn.disabled = true; btn.textContent = 'جارِ الإرسال…'; }
+    const { data, error } = await c.rpc('submit_provider_review', {
+      p_section: REV_SECTION,
+      p_provider_id: String(barber.id),
+      p_rating: revStarPick,
+      p_comment: comment || null
+    });
+    if (btn) { btn.disabled = false; btn.textContent = 'إرسال للإدارة'; }
+    if (error) {
+      console.warn('[BarberPage] submit_provider_review:', error);
+      return revError(error.message || 'تعذر إرسال التقييم — جرّب تاني');
+    }
+    if (data && data.success === false) return revError(data.error || 'تعذر إرسال التقييم');
+    myReview = { id: data && data.id, rating: revStarPick, comment, status: (data && data.status) || 'pending', admin_notes: null };
+    revFormOpen = false;
+    revJustSent = true;
+    renderReviewForm();
+    setTimeout(() => { revJustSent = false; }, 4000);
+  }
+
+  function onReviewClick(e) {
+    const star = e.target.closest('[data-rev-star]');
+    if (star) { revStarPick = Number(star.dataset.revStar) || 0; refreshStarPickUi(); revError(''); return; }
+    if (e.target.closest('#bp-rev-open')) {
+      revFormOpen = true; revStarPick = (myReview && myReview.rating) || 0;
+      renderReviewForm();
+      const ta = $('bp-rev-comment'); if (ta && myReview) ta.value = myReview.comment || '';
+      return;
+    }
+    if (e.target.closest('#bp-rev-edit')) {
+      revFormOpen = true; revStarPick = (myReview && myReview.rating) || 0;
+      renderReviewForm();
+      return;
+    }
+    if (e.target.closest('#bp-rev-cancel')) { revFormOpen = false; renderReviewForm(); return; }
+    if (e.target.closest('#bp-rev-send')) { submitReview(); return; }
+  }
+
+  /* الدخول بيتم من المتجر (index.html) — هنا بنسمع تغيير الحالة بس */
+  async function initReviews() {
+    const c = supa();
+    if (c) {
+      try {
+        const { data } = await c.auth.getSession();
+        authUser = (data && data.session && data.session.user) || null;
+      } catch (_) { authUser = null; }
+      try {
+        c.auth.onAuthStateChange((_event, session) => {
+          authUser = (session && session.user) || null;
+          revFormOpen = false;
+          loadMyReview().then(renderReviewForm);
+        });
+      } catch (_) { /* النسخة القديمة من supabase-js */ }
+    }
+    await loadReviews();
+    await loadMyReview();
+    renderReviewSummary();
+    renderReviewForm();
   }
 
   /* ── الـlightbox ──────────────────────────────────────────── */
@@ -547,6 +834,24 @@
   function wire() {
     $('bp-scroll-book')?.addEventListener('click', () => {
       $('booking-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // قايمة الخدمات: «المزيد» / «عرض أقل» لكل مجموعة (لو أكتر من 5 خدمات)
+    $('bp-services-list')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-svc-more]');
+      if (!btn) return;
+      const key = btn.dataset.svcMore;
+      if (openSvcGroups.has(key)) openSvcGroups.delete(key);
+      else openSvcGroups.add(key);
+      renderServicePanel();
+    });
+
+    // تقييمات الزوار: النجوم / فتح النموذج / الإرسال (تفويض — المحتوى بيتبني من JS)
+    $('bp-rev-form')?.addEventListener('click', onReviewClick);
+    $('bp-rev-list')?.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-rev-more]')) return;
+      revOpenAll = !revOpenAll;
+      renderReviewsList();
     });
 
     // الألبوم → lightbox
@@ -728,6 +1033,7 @@
     renderProfile();
     wire();
     setStep(1);
+    initReviews();
     document.addEventListener('doddz:barber-data', onDataChanged);
   });
 })();

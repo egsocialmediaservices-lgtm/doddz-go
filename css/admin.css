@@ -684,8 +684,72 @@ table.adm-table tr:last-child td { border-bottom:none; }
 .sb-preset-bar select { flex: 1; min-width: 190px; padding: 7px; font-size: 12.5px; border: 1px solid #dfe4e8; border-radius: 9px; }
 .svc-row-tools { display: flex; justify-content: flex-end; }
 
+/* ── طلب عمالة (صاحب الصالون → الإدارة) ───────────────────── */
+.sb-staff-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sb-staff-kind {
+  flex: 1 1 calc(50% - 8px);
+  min-width: 140px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #4a4a58;
+  background: #f7fbfc;
+  border: 1.5px dashed #cfd8dc;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.sb-staff-kind:hover { border-color: #67e2f0; color: #0e7490; }
+.sb-staff-kind.selected {
+  background: #0e7490;
+  border-color: #0e7490;
+  border-style: solid;
+  border-width: 1.5px;
+  color: #fff;
+}
+
+/* ── جدول الأدمن: أزرار حالة طلب العمالة + رد الإدارة ─────── */
+.adm-staff-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 8px;
+}
+.adm-staff-actions .adm-btn { padding: 5px 10px; font-size: 11.5px; }
+.adm-staff-notes {
+  flex: 1;
+  min-width: 180px;
+  padding: 6px 9px;
+  font-family: inherit;
+  font-size: 12px;
+  border: 1px solid #dfe4e8;
+  border-radius: 8px;
+  background: #fff;
+  color: #2c2c38;
+}
+.adm-staff-notes:focus { outline: 2px solid #67e2f0; outline-offset: 1px; }
+
+/* ── نجوم تقييمات الزوار في لوحة الأدمن ────────────────────── */
+.adm-stars {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #d97706;
+  letter-spacing: 1px;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
 @media (max-width: 640px) {
   .sb-hero-grid { grid-template-columns: 1fr; }
   .sb-team-card { flex-wrap: wrap; }
   .sb-team-actions { width: 100%; justify-content: flex-start; }
+  .sb-staff-kind { flex: 1 1 100%; }
+  .adm-staff-notes { min-width: 100%; }
 }

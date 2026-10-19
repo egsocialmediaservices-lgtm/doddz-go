@@ -16,6 +16,10 @@
 
   const STAFF_ROLES = ['seller', 'merchant', 'service_provider', 'admin'];
 
+  // الأقسام الأربعة اللي ليها صاحب نشاط (قصها / لمعها / انامل / كسبني).
+  // زرار «نشاطي» في الهيدر بيظهر لحساب من دول أو للأدمن بس.
+  const PROVIDER_CATEGORIES = ['barbers', 'carwash', 'handmade', 'merchants'];
+
   const STATUS_LABELS = {
     pending:   { label: 'قيد الانتظار', cls: 'pending' },
     confirmed: { label: 'مؤكد',         cls: 'confirmed' },
@@ -92,9 +96,11 @@
     const isAdmin = role === 'admin';
 
     const sellerFab = $('#seller-fab');
-    // الزرار يفضل ظاهر لغير المسجلين (لأن منه بيتم تسجيل التجار والحلّاقين الجدد)،
-    // وبيختفي لحساب الزائر المسجّل — اللي ليه يشتري ويستخدم الخدمات بس.
-    if (sellerFab) sellerFab.style.display = (state.user && !isStaff) ? 'none' : '';
+    // «نشاطي» لصاحب الصالون / التاجر / ورشة الانامل / صاحب المغسلة / الأدمن بس.
+    // الزائر المسجّل مالوش نشاط → الزرار مخفي، وزرار «حسابي» هو بوابته الأصلية
+    // للتسجيل الدخول أو طلب الانضمام (site.js → seller-entry-overlay).
+    const isProviderOwner = !!category && PROVIDER_CATEGORIES.includes(category);
+    if (sellerFab) sellerFab.style.display = (isProviderOwner || isAdmin) ? '' : 'none';
 
     const staffNav = $('#account-nav-staff');
     if (staffNav) staffNav.hidden = !isStaff;

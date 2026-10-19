@@ -205,6 +205,16 @@
       loadProvidersAdmin();
       return;
     }
+    // تبويبات جديدة: طلبات العمالة + تقييمات الزوار (منطقها تحت في الملف)
+    if (tab === 'staff' || tab === 'reviews') {
+      document.querySelectorAll('.adm-tab').forEach(x => x.classList.toggle('active', x.dataset.tab === tab));
+      document.querySelectorAll('.adm-view').forEach(x => x.classList.remove('active'));
+      const view = $('#adm-view-' + tab);
+      if (view) view.classList.add('active');
+      if (tab === 'staff') loadStaffRequestsAdmin();
+      else loadReviewsAdmin();
+      return;
+    }
 
     tabList.classList.toggle('active', tab === 'list');
     tabForm.classList.toggle('active', tab === 'form');
@@ -2147,6 +2157,239 @@
   $('#adm-tab-providers')?.addEventListener('click', () => switchTab('providers'));
   $('#adm-providers-refresh')?.addEventListener('click', loadProvidersAdmin);
   $('#adm-providers-filter')?.addEventListener('change', renderProvidersAdmin);
+
+  /* ================================================================
+     طلبات العمالة — لوحة الأدمن
+     صاحب الصالون بيبعتها من لوحة البائع (تبويب «طلب عمالة»)،
+     والجدول ده بيقرأها كلها ويحوّل حالتها بدالة
+     set_staff_request_status (الفحص في Supabase مش هنا).
+  ================================================================ */
+  const STAFF_KIND_LABELS = {
+    barber_tech:   'فني حلاقة',
+    cleaning_tech: 'فني نظافة',
+    cashier:       'كاشير',
+    pos_system:    'نظام كاشير'
+  };
+  const STAFF_STATUS_META = {
+    pending:  { label: 'جديد',        cls: 'pending'   },
+    approved: { label: 'مقبول',       cls: 'delivered' },
+    rejected: { label: 'مرفوض',       cls: 'cancelled' },
+    done:     { label: 'تم التنفيذ',  cls: 'delivered' }
+  };
+  let staffReqRows = [];
+
+  function admEsc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  async function loadStaffRequestsAdmin() {
+    const listEl = $('#adm-staff-list');
+    const stats  = $('#adm-staff-stats');
+    if (!listEl) return;
+    const client = getSupabaseClient();
+    if (!client) { listEl.innerHTML = '<div class="adm-empty">الاتصال بالسحابة مقفول</div>'; return; }
+    listEl.innerHTML = '<div class="adm-empty">جارِ التحميل…</div>';
+    const { data, error } = await client
+      .from('staff_requests')
+      .select('id,provider_name,kind,quantity,governorate,area,contact_phone,notes,status,admin_notes,created_at')
+      .order('created_at', { ascending: false })
+      .limit(200);
+    if (error) {
+      console.warn('[Admin] staff_requests:', error);
+      staffReqRows = [];
+      listEl.innerHTML = '<div class="adm-empty">تعذر قراءة الطلبات — تأكد إن <b>supabase/10-staff-requests-and-reviews.sql</b> اتنفّذ في SQL Editor، وإنك مسجّل دخول كأدمن.</div>';
+      if (stats) stats.textContent = '';
+      return;
+    }
+    staffReqRows = data || [];
+    renderStaffRequestsAdmin();
+  }
+
+  function renderStaffRequestsAdmin() {
+    const listEl = $('#adm-staff-list');
+    const stats  = $('#adm-staff-stats');
+    if (!listEl) return;
+    const filter = ($('#adm-staff-status-filter')?.value || '');
+    const rows   = filter ? staffReqRows.filter(r => r.status === filter) : staffReqRows;
+    const fresh  = staffReqRows.filter(r => r.status === 'pending').length;
+    if (stats) stats.textContent = `${staffReqRows.length} طلب · ${fresh} جديد`;
+    if (!rows.length) { listEl.innerHTML = '<div class="adm-empty">لا توجد طلبات مطابقة</div>'; return; }
+
+    listEl.innerHTML = rows.map(r => {
+      const meta = STAFF_STATUS_META[r.status] || STAFF_STATUS_META.pending;
+      const when = r.created_at ? new Date(r.created_at).toLocaleString('ar-EG') : '—';
+      const place = [r.area, r.governorate].filter(Boolean).join(' · ');
+      return `<div class="adm-order-card">
+        <div class="adm-order-head">
+          <div class="adm-order-head-main">
+            <strong>${admEsc(STAFF_KIND_LABELS[r.kind] || r.kind)}${Number(r.quantity) > 1 ? ' × ' + r.quantity : ''}</strong>
+            <span class="adm-order-date">${admEsc(r.provider_name || 'صالون')} · ${when}${place ? ' · ' + admEsc(place) : ''}</span>
+            <span class="adm-order-date">${r.contact_phone ? 'تواصل: ' + admEsc(r.contact_phone) : 'بدون رقم تواصل'}</span>
+            ${r.notes ? `<span class="adm-order-date">ملاحظات صاحب الصالون: ${admEsc(r.notes)}</span>` : ''}
+            ${r.admin_notes ? `<span class="adm-order-date">رد الإدارة: ${admEsc(r.admin_notes)}</span>` : ''}
+          </div>
+          <div class="adm-order-head-side">
+            <span class="adm-order-badge ${meta.cls}">${meta.label}</span>
+          </div>
+        </div>
+        <div class="adm-row-actions adm-staff-actions">
+          <input type="text" class="adm-staff-notes" data-staff-notes="${admEsc(r.id)}" placeholder="رد للإطلاع (اختياري)" value="${admEsc(r.admin_notes || '')}"/>
+          ${r.status !== 'approved' ? `<button type="button" class="adm-btn" data-staff-status="${admEsc(r.id)}|approved">قبول</button>` : ''}
+          ${r.status !== 'done' ? `<button type="button" class="adm-btn" data-staff-status="${admEsc(r.id)}|done">تم التنفيذ</button>` : ''}
+          ${r.status !== 'rejected' ? `<button type="button" class="adm-btn secondary" data-staff-status="${admEsc(r.id)}|rejected">رفض</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function setStaffRequestStatus(id, status, notes) {
+    const client = getSupabaseClient();
+    if (!client) return;
+    const { data, error } = await client.rpc('set_staff_request_status', {
+      p_id: id, p_status: status, p_admin_notes: notes || null
+    });
+    if (error) {
+      console.warn('[Admin] set_staff_request_status:', error);
+      toast(error.message || 'تعذر تغيير حالة الطلب');
+      return;
+    }
+    if (data && data.success === false) { toast(data.error || 'تعذر تغيير حالة الطلب'); return; }
+    toast(status === 'rejected' ? 'تم رفض طلب العمالة' : 'تم تحديث طلب العمالة');
+    await loadStaffRequestsAdmin();
+  }
+
+  $('#adm-tab-staff')?.addEventListener('click', () => switchTab('staff'));
+  $('#adm-staff-refresh')?.addEventListener('click', loadStaffRequestsAdmin);
+  $('#adm-staff-status-filter')?.addEventListener('change', renderStaffRequestsAdmin);
+  $('#adm-staff-list')?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-staff-status]');
+    if (!btn) return;
+    const raw = btn.dataset.staffStatus || '';
+    const sep = raw.indexOf('|');
+    const id = raw.slice(0, sep);
+    const status = raw.slice(sep + 1);
+    const notesInput = document.querySelector(`[data-staff-notes="${id}"]`);
+    btn.disabled = true;
+    await setStaffRequestStatus(id, status, notesInput ? notesInput.value.trim() : '');
+    btn.disabled = false;
+  });
+
+
+  /* ================================================================
+     تقييمات الزوار — لوحة الأدمن
+     كل مراجعة new = pending؛ المعتمد منها بس اللي بيبان للزوار
+     ومتوسط النشاط بيتحساب منه (دالة set_provider_review_status).
+  ================================================================ */
+  const REVIEW_STATUS_META = {
+    pending:  { label: 'في المراجعة', cls: 'pending'   },
+    approved: { label: 'منشور',       cls: 'delivered' },
+    rejected: { label: 'مرفوض',       cls: 'cancelled' }
+  };
+  let reviewRows = [];
+
+  async function loadReviewsAdmin() {
+    const listEl = $('#adm-reviews-list');
+    const stats  = $('#adm-reviews-stats');
+    if (!listEl) return;
+    const client = getSupabaseClient();
+    if (!client) { listEl.innerHTML = '<div class="adm-empty">الاتصال بالسحابة مقفول</div>'; return; }
+    listEl.innerHTML = '<div class="adm-empty">جارِ التحميل…</div>';
+    const { data, error } = await client
+      .from('provider_reviews')
+      .select('id,section,provider_id,rating,comment,status,admin_notes,created_at,profiles(display_name)')
+      .order('created_at', { ascending: false })
+      .limit(200);
+    if (error) {
+      console.warn('[Admin] provider_reviews:', error);
+      reviewRows = [];
+      listEl.innerHTML = '<div class="adm-empty">تعذر قراءة التقييمات — تأكد إن <b>supabase/10-staff-requests-and-reviews.sql</b> اتنفّذ في SQL Editor، وإنك مسجّل دخول كأدمن.</div>';
+      if (stats) stats.textContent = '';
+      return;
+    }
+    reviewRows = (data || []).map(r => ({
+      ...r,
+      reviewer: (r.profiles && r.profiles.display_name) || 'زائر Doddz Go'
+    }));
+    renderReviewsAdmin();
+  }
+
+  function reviewStars(n) {
+    const r = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+    return '★★★★★'.slice(0, r) + '☆☆☆☆☆'.slice(0, 5 - r);
+  }
+
+  function renderReviewsAdmin() {
+    const listEl = $('#adm-reviews-list');
+    const stats  = $('#adm-reviews-stats');
+    if (!listEl) return;
+    const filter = ($('#adm-reviews-status-filter')?.value || 'pending');
+    const rows   = filter ? reviewRows.filter(r => r.status === filter) : reviewRows;
+    const fresh  = reviewRows.filter(r => r.status === 'pending').length;
+    if (stats) stats.textContent = `${reviewRows.length} تقييم · ${fresh} في المراجعة`;
+    if (!rows.length) { listEl.innerHTML = '<div class="adm-empty">لا توجد تقييمات مطابقة</div>'; return; }
+
+    listEl.innerHTML = rows.map(r => {
+      const meta = REVIEW_STATUS_META[r.status] || REVIEW_STATUS_META.pending;
+      const when = r.created_at ? new Date(r.created_at).toLocaleString('ar-EG') : '—';
+      return `<div class="adm-order-card">
+        <div class="adm-order-head">
+          <div class="adm-order-head-main">
+            <strong>${admEsc(r.reviewer)} <span class="adm-stars">${reviewStars(r.rating)}</span> ${Number(r.rating) || 0}/5</strong>
+            <span class="adm-order-date">${admEsc(providerLabel(r.section))} · ${admEsc(r.provider_name || r.provider_id || '—')} · ${when}</span>
+            ${r.comment ? `<span class="adm-order-date">«${admEsc(r.comment)}»</span>` : '<span class="adm-order-date">بدون تعليق</span>'}
+            ${r.admin_notes ? `<span class="adm-order-date">ملاحظة الإدارة: ${admEsc(r.admin_notes)}</span>` : ''}
+          </div>
+          <div class="adm-order-head-side">
+            <span class="adm-order-badge ${meta.cls}">${meta.label}</span>
+          </div>
+        </div>
+        <div class="adm-row-actions adm-staff-actions">
+          <input type="text" class="adm-staff-notes" data-review-notes="${admEsc(r.id)}" placeholder="ملاحظة داخلية (اختياري)" value="${admEsc(r.admin_notes || '')}"/>
+          ${r.status !== 'approved' ? `<button type="button" class="adm-btn" data-review-status="${admEsc(r.id)}|approved">نشر</button>` : ''}
+          ${r.status !== 'rejected' ? `<button type="button" class="adm-btn secondary" data-review-status="${admEsc(r.id)}|rejected">حذف</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  async function setProviderReviewStatus(id, status, notes) {
+    const client = getSupabaseClient();
+    if (!client) return;
+    const { data, error } = await client.rpc('set_provider_review_status', {
+      p_id: id, p_status: status, p_admin_notes: notes || null
+    });
+    if (error) {
+      console.warn('[Admin] set_provider_review_status:', error);
+      toast(error.message || 'تعذر تغيير حالة التقييم');
+      return;
+    }
+    if (data && data.success === false) { toast(data.error || 'تعذر تغيير حالة التقييم'); return; }
+    toast(status === 'approved' ? 'التقييم اتنشر للعملاء' : 'التقييم اتمسح');
+    await loadReviewsAdmin();
+    // لو الصالون معروض في تبويب الحلاقين، التقييم ده بيعدّي على صفّه
+    if (typeof BarberStore !== 'undefined' && typeof BarberStore.syncCatalogFromSupabase === 'function') {
+      try { await BarberStore.syncCatalogFromSupabase(); } catch (_) {}
+    }
+  }
+
+  $('#adm-tab-reviews')?.addEventListener('click', () => switchTab('reviews'));
+  $('#adm-reviews-refresh')?.addEventListener('click', loadReviewsAdmin);
+  $('#adm-reviews-status-filter')?.addEventListener('change', renderReviewsAdmin);
+  $('#adm-reviews-list')?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-review-status]');
+    if (!btn) return;
+    const raw = btn.dataset.reviewStatus || '';
+    const sep = raw.indexOf('|');
+    const id = raw.slice(0, sep);
+    const status = raw.slice(sep + 1);
+    const notesInput = document.querySelector(`[data-review-notes="${id}"]`);
+    btn.disabled = true;
+    await setProviderReviewStatus(id, status, notesInput ? notesInput.value.trim() : '');
+    btn.disabled = false;
+  });
+
   $('#adm-providers-tbody')?.addEventListener('click', async (e) => {
     const approveBtn = e.target.closest('[data-p-approve]');
     const rejectBtn  = e.target.closest('[data-p-reject]');

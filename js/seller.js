@@ -165,7 +165,8 @@
    *  و«نشاطي» لأي حساب ليه نشاط في قسم. */
   const BARBER_TABS = [
     'barber-bookings', 'barber-services', 'barber-team',
-    'barber-gallery', 'barber-hours', 'barber-location', 'barber-home'
+    'barber-gallery', 'barber-hours', 'barber-location', 'barber-home',
+    'barber-staff'
   ];
 
   function applySectionTabs() {

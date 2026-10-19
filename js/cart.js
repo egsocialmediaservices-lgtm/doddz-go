@@ -76,12 +76,16 @@ function addToCart(productId, event, options = {}) {
   const existing = cart.find(item => getCartItemKey(item.id, item.color, item.size) === itemKey);
   if (existing) {
     existing.quantity++;
+    if (!existing.label) existing.label = product.name || '';
   } else {
     cart.push({
       id: product.id,
       color: color,
       size: size,
-      quantity: 1
+      quantity: 1,
+      // نسخة من الاسم وقت الإضافة — لو المنتج اتشيل من المتجر العربة لسه
+      // تعرف تعرض إيه هو، بدل ما ترمي معرّف غامض في وش الزائر.
+      label: product.name || ''
     });
   }
 
@@ -161,13 +165,33 @@ function getCartCount() {
   return getCartProducts().reduce((total, product) => total + (product.quantity || 0), 0);
 }
 
-function pruneOrphanCartItems() {
-  const before = cart.length;
-  cart = cart.filter(item => {
-    try { return !!(typeof ProductStore !== 'undefined' && ProductStore.getById(item.id)); }
-    catch { return false; }
-  });
-  if (cart.length !== before) saveCart();
+// ------------------------------------------------
+// السلة ما تتمسحش بالريفارش:
+// منتجات المتجر بتيجي من Supabase بعد تحميل الصفحة، وكان فيه تنظيف
+// (prune) بيشيل أي عنصر لسه مقدرش يوصل له وقت الريفارش، يعني أي refresh
+// كان بيفرّغ العربة. دلوقتي مفيش أي حذف تلقائي: العنصر اللي لسه ما اتعرفش
+// (الكتالوج ما وصلش بعد، أو المنتج اتشيل فعلًا من المتجر) بيترسم «غير متاح»
+// ومابيحسبش في الإجمالي وفي الطلب، والمستخدم وحده اللي يشيله.
+// ------------------------------------------------
+let cartCatalogReady = false;
+
+function isCartItemAvailable(item) {
+  try {
+    return !!(typeof ProductStore !== 'undefined' && ProductStore.getById(item.id));
+  } catch (_) {
+    return false;
+  }
+}
+
+/** عناصر في السلة الكتالوج لسه ما رجّعهاش — للعرض بس، بدون سعر */
+function getUnavailableCartItems() {
+  return cart
+    .filter(item => !isCartItemAvailable(item))
+    .map(item => ({
+      ...item,
+      cartKey: getCartItemKey(item.id, item.color, item.size),
+      label: item.label || 'منتج في عربتك'
+    }));
 }
 
 // ------------------------------------------------
@@ -184,7 +208,6 @@ function getCartTotal() {
 // تحديث Header + Drawer
 // ------------------------------------------------
 function updateCartUI() {
-  pruneOrphanCartItems();
   const count = getCartCount();
   const total = getCartTotal();
 
@@ -210,9 +233,10 @@ function renderCartDrawer() {
   if (!container) return;
 
   const products = getCartProducts();
+  const missing  = getUnavailableCartItems();
 
-  // العربة فاضية
-  if (!products.length) {
+  // العربة فاضية فعلًا (مفيش عناصر محفوظة أصلاً)
+  if (!products.length && !missing.length) {
     container.innerHTML = `
       <div class="cart-empty">
         <div class="cart-empty-icon" aria-hidden="true">
@@ -257,8 +281,34 @@ function renderCartDrawer() {
     `;
   }).join('');
 
+  // عناصر لسه الكتالوج ما رجّعهاش — ريفرش قبل ما بيانات المتجر توصل،
+  // أو منتج اتشيل فعلًا. بتتعرض بوضوح ومبتتمسحش، وبتفضل برّا الإجمالي والطلب.
+  if (missing.length) {
+    container.innerHTML += `
+      <div class="cart-off">
+        <div class="cart-off-title">${cartCatalogReady ? 'منتجات مش متاحة حاليًا' : 'جارِ التحقق من باقي العربة…'}</div>
+        ${missing.map(item => `
+          <div class="cart-item cart-item-off">
+            <div class="cart-item-img cart-off-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg>
+            </div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.label}</div>
+              <div class="cart-off-note">${cartCatalogReady ? 'المنتج ده مش في المتجر حاليًا — مش داخل في الإجمالي' : 'السعر هيظهر أول ما بيانات المتجر توصل'}</div>
+              ${item.quantity > 1 ? `<div class="cart-off-qty">العدد: ${item.quantity}</div>` : ''}
+            </div>
+            <button class="cart-remove" onclick="removeFromCart('${item.cartKey}')" title="حذف" aria-label="حذف">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
   // Footer
   if (footer) {
+    if (!products.length) { footer.innerHTML = ''; return; }
     const total = getCartTotal();
     footer.innerHTML = `
       <div class="cart-summary">
@@ -353,7 +403,7 @@ function renderCheckoutSummary() {
 }
 
 function openCheckout() {
-  if (!cart.length || !checkoutOverlay) return;
+  if (!getCartProducts().length || !checkoutOverlay) return;
   checkoutForm.hidden = false;
   checkoutSuccessEl.hidden = true;
   clearCheckoutError();
@@ -522,8 +572,9 @@ async function submitCheckout(event) {
       throw userFacingError('تعذر إرسال تفاصيل الطلب. جرّب تاني بعد قليل.');
     }
 
-    // نجاح — نفضّي العربة ونعرض شاشة التأكيد
-    cart = [];
+    // نجاح — نشيل العناصر اللي اتطلبت بس، وأي عنصر لسه غير متاح يفضل في العربة
+    const orderedKeys = new Set(products.map(p => p.cartKey));
+    cart = cart.filter(item => !orderedKeys.has(getCartItemKey(item.id, item.color, item.size)));
     saveCart();
     updateCartUI();
 
@@ -553,8 +604,15 @@ checkoutDoneBtn?.addEventListener('click', () => {
 });
 
 function checkoutCart() {
-  if (!cart.length) return;
+  if (!getCartProducts().length) return;
   openCheckout();
 }
 
 document.addEventListener('DOMContentLoaded', updateCartUI);
+
+// أول ما بيانات المتجر توصل من Supabase: نعيد رسم العربة ونكشف العناصر
+// غير المتاحة فعلًا (بدل ما نفضل نقول «جارِ التحقق…»)
+window.addEventListener('products-ready', () => {
+  cartCatalogReady = true;
+  updateCartUI();
+});

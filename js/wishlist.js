@@ -13,18 +13,33 @@ function saveWishlist() {
   updateWishlistUI();
 }
 
-function pruneWishlist() {
-  const valid = new Set(getWishlistProducts().map(p => String(p.id)));
-  const next = wishlist.filter(id => valid.has(String(id)));
-  if (next.length !== wishlist.length) {
-    wishlist = next;
-    localStorage.setItem('doddz_wishlist', JSON.stringify(wishlist));
+// ------------------------------------------------
+// المفضلة ما تتمسحش بالريفارش:
+// منتجات المتجر بتيجي من Supabase بعد تحميل الصفحة، وكان فيه تنظيف
+// بيشيل أي id لسه مقدرش يوصل له وقت الريفارش — يعني أي refresh كان
+// بيفرّغ المفضلة. دلوقتي مفيش حذف تلقائي: العنصر اللي لسه ما اتعرفش
+// بيترسم «غير متاح» في الدرج، ومافيش حاجة بتتمسح غير بزرار من المستخدم.
+// ------------------------------------------------
+let wishlistCatalogReady = false;
+
+function resolveWishlistProduct(id) {
+  if (typeof ProductStore !== 'undefined') {
+    const p = ProductStore.getById(id);
+    if (p) return p;
   }
+  if (typeof PRODUCTS !== 'undefined') {
+    return PRODUCTS.find(p => String(p.id) === String(id)) || null;
+  }
+  return null;
+}
+
+/** ids محفوظة بس الكتالوج لسه ما رجّعهاش */
+function getUnavailableWishlistIds() {
+  return wishlist.filter(id => !resolveWishlistProduct(id));
 }
 
 function updateWishlistUI() {
-  pruneWishlist();
-  const count = getWishlistProducts().length;
+  const count = wishlist.length;
   // 1. تحديث العداد في الهيدر
   const favCount = document.getElementById('fav-count');
   if (favCount) favCount.textContent = `${count} عناصر`;
@@ -56,7 +71,7 @@ function updateWishlistUI() {
   // 4. تحديث العداد داخل درج المفضلة
   const drawerCount = document.getElementById('wishlist-drawer-count');
   if (drawerCount) {
-    drawerCount.textContent = `${getWishlistProducts().length} منتج محفوظ`;
+    drawerCount.textContent = `${wishlist.length} منتج محفوظ`;
   }
 }
 
@@ -125,16 +140,7 @@ function closeWishlist() {
 }
 
 function getWishlistProducts() {
-  return wishlist.map(id => {
-    if (typeof ProductStore !== 'undefined') {
-      const p = ProductStore.getById(id);
-      if (p) return p;
-    }
-    if (typeof PRODUCTS !== 'undefined') {
-      return PRODUCTS.find(p => String(p.id) === String(id)) || null;
-    }
-    return null;
-  }).filter(Boolean);
+  return wishlist.map(resolveWishlistProduct).filter(Boolean);
 }
 
 function renderWishlistDrawer() {
@@ -143,8 +149,9 @@ function renderWishlistDrawer() {
   if (!container) return;
 
   const products = getWishlistProducts();
+  const missing  = getUnavailableWishlistIds();
 
-  if (!products.length) {
+  if (!products.length && !missing.length) {
     container.innerHTML = `
       <div class="cart-empty">
         <div class="cart-empty-icon" aria-hidden="true">
@@ -179,6 +186,30 @@ function renderWishlistDrawer() {
     </div>
   `;
   }).join('');
+
+  // عناصر لسه ما اتعرفتش (ريفارش قبل بيانات المتجر، أو منتج اتشيل) — بتتعرض
+  // ومش بتتمسح، عشان المستخدم ما يفقدش حاجته المحفوظة
+  if (missing.length) {
+    container.innerHTML += `
+      <div class="cart-off">
+        <div class="cart-off-title">${wishlistCatalogReady ? 'عناصر مش متاحة حاليًا' : 'جارِ التحقق من باقي المفضلة…'}</div>
+        ${missing.map(id => `
+          <div class="cart-item cart-item-off">
+            <div class="cart-item-img cart-off-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg>
+            </div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">منتج محفوظ في مفضلتك</div>
+              <div class="cart-off-note">${wishlistCatalogReady ? 'مش موجود في المتجر حاليًا' : 'هيرجع أول ما بيانات المتجر توصل'}</div>
+            </div>
+            <button class="cart-remove" onclick="toggleWishlist('${id}', event)" title="إزالة من المفضلة" aria-label="إزالة">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
 }
 
 // ------------------------------------------------
@@ -201,7 +232,15 @@ function initWishlist() {
 }
 
 document.addEventListener('DOMContentLoaded', initWishlist);
-window.addEventListener('products-ready', updateWishlistUI);
+
+// أول ما بيانات المتجر توصل: نعيد العداد والدرج لو مفتوح، ونكشف العناصر
+// غير المتاحة فعلًا بدل رسالة «جارِ التحقق…»
+window.addEventListener('products-ready', () => {
+  wishlistCatalogReady = true;
+  updateWishlistUI();
+  const drawer = document.getElementById('wishlist-drawer');
+  if (drawer && drawer.classList.contains('open')) renderWishlistDrawer();
+});
 
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   initWishlist();

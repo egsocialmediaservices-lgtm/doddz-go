@@ -10,13 +10,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/base.css?v=20261017f"/>
-  <link rel="stylesheet" href="css/header.css?v=20261017f"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261017f"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261017f"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261017f"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261017f"/>
-  <script src="js/motion.js?v=20261017f" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261019a"/>
+  <link rel="stylesheet" href="css/header.css?v=20261019a"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261019a"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261019a"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261019a"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261019a"/>
+  <script src="js/motion.js?v=20261019a" defer></script>
 </head>
 <body>
 
@@ -98,7 +98,7 @@
         <span class="icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>
         </span>
-        <span class="label">الصالونات</span>
+        <span class="label">الحلاقين</span>
         <span class="sub">استكشف</span>
       </button>
     </div>
@@ -106,7 +106,7 @@
 </header>
 
 <div class="bp-wrap" id="barber-page">
-  <button type="button" class="bp-back" onclick="window.location.href='index.html'">رجوع للصالونات</button>
+  <button type="button" class="bp-back" onclick="window.location.href='index.html'">رجوع للحلاقين</button>
   <div id="barber-not-found" hidden style="text-align:center;padding:48px 16px;color:#6b6b7b;font-weight:700;">
     الحلاق غير موجود أو غير معتمد للعرض.
   </div>
@@ -194,6 +194,18 @@
           </h3>
           <div class="bp-shots" id="bp-samples"></div>
         </div>
+
+        <!-- تقييمات الزوار: بتظهر بعد اعتماد الإدارة (provider_reviews) -->
+        <div class="bp-panel" id="bp-reviews-panel">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg>
+            تقييمات الزوار
+          </h3>
+          <div class="bp-rev-summary" id="bp-rev-summary"></div>
+          <div class="bp-rev-list" id="bp-rev-list"></div>
+          <div class="bp-rev-form" id="bp-rev-form"></div>
+        </div>
+
         <div class="bp-panel" id="bp-home-panel" hidden>
           <h3>
           <svg class="barber-home-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/></svg>
@@ -330,9 +342,9 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261017f"></script>
-<script src="js/barbers-data.js?v=20261017f"></script>
-<script src="js/barber-page.js?v=20261017f"></script>
-<script src="js/i18n.js?v=20261017f"></script>
+<script src="js/supabase-client.js?v=20261019a"></script>
+<script src="js/barbers-data.js?v=20261019a"></script>
+<script src="js/barber-page.js?v=20261019a"></script>
+<script src="js/i18n.js?v=20261019a"></script>
 </body>
 </html>
