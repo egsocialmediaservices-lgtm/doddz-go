@@ -5,7 +5,7 @@
 const SECTION_LABELS_SITE = {
   electronics: 'إلكترونيات',
   mobiles: 'موبايلات',
-  laptops: 'لاب توب',
+  laptops: 'اكسسوارات لاب توب',
   fashion: 'أزياء',
   shoes: 'أحذية',
   watches: 'ساعات وإكسسوارات',

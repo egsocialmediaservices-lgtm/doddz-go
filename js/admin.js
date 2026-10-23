@@ -79,7 +79,7 @@
   const SECTION_LABELS = {
     electronics: 'إلكترونيات',
     mobiles: 'موبايلات',
-    laptops: 'لاب توب',
+    laptops: 'اكسسوارات لاب توب',
     fashion: 'أزياء',
     shoes: 'أحذية',
     watches: 'ساعات وإكسسوارات',
@@ -529,7 +529,7 @@
   const SECTION_VALUE_MAP = {
     electronics:     ['electronics', 'الكترونيات', 'إلكترونيات'],
     mobiles:         ['mobiles', 'موبايلات', 'جوالات', 'هواتف'],
-    laptops:         ['laptops', 'لابتوب', 'لاب توب', 'لابتوبات'],
+    laptops:         ['laptops', 'لابتوب', 'لاب توب', 'لابتوبات', 'اكسسوارات لاب توب', 'اكسسوارات لابتوب', 'لاب توباكسسوارات'],
     fashion:         ['fashion', 'ازياء', 'أزياء', 'ملابس'],
     shoes:           ['shoes', 'احذية', 'أحذية'],
     watches:         ['watches', 'ساعات', 'ساعاتواكسسوارات', 'ساعات وإكسسوارات'],

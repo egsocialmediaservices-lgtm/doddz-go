@@ -423,3 +423,78 @@
 .badge-sale {
   background: var(--brand) !important;
 }
+
+/* ================================================================
+   «المنزل» بالتصنيفات الفرعية — js/home-subcategories.js
+   بنحوّل صف المنزل من شريط أفقي واحد لأربع مجموعات، كل مجموعة
+   شريطها الأفقي الخاصها. كل الألوان/القياسات من متغيرات base.css.
+================================================================ */
+#section-home.is-grouped {
+  display: block;
+  overflow: visible;
+  padding: 0;
+  gap: 0;
+}
+.home-sub {
+  margin-bottom: 18px;
+}
+.home-sub:last-child {
+  margin-bottom: 0;
+}
+.home-sub-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.home-sub-icon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+  font-size: 14px;
+  line-height: 1;
+}
+.home-sub-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: var(--ink-2);
+}
+.home-sub-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  padding: 2px 9px;
+}
+.home-sub-track {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.home-sub-track::-webkit-scrollbar { height: 5px; }
+.home-sub-track::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 99px;
+}
+.home-sub-track > .pcard { scroll-snap-align: start; }
+
+@media (max-width: 768px) {
+  .home-sub { margin-bottom: 14px; }
+  .home-sub-track { gap: 10px; padding-bottom: 8px; }
+  .home-sub-title { font-size: 14px; }
+  .home-sub-icon { width: 24px; height: 24px; font-size: 12px; }
+}

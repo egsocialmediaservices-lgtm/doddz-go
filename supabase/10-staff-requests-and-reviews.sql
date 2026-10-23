@@ -501,7 +501,7 @@ begin
   into v_id, v_st;
 
   -- لو المراجعة كانت معتمدة قبل كده، المتوسط بيتظبط حالًا
-  public.refresh_provider_rating(p_section, p_provider_id);
+  perform public.refresh_provider_rating(p_section, p_provider_id);
 
   return jsonb_build_object('success', true, 'id', v_id, 'status', v_st);
 end;
@@ -546,7 +546,7 @@ begin
     raise exception 'المراجعة مش موجودة';
   end if;
 
-  public.refresh_provider_rating(v_row.section, v_row.provider_id);
+  perform public.refresh_provider_rating(v_row.section, v_row.provider_id);
 
   return jsonb_build_object('success', true,
                             'id', v_row.id,
