@@ -10,13 +10,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/base.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/header.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261023a"/>
-  <script src="js/motion.js?v=20261023a" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/header.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261023d"/>
+  <script src="js/motion.js?v=20261023d" defer></script>
 </head>
 <body>
 
@@ -106,7 +106,11 @@
 </header>
 
 <div class="bp-wrap" id="barber-page">
-  <button type="button" class="bp-back" onclick="window.location.href='index.html'">رجوع للحلاقين</button>
+  <!-- رجوع: history.back لو جاي من نفس الموقع، ولو لأ → قسم قصها في الرئيسية -->
+  <a class="back-btn" id="bp-back-link" href="index.html?section=barbers">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+    <span>رجوع للحلاقين</span>
+  </a>
   <div id="barber-not-found" hidden style="text-align:center;padding:48px 16px;color:#6b6b7b;font-weight:700;">
     الحلاق غير موجود أو غير معتمد للعرض.
   </div>
@@ -342,9 +346,10 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261023a"></script>
-<script src="js/barbers-data.js?v=20261023a"></script>
-<script src="js/barber-page.js?v=20261023a"></script>
-<script src="js/i18n.js?v=20261023a"></script>
+<script src="js/supabase-client.js?v=20261023d"></script>
+<script src="js/barbers-data.js?v=20261023d"></script>
+<script src="js/barber-page.js?v=20261023d"></script>
+<script src="js/back-button.js?v=20261023d"></script>
+<script src="js/i18n.js?v=20261023d"></script>
 </body>
 </html>

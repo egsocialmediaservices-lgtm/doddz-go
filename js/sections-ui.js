@@ -13,6 +13,19 @@
     merchants: 'section-merchants'
   };
 
+  // صفحة الملف المستقلة لكل قسم (نفس فكرة barber.html للحلاقين)
+  const PROFILE_PAGE = {
+    carwash: 'carwash.html',
+    handmade: 'handmade.html',
+    merchants: 'merchant.html'
+  };
+
+  function providerLink(row, code) {
+    const page = PROFILE_PAGE[code];
+    if (!page || !row || row.id == null) return '';
+    return page + '?id=' + encodeURIComponent(String(row.id));
+  }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -56,8 +69,10 @@
     const label = (window.SectionsStore && SectionsStore.section(code) && SectionsStore.section(code).entity) || 'نشاط';
     const count = code === 'merchants' ? productCount(row) : 0;
     const wa = waLink(row.phone);
+    const link = providerLink(row, code);
     return `
-      <div class="pcard" data-provider="${esc(row.id)}" data-section="${code}"
+      <div class="pcard pcard-provider" data-provider="${esc(row.id)}" data-section="${code}"
+           ${link ? 'data-provider-link="' + esc(link) + '" tabindex="-1"' : ''}
            style="background:#2a2a3d;border-color:#3a3a5c;">
         <div class="pcard-img" style="display:flex;align-items:center;justify-content:center;font-size:34px;">
           ${row.logo_url || row.cover_url
@@ -66,14 +81,16 @@
         </div>
         <div class="pcard-body">
           <div class="pcard-cat" style="color:#ff6b4a;">${esc(label)}</div>
-          <div class="pcard-name" style="color:#fff;">${esc(row.name)}</div>
+          ${link
+            ? `<a class="pcard-name pcard-provider-name" href="${esc(link)}" style="color:#fff;">${esc(row.name)}</a>`
+            : `<div class="pcard-name" style="color:#fff;">${esc(row.name)}</div>`}
           <div class="pcard-cat" style="color:#aaa;">${esc(row.area || row.governorate || '—')}</div>
           <div class="pcard-stars">
             <span class="stars">★ ${Number(row.rating || 0).toFixed(1)}</span>
             <span class="stars-count" style="color:#aaa;">(${Number(row.reviews_count || 0)} تقييم)</span>
           </div>
           <div class="pcard-price">
-            <span class="price-now" style="color:#ff6b4a;">${esc(priceFrom(row) || (count ? count + ' منتج' : 'احجز / تواصل'))}</span>
+            <span class="price-now" style="color:#ff6b4a;">${esc(priceFrom(row) || (count ? count + ' منتج' : 'شوف الملف'))}</span>
           </div>
           <div style="font-size:12px;color:#c9c9de;margin:2px 0 8px;">${esc(servicesPreview(row))}</div>
           ${row.phone ? `<a class="pcard-btn" href="${esc(wa || ('tel:' + row.phone))}" target="_blank" rel="noopener"
@@ -130,12 +147,37 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    openProfileOnCardClick();
     if (window.SectionsStore && SectionsStore.whenReady) {
       SectionsStore.whenReady().then(renderAll);
     } else {
       renderAll();
     }
   });
+
+  /**
+   * الضغط على أي حتة في كارت النشاط بيفتح صفحة الملف الخاصة بيه
+   * (carwash.html / handmade.html / merchant.html?id=…) — زي صفحة الصالون بالظبط.
+   * زرار «تواصل» (a) بيكمل شغله عادي، والكارت اللي ملهوش صفحة بيتجاهل.
+   */
+  function openProfileOnCardClick() {
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      if (e.target.closest('a, button')) return;          // الوصلة الأصلية تتنفّذ عادي
+      const card = e.target.closest('.pcard-provider[data-provider-link]');
+      if (!card) return;
+      const url = card.getAttribute('data-provider-link');
+      if (!url) return;
+      window.location.href = url;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const card = e.target.closest && e.target.closest('.pcard-provider[data-provider-link]');
+      if (!card || e.target.closest('a, button')) return;
+      e.preventDefault();
+      window.location.href = card.getAttribute('data-provider-link');
+    });
+  }
 
   window.DoddzSectionsUI = { renderAll, renderSection };
 })();

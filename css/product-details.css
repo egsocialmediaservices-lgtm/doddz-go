@@ -624,3 +624,19 @@ body:has(.pd-wrap) .search-bar {
     height: 44px !important;
   }
 }
+
+/* ================================================================
+   زرار «رجوع» صفحة المنتج — نفس ستايل بقية الصفحات (base.css)
+   الضغط يرجّع للتاريخ لو جاي من نفس الموقع، والـhref هنا احتياطي
+   بيروح لقسم المنتج نفسه في الرئيسية (js/site.js + ?section=)
+================================================================ */
+.pd-backbar {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 16px 20px 0;
+}
+.pd-backbar + .pd-breadcrumb { padding-top: 8px; }
+
+@media (max-width: 600px) {
+  .pd-backbar { padding: 12px 12px 0; }
+}

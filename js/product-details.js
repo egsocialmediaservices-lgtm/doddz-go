@@ -56,6 +56,15 @@
   function render(product) {
     document.title = `${product.name} — Doddz Go`;
 
+    // زرار «رجوع»: لو المستخدم داخل من الرئيسية history.back() بيكفي شغله
+    // (back-button.js)، والـhref ده بيكون الاحتياطي لما الصفحة تتفتح مباشرة
+    // → بيرجّع لقسم المنتج نفسه في الرئيسية (إلكترونيات / منزل / موضة...).
+    const backEl = document.getElementById('pd-back');
+    if (backEl) {
+      const code = String(product.section || '').trim();
+      backEl.href = code ? 'index.html?section=' + encodeURIComponent(code) : 'index.html';
+    }
+
     // Breadcrumb
     if (breadcrumbCat) breadcrumbCat.textContent = product.category || '';
     if (breadcrumbCur) breadcrumbCur.textContent = product.name;

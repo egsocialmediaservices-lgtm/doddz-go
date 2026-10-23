@@ -12,15 +12,15 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
   <!-- ===== CSS — نفس ملفات الموقع الأساسية + ملف صفحة التفاصيل ===== -->
-  <link rel="stylesheet" href="css/base.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/header.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/cart.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/product-details.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/checkout.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261023a"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261023a"/>
-  <script src="js/motion.js?v=20261023a" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/header.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/product-details.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261023d"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261023d"/>
+  <script src="js/motion.js?v=20261023d" defer></script>
 </head>
 <body>
 
@@ -130,6 +130,14 @@
     </div>
   </div>
 </header>
+
+<!-- رجوع: history.back لو جاي من نفس الموقع، ولو لأ → المتجر / قسم المنتج -->
+<div class="pd-backbar">
+  <a class="back-btn" id="pd-back" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+    <span>رجوع</span>
+  </a>
+</div>
 
 <!-- Breadcrumb -->
 <div class="pd-breadcrumb">
@@ -353,13 +361,14 @@
 
 <!-- ===== JS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261023a"></script>
-<script src="js/products-data.js"></script>
-<script src="js/cart.js?v=20261023a"></script>
-<script src="js/wishlist.js?v=20261023a"></script>
-<script src="js/i18n.js?v=20261023a"></script>
-<script src="js/site.js?v=20261023a"></script>
-<script src="js/product-details.js"></script>
+<script src="js/supabase-client.js?v=20261023d"></script>
+<script src="js/products-data.js?v=20261023d"></script>
+<script src="js/cart.js?v=20261023d"></script>
+<script src="js/wishlist.js?v=20261023d"></script>
+<script src="js/i18n.js?v=20261023d"></script>
+<script src="js/site.js?v=20261023d"></script>
+<script src="js/back-button.js?v=20261023d"></script>
+<script src="js/product-details.js?v=20261023d"></script>
 
 </body>
 </html>

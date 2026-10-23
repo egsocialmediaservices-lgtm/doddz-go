@@ -166,3 +166,27 @@ document.querySelectorAll('.top-register-visitor').forEach((link) => {
     (signup || entry).classList.add('open');
   });
 });
+
+
+// ------------------------------------------------
+// ?section=code — بييجي من زرار «رجوع» في الصفحات الفرعية (أو لينك قسم مباشر).
+// بنستنى الأقسام ترسم أول حاجة عشان موضع القسم على الصفحة يكون نهائي،
+// وبعدين ننزله تحت الهيدر الملتصق وننضّف الـURL.
+// ------------------------------------------------
+(function () {
+  const code = new URLSearchParams(location.search).get('section');
+  if (!code) return;
+  let done = false;
+  const go = () => {
+    if (done) return;
+    done = true;
+    setTimeout(() => {
+      setActiveNav(code);
+      scrollToSection(code);
+      try { history.replaceState({}, '', location.pathname); } catch (_) {}
+    }, 140);
+  };
+  window.addEventListener('doddz:sections-rendered', go);
+  window.addEventListener('products-ready', go);
+  setTimeout(go, 2600);   // شبكة أمان لو القسم فاضي والأحداث اتأخرت
+})();

@@ -277,3 +277,52 @@ body {
   background: var(--brand-soft) !important;
   border-color: rgba(14, 116, 144, 0.35) !important;
 }
+
+/* ============================================================
+   زرار «رجوع» المشترك — شغال في كل الصفحات الفرعية
+   (product / barber / carwash / handmade / merchant)
+   السهم بيتبادل تلقائيًا بين RTL و LTR
+   ============================================================ */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px 8px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: background .18s, border-color .18s, color .18s, transform .18s;
+}
+.back-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transform: scaleX(1);
+}
+html[dir="rtl"] .back-btn svg,
+[dir="rtl"] .back-btn svg { transform: scaleX(-1); }
+.back-btn:hover {
+  background: var(--brand-soft);
+  border-color: rgba(14, 116, 144, 0.35);
+  color: var(--brand-deep);
+  transform: translateY(-1px);
+}
+.back-btn:active { transform: translateY(0); }
+.back-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.back-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+}
