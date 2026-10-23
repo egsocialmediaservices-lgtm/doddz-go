@@ -48,7 +48,7 @@
     const label = SOURCE_LABELS[product.source] || product.source || 'Doddz';
     let html = `البائع: <strong>${label}</strong>`;
     if (product.sourceUrl) {
-      html += ` <a class="pd-source-link" href="${product.sourceUrl}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`;
+      html += ` <a class="pd-source-link" href="${product.sourceUrl}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ${DoddzIcon.svg('external', { size: 14, cls: 'ic-inline' })}</a>`;
     }
     return html;
   }
@@ -107,12 +107,12 @@
     if (isPhysical) {
       stockEl.style.display = '';
       if (product.stock > 0) {
-        stockEl.textContent = `✔ متوفر في المخزون (${product.stock} قطعة)`;
+        stockEl.innerHTML = `${DoddzIcon.svg('check', { size: 15, cls: 'ic-inline' })} متوفر في المخزون (${product.stock} قطعة)`;
         stockEl.className = 'pd-stock in';
         addBtn.disabled = false;
-        addBtn.textContent = '+ أضف للعربة';
+        addBtn.innerHTML = `${DoddzIcon.svg('plus', { size: 15, cls: 'ic-inline' })} أضف للعربة`;
       } else {
-        stockEl.textContent = '✕ غير متوفر حالياً';
+        stockEl.innerHTML = `${DoddzIcon.svg('close', { size: 15, cls: 'ic-inline' })} غير متوفر حالياً`;
         stockEl.className = 'pd-stock out';
         addBtn.disabled = true;
         addBtn.textContent = 'غير متوفر حالياً';
@@ -213,17 +213,33 @@
     const mainImgEl = document.getElementById('pd-gallery-main');
     const thumbsEl  = document.getElementById('pd-thumbs');
 
+    // Placeholder موحّد: أيقونة SVG وكلمة واضحة — بدل الإيموجي والصندوق الرمادي
+    function placeholderHTML() {
+      const icon = (typeof DoddzIcon !== 'undefined')
+        ? DoddzIcon.svg('imagePlaceholder', { size: 54, cls: 'pd-ph-icon' })
+        : '';
+      return `<div class="pd-no-img">${icon}<span class="pd-ph-txt">لا توجد صورة للمنتج</span></div>`;
+    }
+
     function setMainImage(src) {
-      mainImgEl.innerHTML = src
-        ? `<img src="${src}" alt="${product.name}">`
-        : (product.image || '📦');
+      if (src) {
+        mainImgEl.innerHTML =
+          `<img src="${src}" alt="${product.name}" fetchpriority="high" decoding="async"` +
+          ` onerror="this.closest('.pd-gallery-main').classList.add('is-broken');this.remove();">`;
+        mainImgEl.classList.remove('is-broken');
+      } else {
+        mainImgEl.innerHTML = (typeof DoddzIcon !== 'undefined' && product.image && product.image !== '📦')
+          ? `<div class="pd-no-img">${DoddzIcon.glyph(product.image, { size: 54, cls: 'pd-ph-icon' })}</div>`
+          : placeholderHTML();
+      }
     }
 
     if (images.length) {
       setMainImage(images[0]);
       thumbsEl.innerHTML = images.map((src, i) => `
         <div class="pd-thumb ${i === 0 ? 'active' : ''}" data-index="${i}">
-          <img src="${src}" alt="صورة ${i + 1} من ${product.name}">
+          <img src="${src}" alt="صورة ${i + 1} من ${product.name}" loading="lazy" decoding="async"
+               onerror="this.parentNode.remove();">
         </div>`).join('');
 
       thumbsEl.querySelectorAll('.pd-thumb').forEach(thumb => {
@@ -242,7 +258,9 @@
     window._currentProductId = product.id;
     const favBtn = document.getElementById('pd-fav-btn');
     if (favBtn) {
-      favBtn.textContent = (typeof isWishlisted === 'function' && isWishlisted(product.id)) ? '❤️' : '♡';
+      favBtn.innerHTML = (typeof isWishlisted === 'function' && isWishlisted(product.id))
+        ? DoddzIcon.svg('heart', { size: 18, fill: true })
+        : DoddzIcon.svg('heart', { size: 18 });
       favBtn.onclick = function(e) {
         if (typeof toggleWishlist === 'function') toggleWishlist(product.id, e);
       };
@@ -253,13 +271,13 @@
       if (isPhysical) {
         // التحقق من اختيار اللون لو المنتج يحتوي على ألوان
         if (product.colors && product.colors.length && !selectedColor) {
-          if (typeof showToast === 'function') showToast('من فضلك اختر اللون أولاً 🎨');
+          if (typeof showToast === 'function') showToast(DoddzIcon.svg('palette', { size: 17, cls: 'ic-inline' }) + ' من فضلك اختر اللون أولاً');
           else alert('من فضلك اختر اللون أولاً');
           return;
         }
         // التحقق من اختيار المقاس لو المنتج يحتوي على مقاسات
         if (product.sizes && product.sizes.length && !selectedSize) {
-          if (typeof showToast === 'function') showToast('من فضلك اختر المقاس أولاً 📏');
+          if (typeof showToast === 'function') showToast(DoddzIcon.svg('ruler', { size: 17, cls: 'ic-inline' }) + ' من فضلك اختر المقاس أولاً');
           else alert('من فضلك اختر المقاس أولاً');
           return;
         }

@@ -1,0 +1,468 @@
+/* ================================================================
+   DODDZ GO — «Deep Teal Trust» لباقي الصفحات (dt-pages.css)
+   ----------------------------------------------------------------
+   نفس هوية الرئيسية بالظبط، بس لصفحات:
+   product / barber / carwash / handmade / merchant / policies.
+
+   * بيحمّل آخر ملف CSS في الصفحة → بقاعدة يستخدم !important
+     لأن base.css وheader.css وproducts.css بيستخدموا !important.
+ * * مفيش أي منطق تجاري هنا — ألوان ومسافات وحواف بس.
+   * الرئيسية بتفضل على home-redesign.css (الملف ده ما بيحمّلش عليها).
+================================================================ */
+
+:root {
+  /* ── سلّم التركواز الغامق — نفس قيم الرئيسية ── */
+  --dt-950: #03151C;
+  --dt-900: #07222E;
+  --dt-800: #0B2E3D;
+  --dt-750: #0E4356;
+  --dt-700: #155E75;
+  --dt-600: #0E7490;
+  --dt-500: #0891B2;
+  --dt-400: #22B8CF;
+  --dt-300: #67E2F0;
+  --dt-200: #A5F3FC;
+  --dt-100: #D8F3FA;
+  --dt-50:  #F1FAFD;
+  --dt-gold: #C8891B;
+
+  --dt-page:      #EFF5F8;
+  --dt-page-2:    #E7EFF4;
+  --dt-card:      #FFFFFF;
+  --dt-ink:       #08222E;
+  --dt-body:      #2A4353;
+  --dt-muted:     #66808F;
+  --dt-line:      #DBE7EE;
+  --dt-line-soft: #EDF3F7;
+
+  --dt-r1: 10px;
+  --dt-r2: 14px;
+  --dt-r3: 18px;
+  --dt-r4: 24px;
+  --dt-gap: 20px;
+
+  --dt-sh1: 0 1px 2px rgba(8, 34, 46, .05);
+  --dt-sh2: 0 6px 18px rgba(8, 34, 46, .07);
+  --dt-sh3: 0 16px 38px rgba(8, 34, 46, .11);
+  --dt-sh-brand: 0 10px 26px rgba(14, 116, 144, .22);
+  --dt-txt-shadow: 0 2px 18px rgba(3, 21, 28, .45);
+}
+
+/* ================================================================
+   1) الصفحة
+================================================================ */
+body {
+  background: linear-gradient(180deg, var(--dt-page) 0%, var(--dt-page-2) 360px, var(--dt-page) 100%) !important;
+  color: var(--dt-body);
+  letter-spacing: -0.1px;
+}
+::selection { background: var(--dt-300); color: var(--dt-950); }
+h1, h2, h3, h4 { color: var(--dt-ink) !important; }
+a { color: var(--dt-600); }
+a:hover { color: var(--dt-500); }
+
+/* ================================================================
+   2) الشريط العلوي + الهيدر + الناف بار (نفس الرئيسية)
+================================================================ */
+.top-bar {
+  background: linear-gradient(96deg, var(--dt-950) 0%, var(--dt-800) 58%, var(--dt-600) 100%) !important;
+  border-bottom: 1px solid rgba(103, 226, 240, .16);
+  color: rgba(226, 246, 251, .88) !important;
+}
+.top-bar .ticker-item { font-weight: 700; }
+.top-bar a { color: var(--dt-300) !important; }
+.top-bar a:hover { color: #fff !important; }
+.ticker-dot { background: var(--dt-400) !important; opacity: .55; }
+
+header {
+  background: linear-gradient(180deg, rgba(3, 21, 28, .97) 0%, rgba(7, 34, 46, .96) 100%) !important;
+  border-bottom: 1px solid rgba(103, 226, 240, .18) !important;
+  box-shadow: 0 12px 34px rgba(3, 21, 28, .38) !important;
+}
+.logo-link:hover .site-logo { filter: drop-shadow(0 8px 22px rgba(103, 226, 240, .42)); }
+
+.search-bar {
+  height: 46px !important;
+  border-radius: var(--dt-r2) !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow: 0 2px 0 rgba(255, 255, 255, .06), var(--dt-sh1) !important;
+}
+.search-bar:focus-within {
+  border-color: var(--dt-400) !important;
+  box-shadow: 0 0 0 4px rgba(34, 184, 207, .22), 0 12px 26px rgba(3, 21, 28, .22) !important;
+}
+.search-bar input { font-weight: 600; color: var(--dt-ink) !important; }
+.search-bar .search-cat {
+  background-color: var(--dt-50) !important;
+  color: var(--dt-800) !important;
+  border-inline-start: 1px solid var(--dt-line) !important;
+}
+.search-bar button { background: var(--dt-600) !important; }
+.search-bar button:hover { background: var(--dt-500) !important; }
+
+.hdr-btn { border-radius: var(--dt-r2) !important; }
+.hdr-btn:hover { background: rgba(103, 226, 240, .14) !important; }
+.hdr-btn .icon svg { stroke: var(--dt-100) !important; }
+.hdr-btn:hover .icon svg { stroke: #fff !important; }
+.hdr-btn .sub { color: rgba(216, 243, 250, .82) !important; }
+#cart-total { color: var(--dt-300) !important; }
+.cart-count {
+  background: var(--dt-300) !important;
+  color: var(--dt-950) !important;
+  box-shadow: 0 0 0 2px var(--dt-900) !important;
+  font-weight: 900 !important;
+}
+
+.nav-bar {
+  background: rgba(255, 255, 255, .96) !important;
+  border-bottom: 1px solid var(--dt-line) !important;
+  box-shadow: 0 6px 18px rgba(8, 34, 46, .05);
+}
+.nav-item {
+  border-radius: var(--dt-r1) !important;
+  color: var(--dt-muted) !important;
+  border-bottom: none !important;
+}
+.nav-item:hover { color: var(--dt-700) !important; background: var(--dt-50) !important; }
+.nav-item.active {
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--dt-600), var(--dt-700)) !important;
+  box-shadow: 0 6px 16px rgba(14, 116, 144, .26);
+}
+
+/* ================================================================
+   3) الفوتر + التوست + أزرار المساعدة
+================================================================ */
+footer {
+  background: linear-gradient(180deg, var(--dt-900) 0%, var(--dt-950) 100%) !important;
+  border-top: 1px solid rgba(103, 226, 240, .18) !important;
+  color: rgba(216, 243, 250, .72) !important;
+}
+.footer-brand p { color: rgba(216, 243, 250, .6) !important; }
+.footer-col h4 { color: #fff !important; }
+.footer-col a { color: rgba(216, 243, 250, .66) !important; }
+.footer-col a:hover { color: var(--dt-300) !important; }
+.footer-bottom {
+  border-top-color: rgba(103, 226, 240, .14) !important;
+  color: rgba(216, 243, 250, .48) !important;
+}
+.site-toast {
+  background: var(--dt-900) !important;
+  box-shadow: 0 18px 40px rgba(3, 21, 28, .3) !important;
+}
+.adm-fab:hover, .support-fab:hover { background: var(--dt-600) !important; color: #fff !important; }
+
+/* ================================================================
+   4) عناصر مشتركة: زراير، كروت، حقن، فتات التنقل
+================================================================ */
+.back-btn,
+.pol-back {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  color: var(--dt-700) !important;
+  border-radius: 999px !important;
+  box-shadow: var(--dt-sh1);
+  font-weight: 700;
+}
+.back-btn:hover, .pol-back:hover {
+  background: var(--dt-600) !important;
+  border-color: var(--dt-600) !important;
+  color: #fff !important;
+}
+
+.pd-breadcrumb, .pv-breadcrumb { color: var(--dt-muted) !important; }
+.pd-breadcrumb a, .pv-breadcrumb a { color: var(--dt-700) !important; }
+.pd-sep, .pv-sep { color: var(--dt-line) !important; }
+
+/* الحقن */
+.bk-field input, .bk-field textarea, .bk-field select,
+.checkout-field input, .checkout-field textarea,
+.pd-variant-opt, .pol-search input {
+  background: var(--dt-50) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r2) !important;
+  color: var(--dt-ink) !important;
+}
+.bk-field input:focus, .bk-field textarea:focus,
+.checkout-field input:focus, .checkout-field textarea:focus {
+  border-color: var(--dt-400) !important;
+  box-shadow: 0 0 0 4px rgba(34, 184, 207, .18) !important;
+  outline: none !important;
+  background: #fff !important;
+}
+
+/* الأزرار الأساسية */
+.bk-btn.primary, .pd-add-btn, .checkout-submit-btn, .bk-book-btn,
+.pol-cta, .bp-book-cta {
+  background: linear-gradient(135deg, var(--dt-600), var(--dt-700)) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--dt-r2) !important;
+  box-shadow: var(--dt-sh-brand) !important;
+  font-weight: 800;
+}
+.bk-btn.primary:hover, .pd-add-btn:hover, .checkout-submit-btn:hover,
+.bp-book-cta:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.bk-btn.secondary, .checkout-done-btn {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  color: var(--dt-700) !important;
+  border-radius: var(--dt-r2) !important;
+}
+.bk-btn.secondary:hover { border-color: var(--dt-400) !important; color: var(--dt-600) !important; }
+
+/* ================================================================
+   5) صفحة المنتج (product.html)
+================================================================ */
+.pd-gallery, .pd-info {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r3) !important;
+  box-shadow: var(--dt-sh2) !important;
+  padding: 18px;
+}
+.pd-cat {
+  color: var(--dt-600) !important;
+  background: var(--dt-50);
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.pd-name { color: var(--dt-ink) !important; letter-spacing: -0.4px; }
+.pd-price-now { color: var(--dt-700) !important; font-weight: 900 !important; }
+.pd-price-was { color: var(--dt-muted) !important; }
+.pd-price-off {
+  background: rgba(200, 137, 27, .12) !important;
+  color: var(--dt-gold) !important;
+  border-radius: 999px !important;
+  padding: 3px 10px;
+  font-weight: 800;
+}
+.pd-badge { border-radius: 999px !important; font-weight: 800 !important; }
+.pd-badge-best { background: var(--dt-600) !important; color: #fff !important; }
+.pd-badge-new  { background: var(--dt-100) !important; color: var(--dt-800) !important; }
+.pd-badge-sale { background: rgba(200, 137, 27, .14) !important; color: var(--dt-gold) !important; }
+.pd-stock.in  { color: #17864F !important; }
+.pd-stock.out { color: #B4232B !important; }
+.pd-tag {
+  background: var(--dt-50) !important;
+  border: 1px solid var(--dt-line) !important;
+  color: var(--dt-700) !important;
+  border-radius: 999px !important;
+}
+.pd-variant-opt.is-active, .pd-variant-opt.active {
+  border-color: var(--dt-600) !important;
+  background: var(--dt-50) !important;
+  color: var(--dt-700) !important;
+  box-shadow: 0 0 0 3px rgba(14, 116, 144, .14) !important;
+}
+.pd-thumb { border-color: var(--dt-line) !important; background: var(--dt-50) !important; border-radius: var(--dt-r2) !important; }
+.pd-thumb.active, .pd-thumb:hover {
+  border-color: var(--dt-600) !important;
+  box-shadow: 0 0 0 3px rgba(14, 116, 144, .16) !important;
+}
+.pd-fav-btn { border: 1px solid var(--dt-line) !important; border-radius: var(--dt-r2) !important; color: var(--dt-600) !important; }
+.pd-source { color: var(--dt-muted) !important; }
+.pd-not-found { color: var(--dt-muted) !important; }
+
+/* ================================================================
+   6) صفحتات الأنشطة (صالون / مغسلة / ورشة / تاجر)
+================================================================ */
+.bp-panel, .pv-panel, .bp-card, .bk-panel {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r3) !important;
+  box-shadow: var(--dt-sh2) !important;
+}
+.bp-name, .pv-name { color: var(--dt-ink) !important; letter-spacing: -0.4px; }
+.bp-bio, .bp-meta-row, .bp-panel-note { color: var(--dt-body) !important; }
+.bp-home-chip, .bp-today-chip, .pv-featured {
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+}
+.bp-home-chip, .bp-today-chip {
+  background: var(--dt-50) !important;
+  color: var(--dt-700) !important;
+  border: 1px solid var(--dt-line) !important;
+}
+.pv-featured {
+  background: rgba(200, 137, 27, .12) !important;
+  color: var(--dt-gold) !important;
+}
+.bp-stat, .bp-stats > div {
+  background: var(--dt-50) !important;
+  border: 1px solid var(--dt-line-soft) !important;
+  border-radius: var(--dt-r2) !important;
+}
+.bp-star.on, .stars .ic-star { color: var(--dt-gold) !important; }
+.bp-svc, .bk-option, .bk-slot, .pv-prod-card {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r2) !important;
+}
+.bk-option.is-picked, .bk-option.selected, .bk-picked {
+  border-color: var(--dt-600) !important;
+  background: var(--dt-50) !important;
+}
+.bp-cover, .pv-cover { border-radius: var(--dt-r3) !important; }
+.bp-lightbox { background: rgba(3, 21, 28, .92) !important; }
+.pv-contact-list li { border-bottom: 1px solid var(--dt-line-soft) !important; }
+
+/* ================================================================
+   7) صفحة السياسات (policies.html)
+================================================================ */
+.pol-hero, .pol-header {
+  background: linear-gradient(135deg, var(--dt-950), var(--dt-750)) !important;
+  color: var(--dt-100) !important;
+}
+.pol-hero h1 { color: #fff !important; }
+.pol-card, .pol-section, .pol-faq {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r3) !important;
+  box-shadow: var(--dt-sh1) !important;
+}
+.pol-nav a {
+  color: var(--dt-700) !important;
+  border-radius: var(--dt-r1) !important;
+}
+.pol-nav a:hover, .pol-nav a.active { background: var(--dt-50) !important; color: var(--dt-600) !important; }
+.pol-faq summary { color: var(--dt-ink) !important; }
+.pol-faq-body { color: var(--dt-body) !important; }
+
+/* ================================================================
+   8) السلة والمفضلة وإتمام الطلب (نفس الدروَرز في كل الصفحات)
+================================================================ */
+.cart-drawer, .checkout-panel, .account-panel {
+  background: var(--dt-card) !important;
+  border-color: var(--dt-line) !important;
+  box-shadow: 0 24px 60px rgba(3, 21, 28, .28) !important;
+}
+.cart-drawer-header, .checkout-head { border-bottom: 1px solid var(--dt-line) !important; }
+.cart-title, .checkout-head h3 { color: var(--dt-ink) !important; }
+.cart-close, .checkout-close, .account-close { color: var(--dt-muted) !important; }
+.cart-close:hover, .checkout-close:hover, .account-close:hover {
+  color: var(--dt-600) !important;
+  background: var(--dt-50) !important;
+}
+.cart-item { border-bottom: 1px solid var(--dt-line-soft) !important; }
+.checkout-success-icon { color: #17864F !important; }
+.checkout-order-ref {
+  background: var(--dt-50) !important;
+  border: 1px dashed var(--dt-line) !important;
+  border-radius: var(--dt-r2) !important;
+  color: var(--dt-700) !important;
+}
+
+/* ================================================================
+   9) اللوحات: الأدمن / بائع / حساب الزائر (نفس الهوية)
+================================================================ */
+.adm-panel, .account-panel, .seller-panel {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r3) !important;
+  box-shadow: 0 24px 60px rgba(3, 21, 28, .28) !important;
+}
+.adm-head, .account-head {
+  background: linear-gradient(135deg, var(--dt-950), var(--dt-750)) !important;
+  color: var(--dt-100) !important;
+}
+.adm-head h3, .account-head h3 { color: #fff !important; }
+.adm-close, .account-close, .seller-close { color: rgba(216, 243, 250, .8) !important; }
+.adm-close:hover, .account-close:hover, .seller-close:hover {
+  background: rgba(103, 226, 240, .16) !important;
+  color: #fff !important;
+}
+.adm-body { color: var(--dt-body) !important; }
+.adm-field label, .account-field label, .seller-field label { color: var(--dt-muted) !important; font-weight: 700; }
+.adm-field input, .adm-field textarea, .adm-field select,
+.account-field input, .account-field textarea,
+.seller-field input, .seller-field textarea, .seller-field select {
+  background: var(--dt-50) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r2) !important;
+  color: var(--dt-ink) !important;
+}
+.adm-field input:focus, .adm-field textarea:focus, .adm-field select:focus,
+.account-field input:focus, .seller-field input:focus {
+  border-color: var(--dt-400) !important;
+  box-shadow: 0 0 0 4px rgba(34, 184, 207, .18) !important;
+  outline: none !important;
+  background: #fff !important;
+}
+.adm-btn {
+  background: linear-gradient(135deg, var(--dt-600), var(--dt-700)) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--dt-r2) !important;
+  box-shadow: var(--dt-sh-brand) !important;
+  font-weight: 800;
+}
+.adm-btn:hover { filter: brightness(1.06); }
+.adm-btn.secondary {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line) !important;
+  color: var(--dt-700) !important;
+  box-shadow: none !important;
+}
+.adm-btn.danger, .adm-btn.secondary.danger {
+  background: #B4232B !important;
+  color: #fff !important;
+  border: none !important;
+}
+.adm-icon-btn {
+  background: var(--dt-50) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r1) !important;
+  color: var(--dt-600) !important;
+}
+.adm-icon-btn:hover { background: var(--dt-100) !important; color: var(--dt-800) !important; }
+.adm-row, .account-order, .account-support-item {
+  background: var(--dt-card) !important;
+  border: 1px solid var(--dt-line-soft) !important;
+  border-radius: var(--dt-r2) !important;
+}
+.adm-tab, .account-nav-btn {
+  color: var(--dt-muted) !important;
+  border-radius: var(--dt-r1) !important;
+}
+.adm-tab.active, .adm-tab.is-active, .account-nav-btn.active, .account-nav-btn.is-active {
+  background: linear-gradient(135deg, var(--dt-600), var(--dt-700)) !important;
+  color: #fff !important;
+}
+.adm-empty, .account-orders-empty { color: var(--dt-muted) !important; }
+.adm-msg, .account-msg {
+  background: var(--dt-50) !important;
+  border: 1px solid var(--dt-line) !important;
+  border-radius: var(--dt-r2) !important;
+  color: var(--dt-700) !important;
+}
+.account-avatar {
+  background: var(--dt-100) !important;
+  color: var(--dt-700) !important;
+}
+.adm-overlay, .account-overlay, .seller-overlay { background: rgba(3, 21, 28, .62) !important; }
+
+/* ================================================================
+   10) التجاوب
+================================================================ */
+@media (max-width: 900px) {
+  .pd-gallery, .pd-info { padding: 14px; }
+  .bp-panel, .pv-panel { padding: 14px; }
+}
+
+/* ================================================================
+   11) ضبط الأيقونات المولّدة تلقائيًا (js/icons.js → polish)
+   بتتعمل هنا لأن dt-pages.css آخر ملف بيتحمّل على كل الصفحات
+================================================================ */
+/* زراير تحريك الفني في لوحة الحلاق: الأيقونة لوحدها في الزرار → بلا مسافة */
+.sb-team-actions .adm-btn .ic { margin-inline-end: 0; }
+.sb-team-actions .adm-btn { padding-inline: 12px; }
+/* سهم «المزيد/التقييمات» وبيّان الطلب في الأدمن: حجم ثابت مقروء */
+.bp-svc-more-arrow .ic, .bp-hours-more .ic { width: 1.15em; height: 1.15em; }
+.adm-order-caret .ic { width: 1.1em; height: 1.1em; vertical-align: -0.15em; }
+/* نجوم التقييم المرسومة بالكلام (★ ☆) */
+.bp-star .ic, .bp-star.on .ic { width: 1em; height: 1em; }
+.pv-prod-emoji .ic { width: 1.5em; height: 1.5em; }

@@ -1299,7 +1299,7 @@
     const row = me && me.row;
     if (!row) {
       box.stats.textContent = 'مفيش نشاط مرتبط بالحساب ده';
-      box.status.textContent = 'سجّل نشاطك من زر «حسابي» ← دخول كصاحب نشاط، وهيظهر هنا للتعديل.';
+      box.status.textContent = 'سجّل نشاطك من زر «حسابي»: دخول كصاحب نشاط، وهيظهر هنا للتعديل.';
       return;
     }
     box.stats.textContent = 'نشاطي في قسم ' + ((S.section(me.section) || {}).label || me.section);

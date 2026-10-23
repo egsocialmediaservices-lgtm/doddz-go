@@ -181,6 +181,13 @@
       track.scrollLeft = target;
       clearTimeout(track._sbTimer);
       track._sbTimer = setTimeout(() => {
+        // شبكة أمان: الحركة السلسة بتتوقف تمامًا لو التبويب مخفي أو الجهاز
+        // بيقلة إطارات — بنلمّ الموضع فوري بنفس الهدف بدل ما الشريط «يقف»
+        const still = posOf(track);
+        if (Math.abs(still - v) > 12) {
+          track.style.scrollBehavior = 'auto';
+          track.scrollLeft = target;
+        }
         track.style.scrollBehavior = '';
         syncNav(track);
       }, 360);

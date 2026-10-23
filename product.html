@@ -9,18 +9,20 @@
   <link rel="apple-touch-icon" href="images/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
   <!-- ===== CSS — نفس ملفات الموقع الأساسية + ملف صفحة التفاصيل ===== -->
-  <link rel="stylesheet" href="css/base.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/header.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/cart.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/product-details.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/checkout.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261023d"/>
-  <script src="js/motion.js?v=20261023d" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/header.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/product-details.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/dt-pages.css?v=20261023i"/>
+  <script src="js/motion.js?v=20261023i" defer></script>
 </head>
 <body>
 
@@ -84,7 +86,7 @@
 <!-- HEADER -->
 <header>
   <div class="header-main">
-    <a href="index.html" class="logo-link" aria-label="Doddz Go"><img class="site-logo" src="images/logo-white.png" alt="Doddz Go" width="180" height="48" decoding="async"/></a>
+    <a href="index.html" class="logo-link" aria-label="Doddz Go"><img class="site-logo" src="images/logo-white.webp" alt="Doddz Go" width="180" height="48" decoding="async"/></a>
     <button type="button" class="lang-toggle" id="lang-toggle" title="Language"><span data-lang-label>EN</span></button>
     <div class="search-bar">
       <input type="text" placeholder="ابحث عن منتجات، كورسات، ماركات..." id="pd-search-input"/>
@@ -153,10 +155,10 @@
 
   <!-- حالة: المنتج مش موجود (مخفية افتراضياً) -->
   <div class="pd-not-found" id="pd-not-found" style="display:none;">
-    <div class="pd-nf-icon" aria-hidden="true"></div>
+    <div class="pd-nf-icon" aria-hidden="true"><i data-icon="box" data-icon-size="44"></i></div>
     <h2>المنتج غير موجود</h2>
     <p>يمكن يكون اتحذف أو الرابط غلط. جرّب ترجع للمتجر وتدور من هناك.</p>
-    <a href="index.html">← الرجوع للمتجر</a>
+    <a href="index.html"><i data-icon="arrowLeft" data-icon-size="15"></i> الرجوع للمتجر</a>
   </div>
 
   <!-- تفاصيل المنتج -->
@@ -164,7 +166,7 @@
 
     <!-- Gallery -->
     <div class="pd-gallery">
-      <div class="pd-gallery-main" id="pd-gallery-main">📦</div>
+      <div class="pd-gallery-main" id="pd-gallery-main"></div>
       <div class="pd-thumbs" id="pd-thumbs"></div>
     </div>
 
@@ -209,7 +211,7 @@
   <div class="footer-top">
     <div class="footer-brand">
       <a href="index.html" class="footer-logo" aria-label="Doddz Go">
-        <img class="site-logo site-logo-footer" src="images/logo-white.png" alt="Doddz Go" width="160" height="42" decoding="async"/>
+        <img class="site-logo site-logo-footer" src="images/logo-white.webp" alt="Doddz Go" width="160" height="42" decoding="async"/>
       </a>
       <p>سوقك الذكي للتسوق والبيع — منتجات متنوعة، عروض مميزة، وتجربة تسوق سهلة وموثوقة.</p>
       <div class="footer-social">
@@ -291,10 +293,10 @@
 <aside id="cart-drawer" class="cart-drawer">
   <div class="cart-drawer-header">
     <div>
-      <div class="cart-title">🛒 عربتي</div>
+      <div class="cart-title"><i data-icon="cart" data-icon-size="18"></i> عربتي</div>
       <div class="cart-subtitle">منتجاتك المختارة</div>
     </div>
-    <button class="cart-close" onclick="closeCart()">✕</button>
+    <button class="cart-close" onclick="closeCart()"><i data-icon="close" data-icon-size="15"></i></button>
   </div>
 
   <div id="cart-items" class="cart-items"></div>
@@ -307,8 +309,8 @@
 <div class="checkout-overlay" id="checkout-overlay">
   <div class="checkout-panel">
     <div class="checkout-head">
-      <h3>🧾 إتمام الطلب</h3>
-      <button class="checkout-close" id="checkout-close">✕</button>
+      <h3><i data-icon="receipt" data-icon-size="18"></i> إتمام الطلب</h3>
+      <button class="checkout-close" id="checkout-close"><i data-icon="close" data-icon-size="15"></i></button>
     </div>
 
     <div class="checkout-body">
@@ -345,30 +347,31 @@
 
         <div class="checkout-errors" id="checkout-errors"></div>
 
-        <button type="submit" class="checkout-submit-btn" id="checkout-submit-btn">تأكيد الطلب ←</button>
+        <button type="submit" class="checkout-submit-btn" id="checkout-submit-btn">تأكيد الطلب <i data-icon="arrowLeft" data-icon-size="15"></i></button>
       </form>
 
       <div class="checkout-success" id="checkout-success" hidden>
-        <div class="checkout-success-icon">✅</div>
+        <div class="checkout-success-icon"><i data-icon="success" data-icon-size="44"></i></div>
         <h3>تم استلام طلبك بنجاح!</h3>
         <p>هنتواصل معاك على رقم الموبايل لتأكيد الطلب.</p>
         <p class="checkout-order-ref" id="checkout-order-ref"></p>
-        <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام ✓</button>
+        <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام <i data-icon="check" data-icon-size="15"></i></button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- ===== JS ===== -->
+<script src="js/icons.js?v=20261023i"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261023d"></script>
-<script src="js/products-data.js?v=20261023d"></script>
-<script src="js/cart.js?v=20261023d"></script>
-<script src="js/wishlist.js?v=20261023d"></script>
-<script src="js/i18n.js?v=20261023d"></script>
-<script src="js/site.js?v=20261023d"></script>
-<script src="js/back-button.js?v=20261023d"></script>
-<script src="js/product-details.js?v=20261023d"></script>
+<script src="js/supabase-client.js?v=20261023i"></script>
+<script src="js/products-data.js?v=20261023i"></script>
+<script src="js/cart.js?v=20261023i"></script>
+<script src="js/wishlist.js?v=20261023i"></script>
+<script src="js/i18n.js?v=20261023i"></script>
+<script src="js/site.js?v=20261023i"></script>
+<script src="js/back-button.js?v=20261023i"></script>
+<script src="js/product-details.js?v=20261023i"></script>
 
 </body>
 </html>

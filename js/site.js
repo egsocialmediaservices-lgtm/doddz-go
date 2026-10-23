@@ -38,7 +38,9 @@ function showToast(msg) {
     toast.className = 'site-toast';
     document.body.appendChild(toast);
   }
-  toast.textContent = msg;
+  // لو الرسالة فيها أيقونة SVG (من js/icons.js) → HTML، وأي كلام عادي → نص نقي
+  if (typeof msg === 'string' && msg.indexOf('<svg') !== -1) toast.innerHTML = msg;
+  else toast.textContent = msg;
   toast.classList.add('show');
   clearTimeout(window._siteToastTimer);
   window._siteToastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
@@ -74,8 +76,12 @@ function scrollToSection(sectionId) {
     return;
   }
 
+  // في الأقسام المتحركة الـid بيكون على شريط المنتجات نفسه — بنطلع لصف القسم
+  // الكامل عشان عنوان القسم («لمعها» مثلًا) ما يختفيش تحت الهيدر الثابت.
+  const row = target.classList.contains('section-row') ? target : (target.closest('.section-row') || target);
+
   const headerOffset = 112; // top-bar + header + nav-bar الملتصقين فوق
-  const y = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+  const y = row.getBoundingClientRect().top + window.scrollY - headerOffset;
   window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
@@ -85,6 +91,14 @@ function scrollToSection(sectionId) {
 function setActiveNav(sectionId) {
   document.querySelectorAll('.nav-item').forEach(item => {
     item.classList.toggle('active', (item.dataset.section || '') === (sectionId || ''));
+  });
+}
+
+// تمييز شيبات الأنشطة وبلاطات الأقسام اللي بتطابق القسم المختار (الرئيسية — Deep Teal Trust)
+function markHubPick(sectionId) {
+  const id = sectionId || '';
+  document.querySelectorAll('.hub-chip, .cat-tile').forEach(el => {
+    el.classList.toggle('is-active', !!id && (el.dataset.section || '') === id);
   });
 }
 
@@ -98,6 +112,7 @@ function wireSectionLinks() {
       const section = el.dataset.section;
       setActiveNav(section);
       scrollToSection(section);
+      markHubPick(section);
     });
   });
 
@@ -183,6 +198,7 @@ document.querySelectorAll('.top-register-visitor').forEach((link) => {
     setTimeout(() => {
       setActiveNav(code);
       scrollToSection(code);
+      markHubPick(code);
       try { history.replaceState({}, '', location.pathname); } catch (_) {}
     }, 140);
   };

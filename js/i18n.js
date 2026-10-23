@@ -178,10 +178,10 @@
     ['عرض التفاصيل', 'View details'],
     ['أضف إلى السلة', 'Add to cart'],
     ['أضف للعربة', 'Add to cart'],
-    ['عرض الكل ←', 'See all'],
+ ['عرض الكل ', 'See all'],
     ['عرض الكل', 'See all'],
-    ['كل التجار ←', 'All merchants'],
-    ['شوف الجديد ←', 'See what\'s new'],
+ ['كل التجار ', 'All merchants'],
+ ['شوف الجديد ', 'See what\'s new'],
     ['المنتجات', 'Products'],
     ['منتج جديد', 'New product'],
     ['الطلبات', 'Orders'],
@@ -271,9 +271,9 @@
     ['مميز', 'Featured'],
     ['خدمة منزلية', 'Home service'],
     ['احجز مع حلاق معتمد في قسم قصها — خدمات، أسعار، ومواعيد واضحة.', 'Book a verified barber in Qasaha — clear services, prices, and time slots.'],
-    ['عرض الكل ←', 'See all'],
-    ['كل التجار ←', 'All merchants'],
-    ['شوف الجديد ←', 'See what\'s new'],
+ ['عرض الكل ', 'See all'],
+ ['كل التجار ', 'All merchants'],
+ ['شوف الجديد ', 'See what\'s new'],
     ['تسوق دلوقتي', 'Shop now'],
     ['شوف الجديد', 'See new'],
     ['خصومات اليوم', "Today's deals"],
@@ -526,11 +526,11 @@
     ['لا توجد صورة غلاف', 'No cover photo'],
 
     // قايمة الخدمات الجاهزة + التصنيفات
-    ['➕ إضافة من القايمة الجاهزة', '➕ Add from the ready list'],
+ ['إضافة من القايمة الجاهزة', 'Add from the ready list'],
     ['— اختَر خدمة جاهزة —', '— Pick a ready-made service —'],
     ['اختَر خدمة جاهزة', 'Pick a ready-made service'],
     ['إضافة خدمة خاصة', 'Add a custom service'],
-    ['🗑️ حذف الخدمة', '🗑️ Delete service'],
+ ['حذف الخدمة', 'Delete service'],
     ['حذف الخدمة', 'Delete service'],
     ['عناية بالشعر', 'Hair care'],
     ['عناية بالذقن', 'Beard care'],
@@ -720,15 +720,15 @@
     ['＋ أضّف تقييمك وتجربتك مع الصالون', '＋ Add your rating and experience'],
     ['تعديل تقييمي', 'Edit my review'],
     ['تقييمك وصل — قيد مراجعة الإدارة', 'Your review was sent — pending admin review'],
-    ['تقييمك منشور ✓', 'Your review is published ✓'],
+ ['تقييمك منشور ', 'Your review is published '],
     ['تقييمك اترفض — تقدر تعدّله وتبعت تاني', 'Your review was rejected — you can edit and resend'],
     ['رد الإدارة: ', 'Admin reply: '],
     ['تقييمك بيروح للإدارة الأول وبعدين يظهر لكل الزوار. لو عدّلته بعد النشر بيرجع للمراجعة من أول.',
      'Your review goes to the admin team first, then appears for all visitors. Editing it after publishing sends it back for review.'],
     ['إرسال للإدارة', 'Send to admin'],
     ['جارِ الإرسال…', 'Sending…'],
-    ['تم إرسال تقييمك للإدارة — هيظهر هنا بعد الاعتماد ✓',
-     'Your review was sent to the admin team — it will show here once approved ✓'],
+ ['تم إرسال تقييمك للإدارة — هيظهر هنا بعد الاعتماد ',
+     'Your review was sent to the admin team — it will show here once approved'],
     ['اختَر عدد النجوم الأول', 'Pick a star rating first'],
     ['اختَر عدد النجوم', 'Pick a star rating'],
     ['تعليقك (اختياري)', 'Your comment (optional)'],
@@ -745,6 +745,40 @@
     ['المتجر بيوصّل الطلبات للبيت في المناطق المتاحة.',
      'The store delivers orders to your home in the available areas.'],
     ['— تقييم', '— reviews'],
+
+    /* ---- الرئيسية بعد إعادة تصميم «Deep Teal Trust» ---- */
+    // مجمّع الخدمات
+    ['خدمات Doddz Go', 'Doddz Go services'],
+    ['أنشطة معتمدة بالكامل — حلاقين، مغاسل، ورش يدوية ومتاجر. أسعار ومواعيد واضحة، وتواصل مباشر مع صاحب النشاط.',
+     'Fully verified businesses — barbers, car washes, handmade workshops and stores. Clear prices and hours, with direct contact to the owner.'],
+    ['مغاسل سيارات معتمدة', 'Certified car washes'],
+    ['متاجر معتمدة على Doddz Go', 'Certified stores on Doddz Go'],
+    ['شغل هند ميد من صنّاع محليين', 'Handmade by local makers'],
+
+    // شبكة «تسوّق حسب القسم»
+    ['تسوّق حسب القسم', 'Shop by category'],
+ ['وصل حديثاً ', 'Just arrived'],
+    ['إلكترونيات', 'Electronics'],
+    ['موبايلات', 'Mobiles'],
+    ['أزياء', 'Fashion'],
+    ['أحذية', 'Shoes'],
+    ['ساعات وإكسسوارات', 'Watches & accessories'],
+    ['الجمال والعناية', 'Beauty & care'],
+    ['عروض اليوم', "Today's deals"],
+    ['أحدث الموديلات', 'Latest models'],
+    ['شواحن وحوامل', 'Chargers & stands'],
+    ['رجالي وحريمي', 'Men & women'],
+    ['كلاسيك وسبورت', 'Classic & sport'],
+    ['ماركات مختارة', 'Selected brands'],
+    ['مطبخ وديكور وصيانة', 'Kitchen, decor & repair'],
+    ['بشرة وعناية', 'Skincare & beauty'],
+    ['اختيارات الناس', "People's picks"],
+
+    // بانرات كبيرة + رسالة القسم الفاضي
+    ['منتجات مضافة بعناية لجودة أوضح وتجربة أسهل', 'Carefully added products for clearer quality and an easier experience'],
+    ['مطبخ، حمامات، ديكور وأدوات صيانة بأسعار واضحة', 'Kitchen, bathroom, decor and repair tools at clear prices'],
+    ['لسه مفيش أنشطة معتمدة في هذا القسم — سجّل نشاطك من زر «حسابي»',
+     'No verified businesses in this section yet — register yours from the “My account” button'],
 
   ];
 
@@ -877,7 +911,11 @@
       }
     });
     document.querySelectorAll('.row-see-all').forEach(btn => {
-      if (lang === 'en') btn.textContent = dict.en.see_all;
+      if (lang === 'en') {
+        // الأيقونة SVG جوه الزرار — بنعيد تركيبها بعد الترجمة بدل ما تمسح
+        const ic = btn.querySelector('svg');
+        btn.innerHTML = dict.en.see_all + (ic ? ' ' + ic.outerHTML : '');
+      }
     });
   }
 

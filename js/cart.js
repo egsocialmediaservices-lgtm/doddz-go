@@ -316,7 +316,7 @@ function renderCartDrawer() {
           <span>الإجمالي</span>
           <strong>${total.toLocaleString()} جنيه</strong>
         </div>
-        <button class="cart-checkout" onclick="checkoutCart()">إتمام الطلب ←</button>
+        <button class="cart-checkout" onclick="checkoutCart()">إتمام الطلب ${typeof DoddzIcon !== 'undefined' ? DoddzIcon.svg('arrowLeft', { size: 15 }) : ''}</button>
       </div>
     `;
   }
@@ -589,7 +589,8 @@ async function submitCheckout(event) {
     showCheckoutError(error && error.userMessage ? error.userMessage : checkoutFriendlyMessage(error));
   } finally {
     checkoutSubmitBtn.disabled = false;
-    checkoutSubmitBtn.textContent = 'تأكيد الطلب ←';
+    checkoutSubmitBtn.innerHTML = 'تأكيد الطلب ' +
+      (typeof DoddzIcon !== 'undefined' ? DoddzIcon.svg('arrowLeft', { size: 15 }) : '');
   }
 }
 

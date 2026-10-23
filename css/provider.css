@@ -100,6 +100,8 @@
 }
 .pv-prod-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pv-prod-emoji { font-size: 34px; }
+/* الأيقونات بقت SVG — حجمها بياخد من حجم الخط حوالين */
+.pv-prod-emoji .ic, .bp-cover-mark .ic { width: 1.5em; height: 1.5em; }
 .pv-prod-name {
   font-size: 12.5px;
   font-weight: 800;

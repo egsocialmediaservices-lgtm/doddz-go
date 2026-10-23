@@ -65,36 +65,42 @@
     return 'يبدأ من ' + Math.min(...prices).toLocaleString('ar-EG') + ' ج';
   }
 
+  /** أول حرف من اسم النشاط — بديل راقٍ عن الإيموجي لما مفيش لوجو */
+  function monogram(name) {
+    const s = String(name || '').trim();
+    return esc(s ? s.charAt(0) : '·');
+  }
+
   function card(row, code) {
     const label = (window.SectionsStore && SectionsStore.section(code) && SectionsStore.section(code).entity) || 'نشاط';
     const count = code === 'merchants' ? productCount(row) : 0;
     const wa = waLink(row.phone);
     const link = providerLink(row, code);
+    const pic  = row.logo_url || row.cover_url;
     return `
       <div class="pcard pcard-provider" data-provider="${esc(row.id)}" data-section="${code}"
-           ${link ? 'data-provider-link="' + esc(link) + '" tabindex="-1"' : ''}
-           style="background:#2a2a3d;border-color:#3a3a5c;">
-        <div class="pcard-img" style="display:flex;align-items:center;justify-content:center;font-size:34px;">
-          ${row.logo_url || row.cover_url
-            ? `<img src="${esc(row.logo_url || row.cover_url)}" alt="${esc(row.name)}" style="width:100%;height:100%;object-fit:cover;"/>`
-            : (code === 'carwash' ? '🚗' : code === 'handmade' ? '🧵' : '🏬')}
+           ${link ? 'data-provider-link="' + esc(link) + '" tabindex="-1"' : ''}>
+        <div class="pcard-img pcard-provider-img">
+          ${pic
+            ? `<img src="${esc(pic)}" alt="${esc(row.name)}" loading="lazy"/>`
+            : `<span class="pcard-provider-mark" aria-hidden="true">${monogram(row.name)}</span>`}
         </div>
         <div class="pcard-body">
-          <div class="pcard-cat" style="color:#ff6b4a;">${esc(label)}</div>
+          <div class="pcard-cat">${esc(label)}</div>
           ${link
-            ? `<a class="pcard-name pcard-provider-name" href="${esc(link)}" style="color:#fff;">${esc(row.name)}</a>`
-            : `<div class="pcard-name" style="color:#fff;">${esc(row.name)}</div>`}
-          <div class="pcard-cat" style="color:#aaa;">${esc(row.area || row.governorate || '—')}</div>
+            ? `<a class="pcard-name pcard-provider-name" href="${esc(link)}">${esc(row.name)}</a>`
+            : `<div class="pcard-name">${esc(row.name)}</div>`}
+          <div class="pcard-provider-area">${esc(row.area || row.governorate || '—')}</div>
           <div class="pcard-stars">
             <span class="stars">★ ${Number(row.rating || 0).toFixed(1)}</span>
-            <span class="stars-count" style="color:#aaa;">(${Number(row.reviews_count || 0)} تقييم)</span>
+            <span class="stars-count">(${Number(row.reviews_count || 0)} تقييم)</span>
           </div>
           <div class="pcard-price">
-            <span class="price-now" style="color:#ff6b4a;">${esc(priceFrom(row) || (count ? count + ' منتج' : 'شوف الملف'))}</span>
+            <span class="price-now">${esc(priceFrom(row) || (count ? count + ' منتج' : 'شوف الملف'))}</span>
           </div>
-          <div style="font-size:12px;color:#c9c9de;margin:2px 0 8px;">${esc(servicesPreview(row))}</div>
-          ${row.phone ? `<a class="pcard-btn" href="${esc(wa || ('tel:' + row.phone))}" target="_blank" rel="noopener"
-              style="display:inline-block;text-align:center;text-decoration:none;color:#fff;background:var(--coral,#ff6b4a);border-radius:10px;padding:8px 12px;">تواصل ${esc(row.phone)}</a>` : ''}
+          <div class="pcard-provider-svc">${esc(servicesPreview(row))}</div>
+          ${row.phone ? `<a class="pcard-btn pcard-provider-contact" href="${esc(wa || ('tel:' + row.phone))}" target="_blank" rel="noopener"
+              >تواصل ${esc(row.phone)}</a>` : ''}
         </div>
       </div>`;
   }
@@ -124,7 +130,7 @@
 
   function renderEmpty(code) {
     if (hasProductCards(code)) { mount(code, ''); return; }   // ما نمسحش منتجات موجودة
-    mount(code, `<div class="search-results-empty" style="min-width:220px;color:#bbb;display:flex;align-items:center;">لسه مفيش أنشطة معتمدة في هذا القسم — سجّل نشاطك من زر «حسابي»</div>`);
+    mount(code, `<div class="provider-empty" style="min-width:220px;display:flex;align-items:center;">لسه مفيش أنشطة معتمدة في هذا القسم — سجّل نشاطك من زر «حسابي»</div>`);
   }
 
   async function renderSection(code) {

@@ -326,3 +326,28 @@ html[dir="rtl"] .back-btn svg,
   gap: 10px;
   margin: 0 0 14px;
 }
+
+/* ================================================================
+   الأيقونات — js/icons.js (كل الإيموجي اتبدّل برسمات SVG خطية)
+   ================================================================ */
+.ic {
+  display: inline-block;
+  vertical-align: -0.22em;
+  flex: 0 0 auto;
+  line-height: 1;
+}
+/* أيقونة جوه كلام (زرار / عنوان) — بتاخد حجم الخط */
+.ic-inline { width: 1.05em; height: 1.05em; vertical-align: -0.2em; }
+/* أيقونة بيتولد حجمها = حجم الخط مكانها (DoddzIcon.polish) */
+.ic-em { width: 1.05em; height: 1.05em; vertical-align: -0.18em; }
+/* أيقونة لوحدها في صف فيه نص: تحافظ على مسافة معقولة جنب الكلام */
+.adm-btn .ic, .bk-btn .ic, .checkout-submit-btn .ic, .checkout-done-btn .ic,
+.cart-checkout .ic, .pc-card .ic, .row-see-all .ic { margin-inline-end: 6px; }
+/* النجوم: SVG بدل ★ ☆ — اللون جاي من currentColor */
+.stars .ic, .pcard-stars .ic { color: var(--star, #f59e0b); }
+.stars, .pcard-stars { display: inline-flex; align-items: center; gap: 1px; }
+/* في اللاتيني (LTR) سهم «عرض الكل» بيتقلب عشان يشاور على اتجاه القراءة */
+html[dir="ltr"] .row-see-all .ic,
+html[dir="ltr"] .checkout-submit-btn .ic,
+html[dir="ltr"] .cart-checkout .ic,
+[dir="ltr"] .row-see-all .ic { transform: scaleX(-1); }

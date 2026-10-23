@@ -15,13 +15,15 @@
   <link rel="apple-touch-icon" href="images/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
-  <!-- قرار المقدمة: هل الزائر ده شافها قبل كده؟ (قبل الرسم عشان مفيش وميض) -->
+  <!-- قرار المقدمة: التاب ده شافها قبل كده؟ (قبل الرسم عشان مفيش وميض)
+       بتظهر كل فتحة جديدة للموقع، ومتتكرارش جوه نفس التاب. -->
   <script>
     (function () {
       try {
-        if (localStorage.getItem('doddz_intro_seen_v1') !== '1') {
+        if (sessionStorage.getItem('doddz_intro_open') !== '1') {
           document.documentElement.className += ' intro-on';
         }
       } catch (e) { document.documentElement.className += ' intro-on'; }
@@ -29,32 +31,35 @@
   </script>
 
   <!-- ===== CSS — كل ملف مسؤول عن جزء واحد فقط ===== -->
-  <link rel="stylesheet" href="css/base.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/header.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/hero.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/promo.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/products.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/courses.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/banners.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/cart.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/checkout.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/account.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/admin.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/splash.css?v=20261023d"/>
-  <script src="js/motion.js?v=20261023d" defer></script>
-  <script src="js/splash.js?v=20261023d" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/header.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/hero.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/promo.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/products.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/courses.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/banners.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/account.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/admin.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/splash.css?v=20261023i"/>
+  <!-- هوية «Deep Teal Trust» — للرئيسية فقط، آخر ملف عشان تتجاوز القواعد القديمة -->
+  <link rel="stylesheet" href="css/home-redesign.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/dt-pages.css?v=20261023i"/>
+  <script src="js/motion.js?v=20261023i" defer></script>
+  <script src="js/splash.js?v=20261023i" defer></script>
   <style>.phase-later { display: none !important; }</style>
 </head>
 <body>
 
 <!-- ================================================================
-     المقدمة (Intro) — لوجو Doddz Go ثلاثي الأبعاد من الفيديو.
-     بتظهر أول مرة لكل زائر بس (localStorage: doddz_intro_seen_v1)،
-     الحركة بتتعمل مرة واحدة وتثبت على آخر إطار، وأي ضغطة = دخول للموقع.
+     المقدمة (Intro) — لوجو Doddz Go.
+     خفيفة: صورة اللوجو بس (مفيش فيديو)، بتظهر كل ما الموقع يتفتح
+     من أول وجديد، وبتقفل نفسها بعد ~1.6 ثانية أو بضغطة/Escape.
      ================================================================ -->
 <div id="intro" role="dialog" aria-modal="true" aria-label="مقدمة Doddz Go">
   <button type="button" class="intro-skip">
@@ -65,8 +70,7 @@
   <div class="intro-stage">
     <span class="intro-halo" aria-hidden="true"></span>
     <button type="button" class="intro-logo" aria-label="الدخول إلى موقع Doddz Go">
-      <video class="intro-media" src="images/doddz-intro.mp4" muted autoplay playsinline preload="auto" tabindex="-1" aria-hidden="true"></video>
-      <img class="intro-fallback" src="images/doddz-logo-white.png" alt="Doddz Go" width="1152" height="448" decoding="async"/>
+      <img class="intro-logo-img" src="images/doddz-logo-white.webp" alt="Doddz Go" width="1152" height="448" fetchpriority="high" decoding="sync"/>
     </button>
   </div>
 
@@ -134,7 +138,7 @@
 <header>
   <div class="header-main">
     <a href="index.html" class="logo-link" aria-label="Doddz Go">
-      <img class="site-logo" src="images/logo-white.png" alt="Doddz Go" width="180" height="48" decoding="async"/>
+      <img class="site-logo" src="images/logo-white.webp" alt="Doddz Go" width="180" height="48" decoding="async"/>
     </a>
     <button type="button" class="lang-toggle" id="lang-toggle" title="Language">
       <span data-lang-label>EN</span>
@@ -256,7 +260,7 @@
       <!-- قصها -->
       <div class="slide active slide-qasaha">
         <div class="slide-media">
-          <img src="images/hero/qasaha.png" alt="قصها" width="1200" height="600" loading="eager"/>
+          <img src="images/hero/qasaha.webp" alt="قصها" width="1200" height="600" loading="eager"/>
         </div>
         <div class="slide-overlay"></div>
         <div class="slide-text">
@@ -270,7 +274,7 @@
       <!-- انامل -->
       <div class="slide slide-anamel">
         <div class="slide-media">
-          <img src="images/hero/anamel.png" alt="انامل" width="1200" height="600" loading="lazy"/>
+          <img src="images/hero/anamel.webp" alt="انامل" width="1200" height="600" loading="lazy"/>
         </div>
         <div class="slide-overlay"></div>
         <div class="slide-text">
@@ -284,7 +288,7 @@
       <!-- لمعها -->
       <div class="slide slide-lamaaha">
         <div class="slide-media">
-          <img src="images/hero/lamaaha.png" alt="لمعها" width="1200" height="600" loading="lazy"/>
+          <img src="images/hero/lamaaha.webp" alt="لمعها" width="1200" height="600" loading="lazy"/>
         </div>
         <div class="slide-overlay"></div>
         <div class="slide-text">
@@ -346,80 +350,160 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       تسوّق حسب القسم — اختصارات سريعة (نفس التنقل الموجود في NAV)
+       أي عنصر عليه data-section بيتوصّل أوتوماتيكًا في js/site.js
+       ============================================================ -->
+  <div class="cat-tiles" data-motion>
+    <div class="cat-tiles-head">
+      <h2 class="cat-tiles-title">تسوّق حسب القسم</h2>
+      <button class="row-see-all" data-section="new">وصل حديثاً <i data-icon="arrowLeft" data-icon-size="15"></i></button>
+    </div>
+    <div class="cat-tiles-grid">
+      <button type="button" class="cat-tile" data-section="electronics">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3.5" width="20" height="14" rx="2"/><path d="M8 20.5h8"/><path d="M12 17.5v3"/></svg></span>
+        <span class="ct-name">إلكترونيات</span>
+        <span class="ct-sub">عروض اليوم</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="mobiles">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span>
+        <span class="ct-name">موبايلات</span>
+        <span class="ct-sub">أحدث الموديلات</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="laptops">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="11" rx="2"/><path d="M2 19.5h20"/></svg></span>
+        <span class="ct-name">اكسسوارات لاب توب</span>
+        <span class="ct-sub">شواحن وحوامل</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="fashion">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l1.4 12.5H4.6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></span>
+        <span class="ct-name">أزياء</span>
+        <span class="ct-sub">رجالي وحريمي</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="shoes">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h5l1.6 5.5H17a4 4 0 0 1 4 4v3.5H3z"/><path d="M3 15.5h4.5"/></svg></span>
+        <span class="ct-name">أحذية</span>
+        <span class="ct-sub">كلاسيك وسبورت</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="watches">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5.5"/><path d="M12 9.5V12l1.8 1.8"/><path d="M9 3.5h6"/><path d="M9 20.5h6"/></svg></span>
+        <span class="ct-name">ساعات وإكسسوارات</span>
+        <span class="ct-sub">ماركات مختارة</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="home">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+        <span class="ct-name">المنزل</span>
+        <span class="ct-sub">مطبخ وديكور وصيانة</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="beauty">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4s5.4 5.1 5.4 9a5.4 5.4 0 0 1-10.8 0c0-3.9 5.4-9 5.4-9z"/><path d="M9.7 13.3a2.7 2.7 0 0 0 2.3 2.4"/></svg></span>
+        <span class="ct-name">الجمال والعناية</span>
+        <span class="ct-sub">بشرة وعناية</span>
+      </button>
+      <button type="button" class="cat-tile" data-section="bestsellers">
+        <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.9-5.4 2.9 1-6L3.3 10l6-.9z"/></svg></span>
+        <span class="ct-name">الأكثر مبيعاً</span>
+        <span class="ct-sub">اختيارات الناس</span>
+      </button>
+    </div>
+  </div>
+
   <!-- نتائج البحث / عرض الكل — مخفية افتراضياً وبتظهر بدل الأقسام العادية -->
   <div class="section-row" id="search-results-row" style="display:none;">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> <span id="search-results-title">نتائج البحث</span></div>
-      <button class="row-see-all" id="search-clear-btn">✕ مسح البحث</button>
+      <button class="row-see-all" id="search-clear-btn"><i data-icon="close" data-icon-size="15"></i> مسح البحث</button>
     </div>
     <div class="search-results-grid" id="search-results-grid"></div>
   </div>
 
-  <!-- ===== 1) قصها — الحلاقون المعتمدون (Barber Marketplace P0) ===== -->
-  <div class="section-row" id="section-barbers">
-    <div class="barber-hero">
+  <!-- ============================================================
+       مجمّع الخدمات — قصها / لمعها / كسبني / انامل
+       الأربعة في مجموعة بصرية واحدة، وكل واحد ليه هويته اللونية
+       داخل باليتة «Deep Teal Trust» (شوف css/home-redesign.css)
+       ============================================================ -->
+  <div class="activity-hub" data-motion>
+
+    <div class="hub-head" data-motion>
       <div>
-        <h2>قصها</h2>
-        <p>احجز مع حلاق معتمد في قسم قصها — خدمات، أسعار، ومواعيد واضحة.</p>
+        <h2 class="hub-title">خدمات Doddz Go</h2>
+        <p class="hub-sub">أنشطة معتمدة بالكامل — حلاقين، مغاسل، ورش يدوية ومتاجر. أسعار ومواعيد واضحة، وتواصل مباشر مع صاحب النشاط.</p>
       </div>
-      <div class="barber-hero-icon" aria-hidden="true"></div>
+      <div class="hub-chips">
+        <button type="button" class="hub-chip" data-section="barbers">قصها</button>
+        <button type="button" class="hub-chip" data-section="carwash">لمعها</button>
+        <button type="button" class="hub-chip" data-section="merchants">كسبني</button>
+        <button type="button" class="hub-chip" data-section="handmade">انامل</button>
+      </div>
     </div>
-    <div class="barber-filters" id="barber-filters">
-      <button type="button" class="barber-filter-chip active" data-filter="all">الكل</button>
-      <button type="button" class="barber-filter-chip" data-filter="featured">مميز</button>
-      <button type="button" class="barber-filter-chip" data-filter="home">خدمة منزلية</button>
-      <!-- رقائق المناطق بتتعمل أوتوماتيك من مناطق الصالونات المعتمدة (js/barbers-ui.js) -->
-      <span id="barber-area-chips" style="display:contents;"></span>
-    </div>
-    <div class="barbers-grid" id="barbers-grid"></div>
-  </div>
 
-  <!-- ===== 2) لمعها — مغاسل السيارات ===== -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> لمعها — مغاسل السيارات</div>
-      <button class="row-see-all" data-section="carwash">عرض الكل ←</button>
+    <!-- ===== 1) قصها — الحلاقون المعتمدون (Barber Marketplace P0) ===== -->
+    <div class="section-row" id="section-barbers" data-activity="barbers">
+      <div class="barber-hero">
+        <div>
+          <h2>قصها</h2>
+          <p>احجز مع حلاق معتمد في قسم قصها — خدمات، أسعار، ومواعيد واضحة.</p>
+        </div>
+        <div class="barber-hero-icon" aria-hidden="true"></div>
+      </div>
+      <div class="barber-filters" id="barber-filters">
+        <button type="button" class="barber-filter-chip active" data-filter="all">الكل</button>
+        <button type="button" class="barber-filter-chip" data-filter="featured">مميز</button>
+        <button type="button" class="barber-filter-chip" data-filter="home">خدمة منزلية</button>
+        <!-- رقائق المناطق بتتعمل أوتوماتيك من مناطق الصالونات المعتمدة (js/barbers-ui.js) -->
+        <span id="barber-area-chips" style="display:contents;"></span>
+      </div>
+      <div class="barbers-grid" id="barbers-grid"></div>
     </div>
-    <div class="products-scroll" id="section-carwash"></div>
-  </div>
 
-  <!-- ===== 3) كسبني — متاجر التجار ===== -->
-  <div class="section-row" style="background:linear-gradient(135deg,#1c1c2e,#2a2a3d); border:none;">
-    <div class="row-header">
-      <div class="row-title" style="color:#fff;"><span class="rt-icon"></span> كسبني - تجار</div>
-      <button class="row-see-all" data-section="merchants">كل التجار ←</button>
+    <!-- ===== 2) لمعها — مغاسل السيارات ===== -->
+    <div class="section-row" data-activity="carwash">
+      <div class="row-header">
+        <div class="row-title"><span class="rt-icon"></span><span class="rt-text">لمعها<span class="row-sub">مغاسل سيارات معتمدة</span></span></div>
+        <button class="row-see-all" data-section="carwash">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
+      </div>
+      <div class="products-scroll" id="section-carwash"></div>
     </div>
-    <div class="products-scroll" id="section-merchants"></div>
-  </div>
 
-  <!-- ===== 4) انامل — شغل هند ميد ===== -->
-  <div class="section-row">
-    <div class="row-header">
-      <div class="row-title"><span class="rt-icon"></span> انامل — هند ميد</div>
-      <button class="row-see-all" data-section="handmade">عرض الكل ←</button>
+    <!-- ===== 3) كسبني — متاجر التجار ===== -->
+    <div class="section-row is-deep" data-activity="merchants">
+      <div class="row-header">
+        <div class="row-title"><span class="rt-text">كسبني - تجار<span class="row-sub">متاجر معتمدة على Doddz Go</span></span></div>
+        <button class="row-see-all" data-section="merchants">كل التجار <i data-icon="arrowLeft" data-icon-size="15"></i></button>
+      </div>
+      <div class="products-scroll" id="section-merchants"></div>
     </div>
-    <div class="products-scroll" id="section-handmade"></div>
-  </div>
+
+    <!-- ===== 4) انامل — شغل هند ميد ===== -->
+    <div class="section-row" data-activity="handmade">
+      <div class="row-header">
+        <div class="row-title"><span class="rt-icon"></span><span class="rt-text">انامل<span class="row-sub">شغل هند ميد من صنّاع محليين</span></span></div>
+        <button class="row-see-all" data-section="handmade">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
+      </div>
+      <div class="products-scroll" id="section-handmade"></div>
+    </div>
+
+  </div><!-- /activity-hub -->
 
   <!-- BIG BANNERS -->
   <div class="big-banners">
     <div class="big-banner bb-yellow">
       <div class="bb-text">
-        <div class="bb-tag">🆕 وصل حديثاً</div>
+        <div class="bb-tag">وصل حديثاً</div>
         <div class="bb-title">اختيارات جديدة كل أسبوع</div>
         <div class="bb-sub">منتجات مضافة بعناية لجودة أوضح وتجربة أسهل</div>
-        <button class="bb-btn" data-section="new">شوف الجديد ←</button>
+        <button class="bb-btn" data-section="new">شوف الجديد <i data-icon="arrowLeft" data-icon-size="15"></i></button>
       </div>
-      <div class="bb-icon"></div>
+      <div class="bb-icon" aria-hidden="true"></div>
     </div>
     <div class="big-banner bb-dark">
       <div class="bb-text">
         <div class="bb-tag">المنزل</div>
         <div class="bb-title">كل اللي بيتك محتاجه</div>
-        <div class="bb-sub">أثاث، ديكور، مطبخ وأكتر بأسعار مناسبة</div>
-        <button class="bb-btn" style="background:var(--coral);color:#fff;" data-section="home">تسوق دلوقتي</button>
+        <div class="bb-sub">مطبخ، حمامات، ديكور وأدوات صيانة بأسعار واضحة</div>
+        <button class="bb-btn" data-section="home">تسوق دلوقتي</button>
       </div>
-      <div class="bb-icon"></div>
+      <div class="bb-icon" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -432,7 +516,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> عروض مميزة</div>
-      <button class="row-see-all" data-section="sell">عرض الكل ←</button>
+      <button class="row-see-all" data-section="sell">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-sell"></div>
   </div>
@@ -441,7 +525,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> إلكترونيات</div>
-      <button class="row-see-all" data-section="electronics">عرض الكل ←</button>
+      <button class="row-see-all" data-section="electronics">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-electronics"></div>
   </div>
@@ -450,7 +534,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> موبايلات</div>
-      <button class="row-see-all" data-section="mobiles">عرض الكل ←</button>
+      <button class="row-see-all" data-section="mobiles">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-mobiles"></div>
   </div>
@@ -459,7 +543,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> اكسسوارات لاب توب</div>
-      <button class="row-see-all" data-section="laptops">عرض الكل ←</button>
+      <button class="row-see-all" data-section="laptops">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-laptops"></div>
   </div>
@@ -468,7 +552,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> تكنولوجيا</div>
-      <button class="row-see-all" data-section="tech">عرض الكل ←</button>
+      <button class="row-see-all" data-section="tech">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-tech"></div>
   </div>
@@ -477,7 +561,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> أزياء</div>
-      <button class="row-see-all" data-section="fashion">عرض الكل ←</button>
+      <button class="row-see-all" data-section="fashion">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-fashion"></div>
   </div>
@@ -486,7 +570,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> أحذية</div>
-      <button class="row-see-all" data-section="shoes">عرض الكل ←</button>
+      <button class="row-see-all" data-section="shoes">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-shoes"></div>
   </div>
@@ -495,7 +579,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> ساعات وإكسسوارات</div>
-      <button class="row-see-all" data-section="watches">عرض الكل ←</button>
+      <button class="row-see-all" data-section="watches">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-watches"></div>
   </div>
@@ -504,7 +588,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> الجمال والعناية</div>
-      <button class="row-see-all" data-section="beauty">عرض الكل ←</button>
+      <button class="row-see-all" data-section="beauty">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-beauty"></div>
   </div>
@@ -513,7 +597,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> المنزل</div>
-      <button class="row-see-all" data-section="home">عرض الكل ←</button>
+      <button class="row-see-all" data-section="home">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-home"></div>
   </div>
@@ -522,7 +606,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> الأطفال</div>
-      <button class="row-see-all" data-section="kids">عرض الكل ←</button>
+      <button class="row-see-all" data-section="kids">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-kids"></div>
   </div>
@@ -531,7 +615,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> الألعاب</div>
-      <button class="row-see-all" data-section="toys">عرض الكل ←</button>
+      <button class="row-see-all" data-section="toys">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-toys"></div>
   </div>
@@ -540,7 +624,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> الرياضة</div>
-      <button class="row-see-all" data-section="sports">عرض الكل ←</button>
+      <button class="row-see-all" data-section="sports">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-sports"></div>
   </div>
@@ -549,7 +633,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> الكتب</div>
-      <button class="row-see-all" data-section="books">عرض الكل ←</button>
+      <button class="row-see-all" data-section="books">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-books"></div>
   </div>
@@ -558,7 +642,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> مستلزمات حلاقة</div>
-      <button class="row-see-all" data-section="barber_supplies">عرض الكل ←</button>
+      <button class="row-see-all" data-section="barber_supplies">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-barber_supplies"></div>
   </div>
@@ -567,7 +651,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> خدمات</div>
-      <button class="row-see-all" data-section="services">عرض الكل ←</button>
+      <button class="row-see-all" data-section="services">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-services"></div>
   </div>
@@ -576,7 +660,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> الأكثر مبيعاً</div>
-      <button class="row-see-all" data-section="bestsellers">عرض الكل ←</button>
+      <button class="row-see-all" data-section="bestsellers">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-bestsellers"></div>
   </div>
@@ -585,7 +669,7 @@
   <div class="section-row">
     <div class="row-header">
       <div class="row-title"><span class="rt-icon"></span> وصل حديثاً</div>
-      <button class="row-see-all" data-section="new">عرض الكل ←</button>
+      <button class="row-see-all" data-section="new">عرض الكل <i data-icon="arrowLeft" data-icon-size="15"></i></button>
     </div>
     <div class="products-scroll" id="section-new"></div>
   </div>
@@ -597,7 +681,7 @@
   <div class="footer-top">
     <div class="footer-brand">
       <a href="index.html" class="footer-logo" aria-label="Doddz Go">
-        <img class="site-logo site-logo-footer" src="images/logo-white.png" alt="Doddz Go" width="160" height="42" decoding="async"/>
+        <img class="site-logo site-logo-footer" src="images/logo-white.webp" alt="Doddz Go" width="160" height="42" decoding="async"/>
       </a>
       <p>سوقك الذكي للتسوق والبيع — منتجات متنوعة، عروض مميزة، وتجربة تسوق سهلة وموثوقة.</p>
       <div class="footer-social">
@@ -673,7 +757,7 @@
 <div class="support-chat" id="support-chat-panel" hidden>
   <div class="support-chat-head">
     <strong>خدمة العملاء</strong>
-    <button type="button" id="support-chat-close" aria-label="إغلاق">✕</button>
+    <button type="button" id="support-chat-close" aria-label="إغلاق"><i data-icon="close" data-icon-size="15"></i></button>
   </div>
   <div class="support-chat-body">
     <p style="margin:0 0 10px;">إزاي نقدر نساعدك؟ اختاري أسرع طريقة للتواصل:</p>
@@ -710,7 +794,7 @@
       </div>
       <div class="cart-subtitle">منتجاتك المختارة</div>
     </div>
-    <button class="cart-close" onclick="closeCart()">✕</button>
+    <button class="cart-close" onclick="closeCart()"><i data-icon="close" data-icon-size="15"></i></button>
   </div>
   <div id="cart-items" class="cart-items"></div>
   <div id="cart-drawer-footer" class="cart-drawer-footer"></div>
@@ -730,7 +814,7 @@
       </div>
       <div class="cart-subtitle" id="wishlist-drawer-count">0 منتجات محفوظة</div>
     </div>
-    <button class="cart-close" onclick="closeWishlist()">✕</button>
+    <button class="cart-close" onclick="closeWishlist()"><i data-icon="close" data-icon-size="15"></i></button>
   </div>
   <div id="wishlist-items" class="cart-items"></div>
 </aside>
@@ -742,7 +826,7 @@
   <div class="checkout-panel">
     <div class="checkout-head">
       <h3>إتمام الطلب</h3>
-      <button class="checkout-close" id="checkout-close">✕</button>
+      <button class="checkout-close" id="checkout-close"><i data-icon="close" data-icon-size="15"></i></button>
     </div>
 
     <div class="checkout-body">
@@ -779,15 +863,15 @@
 
         <div class="checkout-errors" id="checkout-errors"></div>
 
-        <button type="submit" class="checkout-submit-btn" id="checkout-submit-btn">تأكيد الطلب ←</button>
+        <button type="submit" class="checkout-submit-btn" id="checkout-submit-btn">تأكيد الطلب <i data-icon="arrowLeft" data-icon-size="15"></i></button>
       </form>
 
       <div class="checkout-success" id="checkout-success" hidden>
         <div class="checkout-success-icon" aria-hidden="true"></div>
-        <h3>تم الطلب بنجاح ✓</h3>
+        <h3>تم الطلب بنجاح <i data-icon="check" data-icon-size="16"></i></h3>
         <p>استلمنا طلبك وهنتواصل معاك على رقم الموبايل لتأكيده. احتفظ بالرقم المرجعي لتتبع طلبك.</p>
         <p class="checkout-order-ref" id="checkout-order-ref"></p>
-        <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام ✓</button>
+        <button type="button" class="checkout-done-btn" id="checkout-done-btn">تمام <i data-icon="check" data-icon-size="15"></i></button>
       </div>
     </div>
   </div>
@@ -806,7 +890,7 @@
           <p id="account-user-email"></p>
         </div>
       </div>
-      <button class="account-close" id="account-close" aria-label="إغلاق">✕</button>
+      <button class="account-close" id="account-close" aria-label="إغلاق"><i data-icon="close" data-icon-size="15"></i></button>
     </div>
 
     <div class="account-body">
@@ -963,10 +1047,10 @@
 <div class="adm-overlay" id="adm-overlay">
   <div class="adm-panel">
     <div class="adm-head">
-      <h3>🛠️ <span>Product</span> Manager</h3>
+      <h3><i data-icon="tools" data-icon-size="20"></i> <span>Product</span> Manager</h3>
       <div class="adm-head-actions">
         <button class="adm-btn secondary adm-logout-btn" id="adm-logout-btn">خروج</button>
-        <button class="adm-close" id="adm-close">✕</button>
+        <button class="adm-close" id="adm-close"><i data-icon="close" data-icon-size="15"></i></button>
       </div>
     </div>
     <div class="adm-body">
@@ -1280,7 +1364,7 @@
           </div>
 
           <div class="adm-form-actions">
-            <button type="submit" class="adm-btn" id="adm-save-btn">💾 حفظ المنتج</button>
+            <button type="submit" class="adm-btn" id="adm-save-btn"><i data-icon="save" data-icon-size="16"></i> حفظ المنتج</button>
             <button type="button" class="adm-btn secondary" id="adm-cancel-btn">إلغاء</button>
           </div>
         </form>
@@ -1493,7 +1577,7 @@
       <div class="checkout-success-icon" aria-hidden="true"></div>
       <h3 id="seller-signup-success-title">تم إرسال طلبك!</h3>
       <p id="seller-signup-success-msg">هيراجعه فريقنا ويتواصل معاك على الإيميل/الموبايل قريباً.</p>
-      <button type="button" class="checkout-done-btn" id="seller-signup-done">تمام ✓</button>
+      <button type="button" class="checkout-done-btn" id="seller-signup-done">تمام <i data-icon="check" data-icon-size="15"></i></button>
     </div>
   </div>
 </div>
@@ -1504,10 +1588,10 @@
 <div class="adm-overlay" id="seller-overlay">
   <div class="adm-panel">
     <div class="adm-head">
-      <h3>🏪 <span>لوحة</span> البائع</h3>
+      <h3><i data-icon="store" data-icon-size="20"></i> <span>لوحة</span> البائع</h3>
       <div class="adm-head-actions">
         <button class="adm-btn secondary adm-logout-btn" id="seller-logout-btn">خروج</button>
-        <button class="adm-close" id="seller-close">✕</button>
+        <button class="adm-close" id="seller-close"><i data-icon="close" data-icon-size="15"></i></button>
       </div>
     </div>
     <div class="adm-body">
@@ -1550,7 +1634,7 @@
         <p class="sb-hint">عدّل خدماتك وأسعارها — تظهر فورًا في صفحة الحجز. الزبون يقدر يختار <strong>أكتر من خدمة</strong> في نفس الموعد.</p>
         <div class="sb-preset-bar">
           <select id="seller-barber-preset-select"></select>
-          <button type="button" class="adm-btn secondary" id="seller-barber-add-preset">➕ إضافة من القايمة الجاهزة</button>
+          <button type="button" class="adm-btn secondary" id="seller-barber-add-preset"><i data-icon="plus" data-icon-size="16"></i> إضافة من القايمة الجاهزة</button>
         </div>
         <div id="seller-barber-services-editor"></div>
         <div class="adm-form-actions" style="margin-top:12px;">
@@ -1579,7 +1663,7 @@
         </div>
         <div class="adm-form-actions">
           <button type="button" class="adm-btn secondary" id="sb-team-reset">إلغاء التعديل</button>
-          <button type="button" class="adm-btn" id="sb-team-save">➕ إضافة / حفظ</button>
+          <button type="button" class="adm-btn" id="sb-team-save"><i data-icon="plus" data-icon-size="16"></i> إضافة / حفظ</button>
         </div>
       </div>
 
@@ -1638,7 +1722,7 @@
           <div class="adm-field"><label>نسخ سريع</label><button type="button" class="adm-btn secondary" id="sb-hours-copy">انسخ السطر الأول لكل الأيام</button></div>
         </div>
         <div class="adm-form-actions">
-          <button type="button" class="adm-btn" id="sb-hours-save">💾 حفظ المواعيد</button>
+          <button type="button" class="adm-btn" id="sb-hours-save"><i data-icon="save" data-icon-size="16"></i> حفظ المواعيد</button>
         </div>
       </div>
 
@@ -1659,9 +1743,9 @@
           <div class="adm-field full"><label>ملاحظة للزبون</label><input type="text" id="sb-loc-note" placeholder="علامة مميزة / الدور / جراج"/></div>
         </div>
         <div class="adm-form-actions">
-          <button type="button" class="adm-btn secondary" id="sb-loc-geo">📍 حدّد موقعي على الخريطة</button>
-          <button type="button" class="adm-btn secondary" id="sb-loc-preview">🗺️ معاينة على الخريطة</button>
-          <button type="button" class="adm-btn" id="sb-loc-save">💾 حفظ اللوكيشن</button>
+          <button type="button" class="adm-btn secondary" id="sb-loc-geo"><i data-icon="location" data-icon-size="16"></i> حدّد موقعي على الخريطة</button>
+          <button type="button" class="adm-btn secondary" id="sb-loc-preview"><i data-icon="map" data-icon-size="16"></i> معاينة على الخريطة</button>
+          <button type="button" class="adm-btn" id="sb-loc-save"><i data-icon="save" data-icon-size="16"></i> حفظ اللوكيشن</button>
         </div>
         <div class="sb-loc-box" id="sb-loc-box"></div>
       </div>
@@ -1691,7 +1775,7 @@
           </div>
         </div>
         <div class="adm-form-actions">
-          <button type="button" class="adm-btn" id="seller-barber-save-home">💾 حفظ إعدادات المنزلي</button>
+          <button type="button" class="adm-btn" id="seller-barber-save-home"><i data-icon="save" data-icon-size="16"></i> حفظ إعدادات المنزلي</button>
         </div>
       </div>
 
@@ -1746,7 +1830,7 @@
           <div class="adm-field full"><label>الخدمات (كل سطر: الاسم | المدة بالدقائق | السعر)</label><textarea id="sb-biz-services" rows="4" placeholder="غسيل كامل | 45 | 150"></textarea></div>
         </div>
         <div class="adm-form-actions" style="margin-top:12px;">
-          <button type="button" class="adm-btn" id="sb-biz-save">💾 حفظ نشاطي</button>
+          <button type="button" class="adm-btn" id="sb-biz-save"><i data-icon="save" data-icon-size="16"></i> حفظ نشاطي</button>
         </div>
       </div>
 
@@ -1808,7 +1892,7 @@
           </div>
 
           <div class="adm-form-actions">
-            <button type="submit" class="adm-btn" id="seller-submit-btn">📤 إرسال للمراجعة</button>
+            <button type="submit" class="adm-btn" id="seller-submit-btn"><i data-icon="upload" data-icon-size="16"></i> إرسال للمراجعة</button>
           </div>
         </form>
       </div>
@@ -1820,26 +1904,27 @@
 <div class="adm-toast" id="adm-toast"></div>
 
 <!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
+<script src="js/icons.js?v=20261023i"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261023d"></script>
-<script src="js/products-data.js?v=20261023d"></script>
-<script src="js/sections-data.js?v=20261023d"></script>
-<script src="js/barbers-data.js?v=20261023d"></script>
-<script src="js/media-upload.js?v=20261023d"></script>
-<script src="js/barbers-ui.js?v=20261023d"></script>
-<script src="js/sections-ui.js?v=20261023d"></script>
-<script src="js/cart.js?v=20261023d"></script>
-<script src="js/wishlist.js?v=20261023d"></script>
-<script src="js/account.js?v=20261023d"></script>
-<script src="js/admin.js?v=20261023d"></script>
-<script src="js/seller.js?v=20261023d"></script>
-<script src="js/seller-barber.js?v=20261023d"></script>
-<script src="js/i18n.js?v=20261023d"></script>
-<script src="js/site.js?v=20261023d"></script>
-<script src="js/search.js?v=20261023d"></script>
-<script src="js/slider.js?v=20261023d"></script>
+<script src="js/supabase-client.js?v=20261023i"></script>
+<script src="js/products-data.js?v=20261023i"></script>
+<script src="js/sections-data.js?v=20261023i"></script>
+<script src="js/barbers-data.js?v=20261023i"></script>
+<script src="js/media-upload.js?v=20261023i"></script>
+<script src="js/barbers-ui.js?v=20261023i"></script>
+<script src="js/sections-ui.js?v=20261023i"></script>
+<script src="js/cart.js?v=20261023i"></script>
+<script src="js/wishlist.js?v=20261023i"></script>
+<script src="js/account.js?v=20261023i"></script>
+<script src="js/admin.js?v=20261023i"></script>
+<script src="js/seller.js?v=20261023i"></script>
+<script src="js/seller-barber.js?v=20261023i"></script>
+<script src="js/i18n.js?v=20261023i"></script>
+<script src="js/site.js?v=20261023i"></script>
+<script src="js/search.js?v=20261023i"></script>
+<script src="js/slider.js?v=20261023i"></script>
 <!-- تقسيم صف «المنزل» لمجموعات فرعية حسب subcategory — عرض فقط، بعد رسم المنتجات -->
-<script src="js/home-subcategories.js?v=20261023d"></script>
+<script src="js/home-subcategories.js?v=20261023i"></script>
 
 </body>
 </html>

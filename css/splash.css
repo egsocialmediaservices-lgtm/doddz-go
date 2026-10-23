@@ -1,11 +1,11 @@
 /* ================================================================
-   المقدمة (Intro) — لوجو Doddz Go ثلاثي الأبعاد من الفيديو
-   بتظهر مرة واحدة لكل زائر (localStorage: doddz_intro_seen_v1)
-   أي ضغطة في الشاشة = دخول، والحركة بتتعمل مرة واحدة وتثبت.
+   المقدمة (Intro) — لوجو Doddz Go
+   بتظهر كل ما الموقع يتفتح من أول وجديد (sessionStorage: doddz_intro_open)
+   وبتقفل نفسها لوحدها بعد ~1.6 ثانية — وأي ضغطة = دخول فوري.
    --------------------------------------------------------------
-   التصميم: خلفية سينمائية هادية (توهّج واحد + فينييت)، اللوجو هو
-   بطل الشاشة لوحده — مفيش نصوص فوقه ولا تحته.
-================================================================ */
+   خفيفة على الجهاز: مفيش فيديو، مفيش blur كبير، مفيش backdrop-filter،
+   ومفيش حركة لا نهائية — حركة دخول واحدة وسكوت.
+   ================================================================ */
 
 /* الصفحات اللي مش فيها مقدمة متتعملش فيها أي حاجة */
 html:not(.intro-on) #intro { display: none !important; }
@@ -37,7 +37,7 @@ html.intro-on body { overflow: hidden !important; }
   to   { opacity: 1; }
 }
 
-/* التوهّج اللي ورا اللوجو — بيتنفس ببطء (بدون شبكة ولا نجوم) */
+/* التوهّج ورا اللوجو — ثابت (بلا animation ولا blur تقيل) */
 #intro::before {
   content: "";
   position: absolute;
@@ -50,12 +50,12 @@ html.intro-on body { overflow: hidden !important; }
               rgba(14, 116, 144, .30) 0%,
               rgba(103, 226, 240, .09) 34%,
               transparent 66%);
-  animation: introGlow 8s ease-in-out infinite;
+  animation: introGlow 1.2s ease-out both;
   pointer-events: none;
 }
 @keyframes introGlow {
-  0%, 100% { opacity: .72; transform: translate(-50%, -50%) scale(1); }
-  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.05); }
+  from { opacity: .2; }
+  to   { opacity: .9; }
 }
 
 /* إطار سينمائي: حواف أغمق بلمسة بسيطة */
@@ -67,10 +67,9 @@ html.intro-on body { overflow: hidden !important; }
   pointer-events: none;
 }
 
-/* ── المسرح ثلاثي الأبعاد ─────────────────────────────────── */
-/* المسرح مقاسه بمقاس شريط اللوجو نفسه — والفيديو (الطولي) بيتوسّع وراه.
-   mix-blend-mode: screen على المسرح = الأسود بتاع الفيديو بيختفي تمامًا
-   ويفضل اللوجو الفضي فوق الكحلي. (الأسود مع screen = بلا أثر) */
+/* ── المسرح ───────────────────────────────────────────────────
+   اللوجو صورة شفافة (WebP/PNG) — مفيش فيديو ومفيش mix-blend،
+   فالرسم بيتمّ في طبقة واحدة وما يعلّش على الأجهزة الضعيفة. */
 .intro-stage {
   --sw: min(86vw, 600px);                 /* عرض شريط اللوجو */
   --sh: clamp(150px, 29vh, 264px);        /* ارتفاعه */
@@ -78,28 +77,25 @@ html.intro-on body { overflow: hidden !important; }
   z-index: 2;
   width: var(--sw);
   height: var(--sh);
-  perspective: var(--persp, 1100px);
-  perspective-origin: 50% 50%;
+  perspective: 1100px;                     /* للوجو يطلع من العمق في حركة الدخول */
   display: flex;
   align-items: center;
   justify-content: center;
-  mix-blend-mode: screen;
 }
 .intro-halo {
   position: absolute;
   inset: -34% -14%;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, rgba(14, 116, 144, .46) 0%, rgba(103, 226, 240, .14) 40%, transparent 70%);
-  filter: blur(42px);
-  animation: introHalo 6.4s ease-in-out infinite;
+  background: radial-gradient(circle at 50% 50%, rgba(14, 116, 144, .40) 0%, rgba(103, 226, 240, .12) 40%, transparent 70%);
+  animation: introHalo 1.4s ease-out both;
   pointer-events: none;
 }
 @keyframes introHalo {
-  0%, 100% { opacity: .68; transform: scale(1); }
-  50%      { opacity: .95; transform: scale(1.05); }
+  from { opacity: 0; transform: scale(.86); }
+  to   { opacity: .9; transform: scale(1); }
 }
 
-/* اللوجو نفسه (فيديو أو صورة بديلة) */
+/* اللوجو نفسه — حركة دخول واحدة (deep → place) وبيسكّت */
 .intro-logo {
   position: relative;
   width: 100%;
@@ -112,48 +108,34 @@ html.intro-on body { overflow: hidden !important; }
   margin: 0;
   background: transparent;
   cursor: pointer;
-  transform-style: preserve-3d;
-  transform: rotateY(-13deg) rotateX(6deg) translateZ(0);
-  animation: introFloat 8s ease-in-out infinite;
-  transition: transform .5s cubic-bezier(.2, .9, .25, 1), filter .5s ease, opacity .62s ease;
-  will-change: transform;
+  transform: rotateY(0) translateZ(0) scale(1);
+  animation: introLand .9s cubic-bezier(.18, .72, .24, 1) both;
   -webkit-tap-highlight-color: transparent;
 }
-@keyframes introFloat {
-  0%   { transform: rotateY(-13deg) rotateX(6deg)  translateZ(0)    scale(1); }
-  25%  { transform: rotateY(5deg)   rotateX(-3deg) translateZ(54px) scale(1.02); }
-  50%  { transform: rotateY(14deg)  rotateX(-5deg) translateZ(22px) scale(1); }
-  75%  { transform: rotateY(-5deg)  rotateX(4deg)  translateZ(62px) scale(1.025); }
-  100% { transform: rotateY(-13deg) rotateX(6deg)  translateZ(0)    scale(1); }
+@keyframes introLand {
+  from { opacity: 0; transform: rotateY(-18deg) rotateX(9deg) translateZ(-160px) scale(.9); }
+  to   { opacity: 1; transform: rotateY(0) rotateX(0) translateZ(0) scale(1); }
 }
-.intro-logo:hover { filter: drop-shadow(0 20px 42px rgba(103, 226, 240, .30)); }
+.intro-logo:hover { filter: drop-shadow(0 14px 30px rgba(103, 226, 240, .22)); }
 .intro-logo:focus-visible {
   outline: 1px solid rgba(103, 226, 240, .75);
   outline-offset: 16px;
   border-radius: 14px;
 }
 
-/* الفيديو أسود الخلفية — بنوسّعه على المسرح فالشريط بتاع اللوجو هو اللي بيبان،
-   والفاضل الأسود فوق وتحت بيختفي مع الـscreen blend.
-   نسبة شريط اللوجو مع السطر بتاعه 576:270 = 2.133 — فالعرض بيتقفل على ارتفاع المسرح كمان
-   عشان اللوجو ما يعديش من فوق ومن تحت في النوافذ القصيرة. */
-.intro-media,
-.intro-fallback {
+/* صورة اللوجو: نسبة 1152:448 = 2.571 — العرض بيتقفل على ارتفاع المسرح
+   كمان عشان اللوجو ما يعديش من فوق ومن تحت في النوافذ القصيرة. */
+.intro-logo-img {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(var(--sw), calc(var(--sh) * 2.133));
+  width: min(var(--sw), calc(var(--sh) * 2.571));
   max-width: none;
   height: auto;
   object-fit: contain;
   pointer-events: none;
 }
-.intro-fallback { display: none; }
-#intro.no-video .intro-media,
-#intro.no-motion .intro-media { display: none; }
-#intro.no-video .intro-fallback,
-#intro.no-motion .intro-fallback { display: block; }
 
 /* ── شريط التقدّم ────────────────────────────────────────────
    العناصر الوحيدَة تحت اللوجو: خط رفيع بيعدّي مع الفيديو. */
@@ -168,14 +150,17 @@ html.intro-on body { overflow: hidden !important; }
 }
 .intro-bar i {
   display: block;
-  width: 0%;
+  width: 100%;
   height: 100%;
   border-radius: 99px;
+  transform: scaleX(0);
+  transform-origin: right center;          /* RTL: البيكسل الأول على اليمين */
   background: linear-gradient(90deg, rgba(14, 116, 144, .9), var(--accent, #67E2F0));
-  transition: width .12s linear;
+  transition: transform 1.65s linear;      /* المدة بتتظبط من js/splash.js */
 }
+html[dir="ltr"] .intro-bar i { transform-origin: left center; }
 #intro.is-frozen .intro-bar { opacity: .4; }
-#intro.is-frozen .intro-bar i { width: 100%; }
+#intro.is-frozen .intro-bar i { transform: scaleX(1); }
 
 /* ── زرار التخطي ───────────────────────────────────────────── */
 .intro-skip {
@@ -186,9 +171,9 @@ html.intro-on body { overflow: hidden !important; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(255, 255, 255, .13);
-  background: rgba(255, 255, 255, .045);
-  color: rgba(255, 255, 255, .62);
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .07);
+  color: rgba(255, 255, 255, .68);
   font-family: inherit;
   font-size: 12px;
   font-weight: 700;
@@ -196,8 +181,6 @@ html.intro-on body { overflow: hidden !important; }
   padding: 9px 15px;
   border-radius: 999px;
   cursor: pointer;
-  backdrop-filter: blur(10px) saturate(130%);
-  -webkit-backdrop-filter: blur(10px) saturate(130%);
   transition: color .2s, border-color .2s, background .2s, transform .2s;
 }
 .intro-skip svg { flex: 0 0 auto; opacity: .7; transition: transform .2s ease, opacity .2s; }
@@ -210,20 +193,13 @@ html.intro-on body { overflow: hidden !important; }
 .intro-skip:focus-visible { outline: 1px solid rgba(103, 226, 240, .8); outline-offset: 3px; }
 
 /* ── حالات الحركة ──────────────────────────────────────────── */
-/* الحركة خلصت → اللوجو يثبت في آخر إطار */
-#intro.is-frozen .intro-logo {
-  animation: none;
-  transform: rotateY(0deg) rotateX(0deg) translateZ(0) scale(1);
-}
-#intro.is-frozen .intro-halo { animation: none; opacity: .75; }
-
-/* لحظة الدخول: اللوجو يقرب ويكبر والموقع كله يفتح */
+/* لحظة الدخول: اللوجو يقرب شوية والموقع يفتح — من غير blur تقيل
+   (الفلتر على عنصر كبير بيخلّي الأجهزة الضعيفة تتعثر) */
 #intro.is-entering .intro-logo {
   animation: none;
-  transform: rotateY(0) rotateX(0) translateZ(320px) scale(1.9);
+  transform: translateZ(120px) scale(1.32);
   opacity: 0;
-  filter: blur(6px);
-  transition: transform .62s cubic-bezier(.4, 0, .2, 1), opacity .62s ease, filter .62s ease;
+  transition: transform .46s cubic-bezier(.4, 0, .2, 1), opacity .46s ease;
 }
 #intro.is-entering .intro-halo { animation: none; opacity: 0; transition: opacity .4s; }
 #intro.is-entering .intro-bar,
@@ -235,15 +211,14 @@ html.intro-on body { overflow: hidden !important; }
   pointer-events: none;
 }
 
-/* ── من يفضّل تقليل الحركة: بدون فيديو، اللوجو ثابت ───────── */
+/* ── من يفضّل تقليل الحركة: اللوجو يظهر من غير تحريك ──────── */
 @media (prefers-reduced-motion: reduce) {
   #intro,
   #intro::before,
   #intro .intro-logo,
   #intro .intro-halo { animation: none !important; }
-  #intro .intro-logo { transform: none; }
-  #intro.no-motion .intro-media { display: none; }
-  #intro.no-motion .intro-fallback { display: block; }
+  #intro .intro-logo { transform: none; opacity: 1; }
+  #intro .intro-bar i { transition: none; transform: scaleX(1); }
 }
 
 /* الموبايل: اللوجو ياخد عرض أوسع شوية */

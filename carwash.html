@@ -9,15 +9,17 @@
   <link rel="apple-touch-icon" href="images/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/base.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/header.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/provider.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261023d"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261023d"/>
-  <script src="js/motion.js?v=20261023d" defer></script>
+  <link rel="stylesheet" href="css/base.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/header.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/provider.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261023i"/>
+  <link rel="stylesheet" href="css/dt-pages.css?v=20261023i"/>
+  <script src="js/motion.js?v=20261023i" defer></script>
 </head>
 <body data-provider-section="carwash">
 
@@ -74,7 +76,7 @@
 
 <header>
   <div class="header-main">
-    <a href="index.html" class="logo-link" aria-label="Doddz Go"><img class="site-logo" src="images/logo-white.png" alt="Doddz Go" width="180" height="48" decoding="async"/></a>
+    <a href="index.html" class="logo-link" aria-label="Doddz Go"><img class="site-logo" src="images/logo-white.webp" alt="Doddz Go" width="180" height="48" decoding="async"/></a>
     <div class="search-bar">
       <input type="text" id="provider-search-input" placeholder="ابحث في متجر Doddz Go..."/>
       <button type="button" aria-label="بحث" onclick="window.location.href='index.html'">
@@ -130,8 +132,8 @@
           <div class="bp-meta-row">
             <span class="bp-area" id="bp-area"></span>
             <span class="bp-today-chip" id="bp-today" hidden></span>
-            <span class="bp-home-chip" id="bp-home-chip" hidden>🏠 خدمة منزلية</span>
-            <span class="pv-featured" id="bp-featured" hidden>⭐ مميز</span>
+            <span class="bp-home-chip" id="bp-home-chip" hidden><i data-icon="home" data-icon-size="15"></i> خدمة منزلية</span>
+            <span class="pv-featured" id="bp-featured" hidden><i data-icon="star" data-icon-size="14"></i> مميز</span>
           </div>
           <p class="bp-bio" id="bp-bio"></p>
           <div class="bp-stats">
@@ -227,11 +229,11 @@
           </h3>
           <ul class="pv-contact-list">
             <li id="bp-owner" hidden></li>
-            <li id="bp-area-li"><span class="pv-ci" aria-hidden="true">📍</span><span id="bp-area-text"></span></li>
+            <li id="bp-area-li"><span class="pv-ci" aria-hidden="true"><i data-icon="location" data-icon-size="17"></i></span><span id="bp-area-text"></span></li>
           </ul>
           <div class="pv-cta-row">
-            <a class="bk-btn primary pv-cta-wa" id="bp-wa" href="#" rel="noopener">💬 واتساب</a>
-            <a class="bk-btn secondary" id="bp-call" href="tel:">📞 اتصال</a>
+            <a class="bk-btn primary pv-cta-wa" id="bp-wa" href="#" rel="noopener"><i data-icon="whatsapp" data-icon-size="16"></i> واتساب</a>
+            <a class="bk-btn secondary" id="bp-call" href="tel:"><i data-icon="phone" data-icon-size="16"></i> اتصال</a>
           </div>
           <p class="pv-note">الحجز والدفع بيتفقوا مباشرة مع صاحب النشاط — Doddz Go بتعرض النشاطات المعتمدة بس.</p>
         </div>
@@ -244,11 +246,12 @@
   <div class="footer-bottom">© 2026 Doddz Go — لمعها · <a href="policies.html#terms" style="color:inherit;">الشروط وسياسة الإلغاء</a></div>
 </footer>
 
+<script src="js/icons.js?v=20261023i"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261023d"></script>
-<script src="js/sections-data.js?v=20261023d"></script>
-<script src="js/provider-page.js?v=20261023d"></script>
-<script src="js/back-button.js?v=20261023d"></script>
-<script src="js/i18n.js?v=20261023d"></script>
+<script src="js/supabase-client.js?v=20261023i"></script>
+<script src="js/sections-data.js?v=20261023i"></script>
+<script src="js/provider-page.js?v=20261023i"></script>
+<script src="js/back-button.js?v=20261023i"></script>
+<script src="js/i18n.js?v=20261023i"></script>
 </body>
 </html>

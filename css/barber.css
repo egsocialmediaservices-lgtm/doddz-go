@@ -736,8 +736,19 @@
   list-style: none;
 }
 .bp-hours-more > summary::-webkit-details-marker { display: none; }
-.bp-hours-more > summary::before { content: "▾ "; color: var(--brand); }
-.bp-hours-more[open] > summary::before { content: "▴ "; }
+/* سهم الفتح/القفل مرسوم بالـCSS — بدل رمز ▾/▴ */
+.bp-hours-more > summary::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-inline-end: 8px;
+  border-right: 2px solid var(--brand);
+  border-bottom: 2px solid var(--brand);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .18s ease;
+}
+.bp-hours-more[open] > summary::before { transform: rotate(-135deg) translateY(-2px); }
 .bp-hours-more .bp-hours { margin-top: 10px; }
 
 /* ── الموقع ───────────────────────────────────────────────── */
