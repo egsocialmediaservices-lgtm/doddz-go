@@ -1,0 +1,386 @@
+/* ================================================================
+   DODDZ GO — صفحة استمارة فني الحلاقة (css/technician-apply.css)
+   ----------------------------------------------------------------
+   * صفحة مستقلة تمامًا: مفيهاش هيدر المتجر ولا فوتر ولا شريط بحث،
+     عشان كده الملف ده بيكتفي بنفسه ومفيش dt-pages.css عليه.
+   * نفس هوية «Deep Teal Trust» بالظبط — نفس القيم والحواف والظلال.
+   * مفيش أي منطق تجاري هنا — شكل وبس.
+   * مفيش إيموجي: الأيقونات SVG من js/icons.js.
+================================================================ */
+
+.ta-root {
+  --dt-950: #03151C;
+  --dt-900: #07222E;
+  --dt-800: #0B2E3D;
+  --dt-750: #0E4356;
+  --dt-700: #155E75;
+  --dt-600: #0E7490;
+  --dt-500: #0891B2;
+  --dt-400: #22B8CF;
+  --dt-300: #67E2F0;
+  --dt-200: #A5F3FC;
+  --dt-100: #D8F3FA;
+  --dt-50:  #F1FAFD;
+  --dt-gold: #C8891B;
+
+  --dt-page:      #EFF5F8;
+  --dt-page-2:    #E7EFF4;
+  --dt-card:      #FFFFFF;
+  --dt-ink:       #08222E;
+  --dt-body:      #2A4353;
+  --dt-muted:     #66808F;
+  --dt-line:      #DBE7EE;
+  --dt-line-soft: #EDF3F7;
+
+  --dt-r1: 10px;
+  --dt-r2: 14px;
+  --dt-r3: 18px;
+  --dt-r4: 24px;
+  --dt-gap: 20px;
+
+  --dt-sh1: 0 1px 2px rgba(8, 34, 46, .05);
+  --dt-sh2: 0 6px 18px rgba(8, 34, 46, .07);
+  --dt-sh3: 0 16px 38px rgba(8, 34, 46, .11);
+  --dt-sh-brand: 0 10px 26px rgba(14, 116, 144, .22);
+}
+
+html, body { background: var(--dt-page); }
+
+body.ta-body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--dt-page) 0%, var(--dt-page-2) 420px, var(--dt-page) 100%);
+  color: var(--dt-body);
+  font-family: var(--font-ar, 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif);
+  direction: rtl;
+  -webkit-text-size-adjust: 100%;
+}
+body.ta-body[dir="ltr"] { direction: ltr; }
+
+.ta-root ::selection { background: var(--dt-300); color: var(--dt-950); }
+
+/* ================================================================
+   1) الشريط العلوي المعزول (مفيش منه رجوع للمتجر)
+================================================================ */
+.ta-bar {
+  background: linear-gradient(96deg, var(--dt-950) 0%, var(--dt-800) 58%, var(--dt-700) 100%);
+  color: #E6F6FB;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(103, 226, 240, .18);
+  box-shadow: 0 10px 28px rgba(3, 21, 28, .28);
+}
+.ta-bar img { height: 30px; width: auto; display: block; }
+.ta-bar-txt { display: flex; flex-direction: column; line-height: 1.25; }
+.ta-bar-txt b { color: #fff; font-size: 15px; font-weight: 700; }
+.ta-bar-txt span { color: rgba(214, 240, 248, .78); font-size: 12px; }
+
+/* ================================================================
+   2) الهيدر + البطاقات
+================================================================ */
+.ta-wrap { max-width: 880px; margin: 0 auto; padding: 26px 16px 60px; }
+
+.ta-hero {
+  background:
+    radial-gradient(120% 150% at 85% -20%, rgba(103, 226, 240, .22) 0%, rgba(103, 226, 240, 0) 60%),
+    linear-gradient(150deg, var(--dt-800) 0%, var(--dt-900) 60%, var(--dt-950) 100%);
+  color: #EAF7FB;
+  border-radius: var(--dt-r4);
+  padding: 26px 22px 24px;
+  box-shadow: var(--dt-sh3);
+  border: 1px solid rgba(103, 226, 240, .2);
+}
+.ta-hero h1 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(21px, 4.4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+.ta-hero p { margin: 0; color: rgba(226, 246, 251, .84); font-size: 14.5px; line-height: 1.85; }
+.ta-hero .ta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.ta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255, 255, 255, .09);
+  border: 1px solid rgba(103, 226, 240, .26);
+  color: #DDF4FA;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.ta-chip .ic { color: var(--dt-300); }
+
+.ta-card {
+  background: var(--dt-card);
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-r3);
+  box-shadow: var(--dt-sh2);
+  padding: 20px 18px;
+  margin-top: 18px;
+}
+.ta-card + .ta-card { margin-top: 14px; }
+
+.ta-sec-head {
+  display: flex; align-items: center; gap: 9px;
+  margin: 0 0 4px;
+  color: var(--dt-ink);
+  font-size: 15.5px; font-weight: 800;
+}
+.ta-sec-head .ic { color: var(--dt-600); }
+.ta-sec-note { margin: 0 0 16px; color: var(--dt-muted); font-size: 12.8px; line-height: 1.7; }
+
+/* ================================================================
+   3) الحقول
+================================================================ */
+.ta-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 14px; }
+.ta-grid .ta-full { grid-column: 1 / -1; }
+@media (max-width: 620px) { .ta-grid { grid-template-columns: 1fr; } }
+
+.ta-field { display: flex; flex-direction: column; gap: 6px; }
+.ta-field > label,
+.ta-legend {
+  color: var(--dt-ink);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -.1px;
+}
+.ta-req { color: var(--dt-600); }
+.ta-opt {
+  color: var(--dt-muted);
+  font-weight: 600;
+  font-size: 11.5px;
+  background: var(--dt-50);
+  border: 1px solid var(--dt-line-soft);
+  border-radius: 999px;
+  padding: 1px 8px;
+  margin-inline-start: 6px;
+}
+
+.ta-field input[type="text"],
+.ta-field input[type="tel"],
+.ta-field input[type="number"],
+.ta-field input[type="date"],
+.ta-field input[type="url"],
+.ta-field select,
+.ta-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid var(--dt-line);
+  border-radius: var(--dt-r1);
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--dt-ink);
+  transition: border-color .16s, box-shadow .16s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.ta-field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366808F' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9.5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  background-size: 16px 16px;
+  padding-inline-start: 12px;
+  padding-inline-end: 34px;
+}
+body.ta-body[dir="ltr"] .ta-field select {
+  background-position: right 12px center;
+  padding-inline-start: 34px;
+  padding-inline-end: 12px;
+}
+.ta-field textarea { min-height: 86px; resize: vertical; line-height: 1.7; }
+.ta-field input:focus,
+.ta-field select:focus,
+.ta-field textarea:focus {
+  outline: none;
+  border-color: var(--dt-400);
+  box-shadow: 0 0 0 4px rgba(34, 184, 207, .18);
+}
+.ta-field input::placeholder, .ta-field textarea::placeholder { color: #9AB0BD; }
+.ta-field input:disabled, .ta-field select:disabled { background: var(--dt-line-soft); color: var(--dt-muted); }
+.ta-hint { color: var(--dt-muted); font-size: 11.8px; line-height: 1.6; }
+
+/* ================================================================
+   4) تخصصات (تشيك بوكس على شكل بلاطات)
+================================================================ */
+.ta-specs { display: flex; flex-wrap: wrap; gap: 8px; }
+.ta-spec {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 1px solid var(--dt-line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: 13.2px;
+  font-weight: 600;
+  color: var(--dt-body);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .16s, background .16s, color .16s;
+}
+.ta-spec input { position: absolute; opacity: 0; width: 0; height: 0; }
+.ta-spec:hover { border-color: var(--dt-300); }
+.ta-spec.is-on {
+  background: var(--dt-900);
+  border-color: var(--dt-900);
+  color: #EAF7FB;
+}
+.ta-spec.is-on .ic { color: var(--dt-300); }
+
+/* ================================================================
+   5) الصورة (اختيارية)
+================================================================ */
+.ta-photo {
+  border: 1px dashed var(--dt-line);
+  border-radius: var(--dt-r2);
+  background: var(--dt-50);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.ta-photo.is-bad { border-color: #E4A0A0; background: #FDF4F4; }
+.ta-photo-prev {
+  width: 74px; height: 74px;
+  border-radius: var(--dt-r1);
+  border: 1px solid var(--dt-line);
+  background: #fff;
+  object-fit: cover;
+  display: none;
+  flex: 0 0 auto;
+}
+.ta-photo-prev.is-on { display: block; }
+.ta-photo-mid { flex: 1 1 190px; min-width: 180px; }
+.ta-photo-mid b { display: block; color: var(--dt-ink); font-size: 13.5px; margin-bottom: 3px; }
+.ta-photo-mid span { display: block; color: var(--dt-muted); font-size: 12.2px; line-height: 1.65; }
+.ta-photo-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; }
+.ta-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ta-photo-state { color: var(--dt-600); font-size: 12.4px; font-weight: 700; margin-top: 8px; min-height: 17px; }
+.ta-photo-state.is-warn { color: #A65A00; }
+
+/* ================================================================
+   6) الأزرار
+================================================================ */
+.ta-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border: 1px solid var(--dt-900);
+  background: linear-gradient(140deg, var(--dt-600) 0%, var(--dt-700) 60%, var(--dt-800) 100%);
+  color: #fff;
+  border-radius: var(--dt-r2);
+  padding: 12px 20px;
+  font: inherit; font-size: 14.5px; font-weight: 800;
+  letter-spacing: -.1px;
+  cursor: pointer;
+  box-shadow: var(--dt-sh-brand);
+  transition: transform .14s, filter .14s, box-shadow .14s;
+}
+.ta-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.ta-btn:active { transform: translateY(0); }
+.ta-btn[disabled] { opacity: .6; cursor: default; transform: none; filter: none; }
+.ta-btn.secondary {
+  background: #fff;
+  color: var(--dt-700);
+  border-color: var(--dt-line);
+  box-shadow: var(--dt-sh1);
+}
+.ta-btn.secondary:hover { border-color: var(--dt-300); background: var(--dt-50); }
+.ta-btn.ghost {
+  background: transparent; color: var(--dt-muted);
+  border-color: var(--dt-line); box-shadow: none;
+  padding: 8px 14px; font-size: 13px; font-weight: 700;
+}
+.ta-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.ta-actions .ta-note { color: var(--dt-muted); font-size: 12.2px; }
+
+/* الموافقة */
+.ta-consent {
+  display: flex; gap: 11px; align-items: flex-start;
+  border: 1px solid var(--dt-line);
+  background: var(--dt-50);
+  border-radius: var(--dt-r2);
+  padding: 13px 14px;
+  cursor: pointer;
+}
+.ta-consent input { margin: 2px 0 0; width: 17px; height: 17px; accent-color: var(--dt-600); flex: 0 0 auto; }
+.ta-consent span { font-size: 13px; line-height: 1.75; color: var(--dt-body); }
+
+/* ================================================================
+   7) الأخطاء / النجاح / المتابعة
+================================================================ */
+.ta-errors {
+  display: none;
+  border: 1px solid #F0C9C9;
+  background: #FDF3F3;
+  color: #8C2B2B;
+  border-radius: var(--dt-r2);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 13.2px;
+  line-height: 1.7;
+}
+.ta-errors.is-on { display: block; }
+.ta-errors b { display: block; margin-bottom: 3px; color: #7A2222; }
+
+.ta-done { text-align: center; padding: 30px 18px; }
+.ta-done .ic { width: 40px; height: 40px; color: var(--dt-600); }
+.ta-done h2 { margin: 10px 0 6px; color: var(--dt-ink); font-size: 21px; font-weight: 800; }
+.ta-done p { margin: 0 auto; max-width: 520px; color: var(--dt-body); font-size: 14px; line-height: 1.85; }
+.ta-code {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 18px auto 6px;
+  background: var(--dt-950);
+  color: #EAF7FB;
+  border: 1px solid rgba(103, 226, 240, .3);
+  border-radius: var(--dt-r2);
+  padding: 12px 18px;
+  font-size: 19px; font-weight: 800; letter-spacing: 1.4px;
+  direction: ltr;
+}
+.ta-code small { font-size: 11px; font-weight: 600; color: rgba(214, 240, 248, .7); letter-spacing: 0; direction: rtl; }
+.ta-code-tip { color: var(--dt-muted); font-size: 12.4px; margin-top: 6px; }
+.ta-done-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+
+.ta-lookup { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.ta-lookup .ta-field { flex: 1 1 220px; }
+.ta-lookup-result { margin-top: 14px; font-size: 13.6px; line-height: 1.8; }
+.ta-state {
+  display: inline-flex; align-items: center; gap: 7px;
+  border-radius: 999px; padding: 5px 13px;
+  font-size: 12.6px; font-weight: 800;
+}
+.ta-state.pending   { background: #FEF6E7; color: #8A5A0B; }
+.ta-state.reviewing { background: var(--dt-100); color: var(--dt-750); }
+.ta-state.approved,
+.ta-state.hired     { background: #E7F7EE; color: #14663C; }
+.ta-state.rejected  { background: #FDEDED; color: #8C2B2B; }
+
+/* ================================================================
+   8) الفوتر المعزول + ملاحظة القفل
+================================================================ */
+.ta-foot {
+  max-width: 880px;
+  margin: 22px auto 0;
+  padding: 0 16px 40px;
+  color: var(--dt-muted);
+  font-size: 12.4px;
+  line-height: 1.85;
+  text-align: center;
+}
+.ta-foot b { color: var(--dt-body); }
+
+/* ================================================================
+   9) حقل ناقص (js/technician-apply.js → mark)
+================================================================ */
+.ta-field .ta-bad { box-shadow: 0 0 0 3px rgba(179, 38, 30, .12); }
+
+/* ================================================================
+   10) تقليل الحركة
+================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .ta-btn, .ta-spec, .ta-field input, .ta-field select, .ta-field textarea { transition: none; }
+  .ta-btn:hover { transform: none; }
+}

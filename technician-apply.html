@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <title>استمارة تقديم فني حلاقة — Doddz Go</title>
+  <meta name="description" content="استمارة التقديم على وظيفة فني حلاقة في Doddz Go: بياناتك الأساسية والسكن والخبرة والمرتاب المتوقع، وتوصل للإدارة مباشرة."/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="theme-color" content="#03151C"/>
+  <link rel="icon" href="images/logo.png" type="image/png"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/base.css?v=20261029a"/>
+  <link rel="stylesheet" href="css/technician-apply.css?v=20261029a"/>
+  <!-- مكتبة Supabase + العميل + رفع الصور: بنفس ترتيب ملفات المتجر -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="js/supabase-client.js?v=20261029a" defer></script>
+  <script src="js/media-upload.js?v=20261029a" defer></script>
+  <script src="js/job-lock.js?v=20261029a" defer></script>
+  <script src="js/icons.js?v=20261029a" defer></script>
+  <script src="js/technician-apply.js?v=20261029a" defer></script>
+</head>
+
+<!-- ================================================================
+     صفحة معزولة للتوظيف: مفيهاش هيدر المتجر، ولا فوتر، ولا أي رابط
+     يطلع من الصفحة. القفل في js/job-lock.js.
+================================================================ -->
+<body class="ta-body" data-job-page="1">
+<div class="ta-root">
+
+  <div class="ta-bar">
+    <img src="images/logo-white.webp" alt="Doddz Go" decoding="async" height="30"/>
+    <span class="ta-bar-txt">
+      <b>باب التوظيف</b>
+      <span>استمارة فني حلاقة</span>
+    </span>
+  </div>
+
+  <main class="ta-wrap">
+
+    <section class="ta-hero">
+      <h1>استمارة تقديم فني حلاقة</h1>
+      <p>
+        لو عندك خبرة في الحلاقة وعايز تشتغل في صالون على Doddz Go، املأ البيانات دي.
+        الاستمارة بتوصل لإدارة Doddz Go بس، والفريق بيشوفها ويرجّع عليك على رقم الموبايل.
+        مفيش حساب ولا تسجيل دخول — بياناتك وبس.
+      </p>
+      <div class="ta-chips">
+        <span class="ta-chip"><i data-icon="lock" data-icon-size="14"></i> بياناتك للإدارة بس</span>
+        <span class="ta-chip"><i data-icon="image" data-icon-size="14"></i> الصورة اختيارية</span>
+        <span class="ta-chip"><i data-icon="receipt" data-icon-size="14"></i> كود لمتابعة الطلب</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════ الاستمارة ═══════════════ -->
+    <form class="ta-card" id="ta-form" novalidate>
+
+      <div class="ta-errors" id="ta-errors" role="alert" aria-live="polite"></div>
+
+      <h2 class="ta-sec-head"><i data-icon="user" data-icon-size="18"></i> البيانات الأساسية</h2>
+      <p class="ta-sec-note">اللي عليه نجمة لازم يتكتب. الاسم زي ما في البطاقة عشان الاتصال بيك.</p>
+
+      <div class="ta-grid">
+        <div class="ta-field ta-full">
+          <label for="ta-name">الاسم بالكامل <span class="ta-req">*</span></label>
+          <input type="text" id="ta-name" name="name" autocomplete="name" placeholder="مثال: محمود سيد إبراهيم" maxlength="120"/>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-phone">رقم الموبايل (واتساب) <span class="ta-req">*</span></label>
+          <input type="tel" id="ta-phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="01xxxxxxxxx" maxlength="15"/>
+          <span class="ta-hint">١١ رقم يبدأ بـ 01 — من غير حروف ولا مسافات.</span>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-alt-phone">رقم تاني لشخص قريب منك <span class="ta-opt">اختياري</span></label>
+          <input type="tel" id="ta-alt-phone" name="alt_phone" inputmode="numeric" placeholder="01xxxxxxxxx" maxlength="15"/>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-age">السن <span class="ta-req">*</span></label>
+          <input type="text" id="ta-age" name="age" inputmode="numeric" maxlength="3" placeholder="مثال: ٢٦"/>
+          <span class="ta-hint">القبول من ١٦ سنة.</span>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-email">بريد إلكتروني <span class="ta-opt">اختياري</span></label>
+          <input type="text" id="ta-email" name="email" inputmode="email" placeholder="example@mail.com" maxlength="120"/>
+        </div>
+      </div>
+
+      <h2 class="ta-sec-head" style="margin-top:22px"><i data-icon="location" data-icon-size="18"></i> السكن</h2>
+      <p class="ta-sec-note">على أساسه بنرشحلك الصالون الأقرب ليك.</p>
+
+      <div class="ta-grid">
+        <div class="ta-field">
+          <label for="ta-gov">المحافظة <span class="ta-req">*</span></label>
+          <select id="ta-gov" name="governorate">
+            <option value="">اختار المحافظة</option>
+            <option>القاهرة</option>
+            <option>الجيزة</option>
+            <option>القليوبية</option>
+            <option>الإسكندرية</option>
+            <option>الدقهلية</option>
+            <option>الشرقية</option>
+            <option>الغربية</option>
+            <option>المنوفية</option>
+            <option>البحيرة</option>
+            <option>كفر الشيخ</option>
+            <option>دمياط</option>
+            <option>بورسعيد</option>
+            <option>الإسماعيلية</option>
+            <option>السويس</option>
+            <option>الفيوم</option>
+            <option>بني سويف</option>
+            <option>المنيا</option>
+            <option>أسيوط</option>
+            <option>سوهاج</option>
+            <option>قنا</option>
+            <option>الأقصر</option>
+            <option>أسوان</option>
+            <option>البحر الأحمر</option>
+            <option>الوادي الجديد</option>
+            <option>مطروح</option>
+            <option>شمال سيناء</option>
+            <option>جنوب سيناء</option>
+          </select>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-area">المنطقة أو الحي <span class="ta-opt">اختياري</span></label>
+          <input type="text" id="ta-area" name="area" placeholder="مثال: المعادي" maxlength="80"/>
+        </div>
+
+        <div class="ta-field ta-full">
+          <label for="ta-address">العنوان بالتفصيل <span class="ta-opt">اختياري</span></label>
+          <textarea id="ta-address" name="address" placeholder="الشارع، رقم العقار، علامة مميزة" maxlength="300"></textarea>
+        </div>
+      </div>
+
+      <h2 class="ta-sec-head" style="margin-top:22px"><i data-icon="scissors" data-icon-size="18"></i> الخبرة</h2>
+      <p class="ta-sec-note">لو لسه بتتعلم، حط «أقل من سنة» وبيّن للإدارة إنك جاهز تتدرب.</p>
+
+      <div class="ta-grid">
+        <div class="ta-field">
+          <label for="ta-exp">سنوات الخبرة <span class="ta-req">*</span></label>
+          <select id="ta-exp" name="experience_years">
+            <option value="">اختار عدد السنين</option>
+            <option value="0">أقل من سنة</option>
+            <option value="1">سنة</option>
+            <option value="2">سنتين</option>
+            <option value="3">٣ سنين</option>
+            <option value="4">٤ سنين</option>
+            <option value="5">٥ سنين</option>
+            <option value="8">أكثر من ٥ سنين</option>
+          </select>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-certificate">شهادة أو دورات تدريبية <span class="ta-opt">اختياري</span></label>
+          <input type="text" id="ta-certificate" name="certificate" placeholder="مثال: دورة أكاديمية الحلاقة ٢٠٢٤" maxlength="160"/>
+        </div>
+
+        <div class="ta-field ta-full">
+          <label for="ta-prev">الصالونات أو الأماكن اللي اشتغلت فيها <span class="ta-opt">اختياري</span></label>
+          <textarea id="ta-prev" name="previous_salons" placeholder="اسم المكان، المنطقة، والمدة — سطر لكل مكان" maxlength="600"></textarea>
+        </div>
+
+        <div class="ta-field ta-full">
+          <label id="ta-specs-label">الحاجات اللي بتبرع فيها <span class="ta-opt">اختياري</span></label>
+          <div class="ta-specs" id="ta-specs" role="group" aria-labelledby="ta-specs-label">
+            <label class="ta-spec"><input type="checkbox" value="قص رجالي"/><i data-icon="scissors" data-icon-size="14"></i><span>قص رجالي</span></label>
+            <label class="ta-spec"><input type="checkbox" value="ذقن وتهذيب"/><i data-icon="user" data-icon-size="14"></i><span>ذقن وتهذيب</span></label>
+            <label class="ta-spec"><input type="checkbox" value="قص وتصفيف أطفال"/><i data-icon="sparkle" data-icon-size="14"></i><span>قص وتصفيف أطفال</span></label>
+            <label class="ta-spec"><input type="checkbox" value="صبغة وحنة"/><i data-icon="palette" data-icon-size="14"></i><span>صبغة وحنة</span></label>
+            <label class="ta-spec"><input type="checkbox" value="عناية بالبشرة وماسكات"/><i data-icon="beauty" data-icon-size="14"></i><span>عناية بالبشرة وماسكات</span></label>
+            <label class="ta-spec"><input type="checkbox" value="حلاقة كهربائية"/><i data-icon="bolt" data-icon-size="14"></i><span>حلاقة كهربائية</span></label>
+            <label class="ta-spec"><input type="checkbox" value="غسيل وشامبو"/><i data-icon="shower" data-icon-size="14"></i><span>غسيل وشامبو</span></label>
+            <label class="ta-spec"><input type="checkbox" value="خدمة مناسبات وVIP"/><i data-icon="star" data-icon-size="14"></i><span>خدمة مناسبات وVIP</span></label>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="ta-sec-head" style="margin-top:22px"><i data-icon="payment" data-icon-size="18"></i> شروط الشغل</h2>
+      <p class="ta-sec-note">الترشيح بيتم على أساسها، وكل حاجة قابلة للتفاوض مع الإدارة.</p>
+
+      <div class="ta-grid">
+        <div class="ta-field">
+          <label for="ta-salary">المرتب المتوقع شهريًا (جنيه) <span class="ta-req">*</span></label>
+          <input type="text" id="ta-salary" name="expected_salary" inputmode="numeric" maxlength="7" placeholder="مثال: ٤٥٠٠"/>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-system">نظام الشغل اللي تفضله <span class="ta-opt">اختياري</span></label>
+          <select id="ta-system" name="work_system">
+            <option value="">ما تحبش تحدد دلوقتي</option>
+            <option value="fixed">مرتب ثابت</option>
+            <option value="daily">يومية</option>
+            <option value="percentage">نسبة من الشغل</option>
+            <option value="flexible">أي نظام يناسب الصالون</option>
+          </select>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-shift">الشيفت المفضل <span class="ta-opt">اختياري</span></label>
+          <select id="ta-shift" name="preferred_shift">
+            <option value="">مش محدد</option>
+            <option value="morning">صبجي</option>
+            <option value="evening">مسجي</option>
+            <option value="flexible">مرون</option>
+          </select>
+        </div>
+
+        <div class="ta-field">
+          <label for="ta-from">متاح تبدأ من <span class="ta-opt">اختياري</span></label>
+          <input type="date" id="ta-from" name="available_from"/>
+        </div>
+      </div>
+
+      <h2 class="ta-sec-head" style="margin-top:22px"><i data-icon="image" data-icon-size="18"></i> الصورة والأعمال</h2>
+      <p class="ta-sec-note">الصورة اختيارية تمامًا — الإرسال ما بيوقفش عليها.</p>
+
+      <div class="ta-photo" id="ta-photo-box">
+        <img class="ta-photo-prev" id="ta-photo-prev" alt="الصورة المختارة"/>
+        <div class="ta-photo-mid">
+          <b>صورة شخصية أو صورة شغل</b>
+          <span>JPG أو PNG أو WebP — الأفضل وجه واضح أو صورة لشغل القص. الصورة بتتضغط أوتوماتيك قبل الرفع.</span>
+          <div class="ta-photo-btns">
+            <button type="button" class="ta-btn secondary" id="ta-photo-btn"><i data-icon="upload" data-icon-size="15"></i> اختيار صورة</button>
+            <button type="button" class="ta-btn ghost" id="ta-photo-clear" hidden><i data-icon="trash" data-icon-size="14"></i> إزالة الصورة</button>
+          </div>
+          <input type="file" class="ta-file" id="ta-photo" accept="image/jpeg,image/png,image/webp"/>
+          <div class="ta-photo-state" id="ta-photo-state"></div>
+        </div>
+      </div>
+
+      <div class="ta-grid" style="margin-top:14px">
+        <div class="ta-field ta-full">
+          <label for="ta-portfolio">لينك صور شغل أو فيديو <span class="ta-opt">اختياري</span></label>
+          <input type="text" id="ta-portfolio" name="portfolio_url" inputmode="url" placeholder="https://..." maxlength="300"/>
+        </div>
+
+        <div class="ta-field ta-full">
+          <label for="ta-notes">كلام للإدارة <span class="ta-opt">اختياري</span></label>
+          <textarea id="ta-notes" name="notes" placeholder="مثال: عندي وسيلة مواصلات، وجاهز أبدأ من الأسبوع الجاي" maxlength="1200"></textarea>
+        </div>
+      </div>
+
+      <label class="ta-consent" style="margin-top:18px">
+        <input type="checkbox" id="ta-consent"/>
+        <span>أوافق على حفظ بياناتي واستخدامها في التوظيف بس، وأني كتبت معلومات صحيحة.</span>
+      </label>
+
+      <div class="ta-actions">
+        <button type="submit" class="ta-btn" id="ta-submit"><i data-icon="check" data-icon-size="16"></i> إرسال الاستمارة</button>
+        <span class="ta-note">بياناتك بتروح لإدارة Doddz Go، ومحدش تاني بيشوفها.</span>
+      </div>
+    </form>
+
+    <!-- ═══════════════ تم الإرسال ═══════════════ -->
+    <section class="ta-card ta-done" id="ta-done" hidden>
+      <i data-icon="success" data-icon-size="40"></i>
+      <h2>الاستمارة وصلت</h2>
+      <p id="ta-done-msg">تم إرسال بياناتك للإدارة. فريق التوظيف بيراجع الاستمارات يومًا بيوم وهيتواصل معاك على رقم الموبايل اللي كتبته.</p>
+      <div class="ta-code"><span id="ta-done-code">—</span><small>كود المتابعة</small></div>
+      <div class="ta-code-tip">احتفظ بالكود ده — بيه تسمحلك تعرف حالة طلبك من القسم تحت.</div>
+      <div class="ta-done-actions">
+        <button type="button" class="ta-btn secondary" id="ta-go-lookup"><i data-icon="search" data-icon-size="15"></i> متابعة حالة الطلب</button>
+        <button type="button" class="ta-btn ghost" id="ta-another"><i data-icon="plus" data-icon-size="14"></i> إرسال استمارة لفني تاني</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ متابعة الحالة ═══════════════ -->
+    <section class="ta-card" id="ta-lookup-card">
+      <h2 class="ta-sec-head"><i data-icon="receipt" data-icon-size="18"></i> متابعة حالة الطلب</h2>
+      <p class="ta-sec-note">اكتب كود المتابعة اللي ظهر لك بعد الإرسال. الحالة والملاحظات بس اللي بتبان — بياناتك ما بتطلعش لحد.</p>
+      <div class="ta-lookup">
+        <div class="ta-field">
+          <label for="ta-code-input">كود المتابعة</label>
+          <input type="text" id="ta-code-input" placeholder="TA-XXXXXXXX" maxlength="16" style="text-transform:uppercase"/>
+        </div>
+        <button type="button" class="ta-btn secondary" id="ta-lookup-btn" style="height:42px"><i data-icon="search" data-icon-size="15"></i> استعلام</button>
+      </div>
+      <div class="ta-lookup-result" id="ta-lookup-result"></div>
+    </section>
+
+  </main>
+
+  <p class="ta-foot">
+    <b>Doddz Go — باب التوظيف</b><br/>
+    الصفحة دي للتوظيف بس، ومفيش منها رجوع للمتجر ولا تصفح للمنتجات.
+    لو عايز تتصفح Doddz Go، افتح الموقع من جهاز أو نافذة تانية.
+  </p>
+
+</div>
+</body>
+</html>

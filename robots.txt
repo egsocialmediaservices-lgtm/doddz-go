@@ -9,4 +9,7 @@ Disallow: /supabase/
 Disallow: /docs/
 Disallow: /js/supabase-client.js
 
+# صفحة استمارة التوظيف — داخلية، بتتشارك باللينك مباشرة
+Disallow: /technician-apply.html
+
 # لوحة الأدمن/الحساب نوافذ مش صفحات، فمفيش حاجة تُحجب غير الملفات فوق.

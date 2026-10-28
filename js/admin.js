@@ -205,13 +205,14 @@
       loadProvidersAdmin();
       return;
     }
-    // تبويبات جديدة: طلبات العمالة + تقييمات الزوار (منطقها تحت في الملف)
-    if (tab === 'staff' || tab === 'reviews') {
+    // تبويبات جديدة: طلبات العمالة + استمارات الفنيين + تقييمات الزوار (منطقها تحت في الملف)
+    if (tab === 'staff' || tab === 'reviews' || tab === 'techapps') {
       document.querySelectorAll('.adm-tab').forEach(x => x.classList.toggle('active', x.dataset.tab === tab));
       document.querySelectorAll('.adm-view').forEach(x => x.classList.remove('active'));
       const view = $('#adm-view-' + tab);
       if (view) view.classList.add('active');
       if (tab === 'staff') loadStaffRequestsAdmin();
+      else if (tab === 'techapps') loadTechAppsAdmin();
       else loadReviewsAdmin();
       return;
     }
@@ -2273,6 +2274,166 @@
     const notesInput = document.querySelector(`[data-staff-notes="${id}"]`);
     btn.disabled = true;
     await setStaffRequestStatus(id, status, notesInput ? notesInput.value.trim() : '');
+    btn.disabled = false;
+  });
+
+
+  /* ================================================================
+     استمارات فنيين الحلاقة — لوحة الأدمن
+     بتيجي من technician-apply.html (بدون تسجيل دخول)، والجدول
+     technician_applications مقروء للأدمن بس في Supabase.
+     تحويل الحالة بدالة set_technician_application_status — الفحص
+     في قاعدة البيانات مش هنا.
+  ================================================================ */
+  const TECH_STATUS_META = {
+    pending:   { label: 'جديد',          cls: 'pending'   },
+    reviewing: { label: 'بيراجعه',       cls: 'pending'   },
+    approved:  { label: 'مقبول',         cls: 'delivered' },
+    hired:     { label: 'تم التعيين',    cls: 'delivered' },
+    rejected:  { label: 'مرفوض',         cls: 'cancelled' }
+  };
+  const TECH_SYSTEM_LABELS = {
+    fixed: 'مرتب ثابت', daily: 'يومية', percentage: 'نسبة من الشغل', flexible: 'أي نظام'
+  };
+  const TECH_SHIFT_LABELS = { morning: 'صبجي', evening: 'مسجي', flexible: 'مرون' };
+  let techAppRows = [];
+
+  async function loadTechAppsAdmin() {
+    const listEl = $('#adm-techapps-list');
+    const stats  = $('#adm-techapps-stats');
+    if (!listEl) return;
+    const client = getSupabaseClient();
+    if (!client) { listEl.innerHTML = '<div class="adm-empty">الاتصال بالسحابة مقفول</div>'; return; }
+    listEl.innerHTML = '<div class="adm-empty">جارِ التحميل…</div>';
+    const { data, error } = await client
+      .from('technician_applications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(300);
+    if (error) {
+      console.warn('[Admin] technician_applications:', error);
+      techAppRows = [];
+      listEl.innerHTML = '<div class="adm-empty">تعذر قراءة الاستمارات — تأكد إن <b>supabase/12-technician-applications.sql</b> اتنفّذ في SQL Editor، وإنك مسجّل دخول كأدمن.</div>';
+      if (stats) stats.textContent = '';
+      return;
+    }
+    techAppRows = data || [];
+    renderTechAppsAdmin();
+  }
+
+  function techExpLabel(n) {
+    const y = Number(n);
+    if (!Number.isFinite(y)) return '—';
+    if (y <= 0) return 'أقل من سنة';
+    if (y > 5) return 'أكثر من ٥ سنين';
+    if (y === 1) return 'سنة';
+    if (y === 2) return 'سنتين';
+    return y + ' سنين';
+  }
+
+  function techRow(label, value) {
+    if (value === null || value === undefined || value === '') return '';
+    return `<div class="adm-tech-row"><b>${admEsc(label)}:</b> <span>${admEsc(value)}</span></div>`;
+  }
+
+  function renderTechAppsAdmin() {
+    const listEl = $('#adm-techapps-list');
+    const stats  = $('#adm-techapps-stats');
+    if (!listEl) return;
+    const filter = ($('#adm-techapps-status-filter')?.value ?? 'pending');
+    const q      = ($('#adm-techapps-search')?.value || '').trim();
+    let rows     = filter ? techAppRows.filter(r => r.status === filter) : techAppRows;
+    if (q) {
+      const needle = q.toLowerCase();
+      rows = rows.filter(r => [r.full_name, r.phone, r.governorate, r.area, r.track_code]
+        .some(v => String(v || '').toLowerCase().includes(needle)));
+    }
+    const fresh = techAppRows.filter(r => r.status === 'pending').length;
+    if (stats) stats.textContent = `${techAppRows.length} استمارة · ${fresh} جديد`;
+    if (!rows.length) { listEl.innerHTML = '<div class="adm-empty">لا توجد استمارات مطابقة</div>'; return; }
+
+    listEl.innerHTML = rows.map(r => {
+      const meta = TECH_STATUS_META[r.status] || TECH_STATUS_META.pending;
+      const when = r.created_at ? new Date(r.created_at).toLocaleString('ar-EG') : '—';
+      const place = [r.area, r.governorate].filter(Boolean).join(' · ');
+      const specs = Array.isArray(r.specialties) ? r.specialties.filter(Boolean) : [];
+      const salary = Number(r.expected_salary);
+      const avail  = r.available_from ? new Date(r.available_from) : null;
+      const photo  = r.photo_url
+        ? `<img src="${admEsc(r.photo_url)}" alt="" loading="lazy" class="adm-tech-photo"/>`
+        : `<div class="adm-tech-photo adm-tech-photo--none"><i data-icon="image" data-icon-size="18"></i></div>`;
+
+      return `<div class="adm-order-card adm-tech-card">
+        <div class="adm-order-head">
+          <div class="adm-order-head-main">
+            <strong>${admEsc(r.full_name || 'بدون اسم')}</strong>
+            <span class="adm-order-date">${when}${place ? ' · ' + admEsc(place) : ''}</span>
+            <span class="adm-order-date">تواصل: ${admEsc(r.phone || '—')}${r.alt_phone ? ' · بديل: ' + admEsc(r.alt_phone) : ''}</span>
+            <span class="adm-order-date" dir="ltr">كود المتابعة: ${admEsc(r.track_code || '—')}</span>
+          </div>
+          <div class="adm-order-head-side">
+            ${photo}
+            <span class="adm-order-badge ${meta.cls}">${meta.label}</span>
+          </div>
+        </div>
+        <div class="adm-tech-grid">
+          ${techRow('السن', r.age)}
+          ${techRow('الخبرة', techExpLabel(r.experience_years))}
+          ${techRow('المرتب المتوقع', Number.isFinite(salary) && salary > 0 ? salary.toLocaleString('en') + ' جنيه' : '')}
+          ${techRow('نظام الشغل', TECH_SYSTEM_LABELS[r.work_system] || '')}
+          ${techRow('الشيفت', TECH_SHIFT_LABELS[r.preferred_shift] || '')}
+          ${techRow('متاح من', avail && !isNaN(avail.getTime()) ? avail.toLocaleDateString('ar-EG') : '')}
+          ${techRow('السكن', r.address)}
+          ${techRow('البريد', r.email)}
+          ${techRow('شهادة أو دورة', r.certification)}
+          ${techRow('أماكن شغل قبل كده', r.previous_salons)}
+          ${techRow('لينك أعمال', r.portfolio_url)}
+          ${techRow('كلام للإدارة', r.notes)}
+          ${techRow('رد الإدارة', r.admin_notes)}
+        </div>
+        ${specs.length ? `<div class="adm-tech-specs">${specs.map(s => `<span class="adm-tech-spec">${admEsc(s)}</span>`).join('')}</div>` : ''}
+        <div class="adm-row-actions adm-staff-actions">
+          <input type="text" class="adm-staff-notes" data-tech-notes="${admEsc(r.id)}" placeholder="رد للإطلاع (اختياري)" value="${admEsc(r.admin_notes || '')}"/>
+          ${r.status !== 'reviewing' ? `<button type="button" class="adm-btn secondary" data-tech-status="${admEsc(r.id)}|reviewing">بيراجعه</button>` : ''}
+          ${r.status !== 'approved'  ? `<button type="button" class="adm-btn" data-tech-status="${admEsc(r.id)}|approved">قبول</button>` : ''}
+          ${r.status !== 'hired'     ? `<button type="button" class="adm-btn" data-tech-status="${admEsc(r.id)}|hired">تم التعيين</button>` : ''}
+          ${r.status !== 'rejected'  ? `<button type="button" class="adm-btn secondary" data-tech-status="${admEsc(r.id)}|rejected">رفض</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    if (window.DoddzIcon && DoddzIcon.hydrate) DoddzIcon.hydrate();
+  }
+
+  async function setTechAppStatus(id, status, notes) {
+    const client = getSupabaseClient();
+    if (!client) return;
+    const { data, error } = await client.rpc('set_technician_application_status', {
+      p_id: id, p_status: status, p_admin_notes: notes || null
+    });
+    if (error) {
+      console.warn('[Admin] set_technician_application_status:', error);
+      toast(error.message || 'تعذر تغيير حالة الاستمارة');
+      return;
+    }
+    if (data && data.success === false) { toast(data.error || 'تعذر تغيير حالة الاستمارة'); return; }
+    toast(status === 'rejected' ? 'تم رفض الاستمارة' : 'تم تحديث الاستمارة');
+    await loadTechAppsAdmin();
+  }
+
+  $('#adm-tab-techapps')?.addEventListener('click', () => switchTab('techapps'));
+  $('#adm-techapps-refresh')?.addEventListener('click', loadTechAppsAdmin);
+  $('#adm-techapps-status-filter')?.addEventListener('change', renderTechAppsAdmin);
+  $('#adm-techapps-search')?.addEventListener('input', renderTechAppsAdmin);
+  $('#adm-techapps-list')?.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-tech-status]');
+    if (!btn) return;
+    const raw = btn.dataset.techStatus || '';
+    const sep = raw.indexOf('|');
+    const id = raw.slice(0, sep);
+    const status = raw.slice(sep + 1);
+    const notesInput = document.querySelector(`[data-tech-notes="${id}"]`);
+    btn.disabled = true;
+    await setTechAppStatus(id, status, notesInput ? notesInput.value.trim() : '');
     btn.disabled = false;
   });
 

@@ -466,3 +466,48 @@ footer {
 /* نجوم التقييم المرسومة بالكلام (★ ☆) */
 .bp-star .ic, .bp-star.on .ic { width: 1em; height: 1em; }
 .pv-prod-emoji .ic { width: 1.5em; height: 1.5em; }
+
+/* ================================================================
+   12) تبويبة «استمارات فنيين» في لوحة الأدمن (js/admin.js)
+   كروت الاستمارات الجاية من technician-apply.html
+================================================================ */
+.adm-tech-card .adm-order-head-side {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.adm-tech-photo {
+  width: 62px; height: 62px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--dt-line);
+  background: var(--dt-50);
+  box-shadow: var(--dt-sh1);
+}
+.adm-tech-photo--none {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dt-muted);
+  border-style: dashed;
+  box-shadow: none;
+}
+.adm-tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 6px 14px;
+  padding: 12px 0 4px;
+  border-top: 1px dashed var(--dt-line-soft);
+  margin-top: 10px;
+}
+.adm-tech-row { font-size: 12.6px; line-height: 1.7; color: var(--dt-body); }
+.adm-tech-row b { color: var(--dt-ink); font-weight: 700; }
+.adm-tech-specs { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; }
+.adm-tech-spec {
+  background: var(--dt-50);
+  border: 1px solid var(--dt-line);
+  color: var(--dt-750);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.adm-tech-row span { white-space: pre-line; }
+/* زرار «فتح صفحة الاستمارة» في التوب بار: <a> بنفس شكل الأزرار */
+a.adm-btn { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
