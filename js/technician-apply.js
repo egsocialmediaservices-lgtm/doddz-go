@@ -72,6 +72,14 @@
     return isNaN(n) ? null : n;
   }
 
+  // «نعم/لا» → boolean، وفاضي → null (الحقل اختياري ومش بيوقف الإرسال)
+  function yesNo(sel) {
+    var v = val(sel);
+    if (v === 'yes') return true;
+    if (v === 'no') return false;
+    return null;
+  }
+
   function showError(list) {
     if (!errorsEl) return;
     if (!list || !list.length) {
@@ -203,7 +211,7 @@
         age: val('#ta-age'), gov: val('#ta-gov'), area: val('#ta-area'),
         address: val('#ta-address'), exp: val('#ta-exp'), prev: val('#ta-prev'),
         cert: val('#ta-certificate'), salary: val('#ta-salary'), email: val('#ta-email'),
-        sys: val('#ta-system'), shift: val('#ta-shift'), from: val('#ta-from'),
+        sys: val('#ta-system'), tools: val('#ta-tools'), from: val('#ta-from'),
         port: val('#ta-portfolio'), notes: val('#ta-notes'), specs: pickedSpecs()
       };
       sessionStorage.setItem(STATE_KEY, JSON.stringify(d));
@@ -219,7 +227,7 @@
       '#ta-gov': d.gov, '#ta-area': d.area, '#ta-address': d.address, '#ta-exp': d.exp,
       '#ta-prev': d.prev, '#ta-certificate': d.cert, '#ta-salary': d.salary,
       '#ta-email': d.email,
-      '#ta-system': d.sys, '#ta-shift': d.shift, '#ta-from': d.from,
+      '#ta-system': d.sys, '#ta-tools': d.tools, '#ta-from': d.from,
       '#ta-portfolio': d.port, '#ta-notes': d.notes
     };
     Object.keys(map).forEach(function (sel) {
@@ -288,7 +296,7 @@
         p_specialties: pickedSpecs(),
         p_expected_salary: salary,
         p_work_system: val('#ta-system') || null,
-        p_preferred_shift: val('#ta-shift') || null,
+        p_has_tools_uniform: yesNo('#ta-tools'),
         p_available_from: val('#ta-from') || null,
         p_portfolio_url: val('#ta-portfolio') || null,
         p_notes: val('#ta-notes') || null,

@@ -52,8 +52,7 @@ create table if not exists public.technician_applications (
   expected_salary   int  check (expected_salary is null or (expected_salary between 0 and 500000)),
   work_system       text check (work_system is null or
                              work_system in ('fixed','daily','percentage','flexible')),
-  preferred_shift   text check (preferred_shift is null or
-                             preferred_shift in ('morning','evening','flexible')),
+  has_tools_uniform boolean,                      -- متوفر عنده عدة ويونيفورم (نعم/لا)
   available_from    date,                          -- متاح يبدأ من ميعاد
   photo_url         text,                          -- اختيارية
   photo_path        text,                          -- مسار الصورة في Storage (للهذف)
@@ -73,6 +72,68 @@ create index if not exists tech_apps_status_idx on public.technician_application
 create index if not exists tech_apps_phone_idx  on public.technician_applications (phone);
 
 alter table public.technician_applications enable row level security;
+
+
+-- ────────────────────────────────────────────────────────────────
+-- 1-ب) ترقية النسخة القديمة من الجدول
+--   النسخة اللي كانت شغالة قبل كده فيها «الشيفت المفضل» (preferred_shift).
+--   الحقل ده اتشال واستبدال بـ has_tools_uniform (نعم/لا).
+--   لو الاستمارات القديمة فيها قيمة شيفت بننقلها لكلمة في الملاحظات
+--   قبل ما نمسح العمود — مفيش بيانات بتتلاشى.
+--   الملف idempotent: لو الجدول اتعمل جديد النهارده البلوك ده بيعدي على طول.
+-- ────────────────────────────────────────────────────────────────
+do $$
+begin
+  if to_regclass('public.technician_applications') is null then
+    return;
+  end if;
+
+  if not exists (
+       select 1 from information_schema.columns
+        where table_schema = 'public'
+          and table_name   = 'technician_applications'
+          and column_name  = 'has_tools_uniform'
+     ) then
+    alter table public.technician_applications
+      add column has_tools_uniform boolean;
+    raise notice 'اتضاف عمود has_tools_uniform';
+  end if;
+
+  if exists (
+       select 1 from information_schema.columns
+        where table_schema = 'public'
+          and table_name   = 'technician_applications'
+          and column_name  = 'preferred_shift'
+     ) then
+    execute $mig$
+      update public.technician_applications
+         set notes = btrim(coalesce(notes, '') ||
+                           ' | الشيفت القديم: ' || preferred_shift)
+       where coalesce(preferred_shift, '') <> '';
+    $mig$;
+    alter table public.technician_applications
+      drop column preferred_shift;
+    raise notice 'اتشال عمود preferred_shift (قيمته اتنقلت للملاحظات)';
+  end if;
+end $$;
+
+-- النسخة القديمة من الدالة (كانت بتاخد text للشيفت مكان الـ boolean) — بنمسح
+-- كل النسخ اللي باسم ده، عشان يفضل overload واحد بس في PostgREST.
+-- المسح动态 من pg_proc: مبنعتمدش على ترتيب الأنواع المكتوب بإيدنا.
+do $$
+declare r record;
+begin
+  for r in
+    select p.oid::regprocedure::text as sig   -- بيطلع «public.submit_…(text, …)»
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+     where n.nspname = 'public'
+       and p.proname = 'submit_technician_application'
+  loop
+    execute 'drop function ' || r.sig;
+    raise notice 'اتمسحت نسخة قديمة من الدالة: %', r.sig;
+  end loop;
+end $$;
 
 -- ════════════════════════════════════════════════════════════════
 -- 2) الحارس: الحالة وكود المتابعة وملاحظات الإدارة متتكتبش من برّه
@@ -168,7 +229,7 @@ create or replace function public.submit_technician_application(
   p_specialties       text[]  default '{}',
   p_expected_salary   int     default null,
   p_work_system       text    default null,
-  p_preferred_shift   text    default null,
+  p_has_tools_uniform boolean default null,
   p_available_from    date    default null,
   p_photo_url         text    default null,
   p_portfolio_url     text    default null,
@@ -200,7 +261,7 @@ declare
   v_exp      int  := coalesce(p_experience_years, 0);
   v_salary   int  := p_expected_salary;
   v_sys      text := nullif(btrim(coalesce(p_work_system, '')), '');
-  v_shift    text := nullif(btrim(coalesce(p_preferred_shift, '')), '');
+  v_tools    boolean := p_has_tools_uniform;   -- null = اختاروش
   v_photo    text := nullif(btrim(coalesce(p_photo_url, '')), '');
   v_id       uuid;
   v_code     text;
@@ -247,9 +308,6 @@ begin
   end if;
   if v_sys is not null and v_sys not in ('fixed','daily','percentage','flexible') then
     v_sys := null;
-  end if;
-  if v_shift is not null and v_shift not in ('morning','evening','flexible') then
-    v_shift := null;
   end if;
   if v_photo is not null and left(v_photo, 5) <> 'https' then
     v_photo := null;                        -- بنقبل روابط https بس
@@ -311,13 +369,13 @@ begin
     track_code, full_name, phone, alt_phone, email, certification, age,
     governorate, area, address,
     experience_years, previous_salons, specialties,
-    expected_salary, work_system, preferred_shift, available_from,
+    expected_salary, work_system, has_tools_uniform, available_from,
     photo_url, photo_path, portfolio_url, notes, consent, status
   ) values (
     v_code, v_name, v_digits, nullif(v_alt, ''), v_email, v_cert, v_age,
     v_gov, v_area, v_addr,
     v_exp, v_prev, v_specs,
-    v_salary, v_sys, v_shift, p_available_from,
+    v_salary, v_sys, v_tools, p_available_from,
     v_photo, v_photo_path,
     v_port, v_notes, true, 'pending'
   ) returning id, status into v_id, v_status;
@@ -334,7 +392,7 @@ $$;
 
 -- الزائر المجهول أو المستخدم المسجّل — الاتنين يقدروا يبعثوا استمارة.
 grant execute on function public.submit_technician_application(
-  text, text, int, text, text, text, int, text, text[], int, text, text,
+  text, text, int, text, text, text, int, text, text[], int, text, boolean,
   date, text, text, text, text, text, text, boolean
 ) to anon, authenticated;
 

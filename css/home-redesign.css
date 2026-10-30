@@ -219,6 +219,7 @@ body.lang-en .hero-slider .slide-overlay {
 .hero-slider .slide h2 {
   font-size: clamp(23px, 2.6vw, 31px) !important;
   letter-spacing: -0.7px;
+  color: #FFFFFF !important;               /* الجملة الكبيرة فوق الصورة: أبيض (كانت غامقة ومش باينة) */
   text-shadow: var(--dt-txt-shadow) !important;
 }
 .hero-slider .slide p {
@@ -277,6 +278,66 @@ body.lang-en .hero-slider .slide-overlay {
   letter-spacing: -0.2px;
 }
 .side-banner .sb-sub { color: rgba(216, 243, 250, .74) !important; font-size: 11.5px !important; }
+
+/* ── السلايدر كامل العرض + بلاطات الأقسام اللي نزلت تحته ── */
+.hero-layout-full { grid-template-columns: 1fr !important; margin-bottom: 14px; }
+.hero-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.hero-tiles .side-banner {
+  min-height: 92px;
+  flex: none;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+}
+.hero-tiles .side-banner .sb-title { font-size: 14.5px !important; }
+
+/* ── سلايدات من غير صورة (منتجات / تجار): خلفية + أيقونات كبيرة ── */
+.slide-products .slide-art {
+  background:
+    radial-gradient(58% 92% at 22% 46%, rgba(34, 184, 207, .40) 0%, rgba(34, 184, 207, 0) 64%),
+    linear-gradient(122deg, var(--dt-950) 0%, var(--dt-900) 46%, var(--dt-750) 100%) !important;
+}
+.slide-kasabni .slide-art {
+  background:
+    radial-gradient(58% 92% at 22% 46%, rgba(200, 137, 27, .34) 0%, rgba(200, 137, 27, 0) 64%),
+    linear-gradient(122deg, var(--dt-950) 0%, var(--dt-900) 46%, var(--dt-700) 100%) !important;
+}
+/* على الموبايل الطبقة دي بتختفي — السلايد نفسه ياخد نفس الخلفية */
+.hero-slider .slide.slide-products {
+  background: linear-gradient(122deg, var(--dt-950) 0%, var(--dt-900) 52%, var(--dt-750) 100%) !important;
+}
+.hero-slider .slide.slide-kasabni {
+  background: linear-gradient(122deg, var(--dt-950) 0%, var(--dt-900) 52%, var(--dt-700) 100%) !important;
+}
+.slide-art .sa-main {
+  position: absolute;
+  top: 50%; left: 14%;
+  transform: translateY(-50%);
+  color: rgba(103, 226, 240, .62);
+  filter: drop-shadow(0 18px 34px rgba(3, 21, 28, .45));
+  opacity: 0;
+  transition: opacity .6s ease .25s;
+}
+.slide-art .sa-chip {
+  position: absolute;
+  color: rgba(226, 246, 251, .5);
+  opacity: 0;
+  transition: opacity .6s ease .35s;
+}
+.slide.active .slide-art .sa-main,
+.slide.is-entering .slide-art .sa-main,
+.slide.active .slide-art .sa-chip,
+.slide.is-entering .slide-art .sa-chip { opacity: 1; }
+.slide-art .sa-chip-a { top: 20%; left: 30%; }
+.slide-art .sa-chip-b { bottom: 16%; left: 26%; }
+body.lang-en .slide-art .sa-main { left: auto; right: 14%; }
+body.lang-en .slide-art .sa-chip-a { left: auto; right: 30%; }
+body.lang-en .slide-art .sa-chip-b { left: auto; right: 26%; }
 
 /* ================================================================
    6) شبكة «تسوّق حسب القسم» (بلوك جديد)
@@ -564,7 +625,12 @@ body.lang-en .hero-slider .slide-overlay {
   padding: 22px 22px !important;
   box-shadow: 0 14px 30px rgba(3, 21, 28, .18) !important;
 }
-.barber-hero h2 { font-size: 22px !important; letter-spacing: -0.5px; }
+.barber-hero h2 {
+  font-size: 22px !important;
+  letter-spacing: -0.5px;
+  color: #FFFFFF !important;               /* «قصها» فوق جملة الحجز: أبيض على الخلفية الغامقة */
+  text-shadow: var(--dt-txt-shadow) !important;
+}
 .barber-hero p { color: rgba(226, 246, 251, .82) !important; font-size: 13.5px !important; }
 .barber-hero-icon:empty {
   background: rgba(103, 226, 240, .12) !important;
@@ -822,6 +888,7 @@ footer {
 ================================================================ */
 @media (max-width: 1100px) {
   .cat-tiles-grid { grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); }
+  .hero-tiles .side-banner .sb-title { font-size: 13.5px !important; }
 }
 
 @media (max-width: 900px) {
@@ -832,6 +899,8 @@ footer {
   .section-row[data-activity] .row-title::before { inset-inline-start: -10px; height: 20px; }
   .cat-tiles-title { font-size: 17.5px; }
   .big-banner { padding: 24px 20px !important; }
+  .hero-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .hero-tiles .side-banner { min-height: 78px; }
 }
 
 @media (max-width: 700px) {

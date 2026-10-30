@@ -48,140 +48,17 @@ const BarberStore = (() => {
     ]}
   ];
 
-  const SEED = [
-    {
-      id: 'barber_01',
-      name: 'كريم فيصل',
-      area: 'المعادي',
-      bio: 'حلاق رجالي بخبرة +10 سنين. قصات حديثة وعناية بالذقن.',
-      avatar: '', avatarUrl: '', coverUrl: '',
-      rating: 4.9,
-      reviewsCount: 128,
-      isFeatured: true,
-      status: 'approved',
-      phone: '01011112222',
-      workDays: [0, 1, 2, 3, 4, 5], // Sun-Fri
-      workStart: 10,
-      workEnd: 21,
-      slotMinutes: 30,
-      hours: _seedHours([0, 1, 2, 3, 4, 5], 10, 21),
-      location: {
-        address: '١٢ شارع ٩، المعادي الجديدة، القاهرة',
-        lat: '30.0024', lng: '31.2912',
-        mapUrl: 'https://maps.google.com/?q=30.0024,31.2912',
-        note: 'قدام صيدلية العزبي — الدور الأرضي'
-      },
-      team: [
-        { id: 'tmr_barber_01_owner', name: 'كريم فيصل', title: 'صاحب الصالون', photoUrl: '', isOwner: true, active: true, sortOrder: 0 },
-        { id: 'tmr_barber_01_tech01', name: 'مروان علي', title: 'فني حلاقة', photoUrl: '', isOwner: false, active: true, sortOrder: 1 },
-        { id: 'tmr_barber_01_tech02', name: 'حسام طه', title: 'فني عناية بالبشرة', photoUrl: '', isOwner: false, active: true, sortOrder: 2 }
-      ],
-      cancelPolicy: 'يمكن الإلغاء قبل الموعد بـ 3 ساعات.',
-      homeService: {
-        enabled: true,
-        areas: ['المعادي', 'المقطم', 'دار السلام'],
-        travelFee: 40,
-        extraFee: 0,
-        note: 'الحلاق بيجي لحد البيت في المناطق المحددة.'
-      },
-      services: [
-        { id: 's1', name: 'حلاقة شعر', durationMin: 30, price: 120, description: 'قص وتصفيف', category: 'hair' },
-        { id: 's2', name: 'ذقن', durationMin: 20, price: 80, description: 'تهذيب وشكل', category: 'beard' },
-        { id: 's3', name: 'شعر + ذقن', durationMin: 45, price: 180, description: 'باقة كاملة', category: 'hair' },
-        { id: 's4', name: 'حلاقة أطفال', durationMin: 25, price: 90, description: 'حتى 12 سنة', category: 'hair' },
-        { id: 's5', name: 'استشوار', durationMin: 25, price: 90, description: 'تصفيف بالحرارة', category: 'hair' },
-        { id: 's6', name: 'تنظيف بشرة', durationMin: 40, price: 160, description: 'بخار وماسك وتقشير', category: 'skin' }
-      ]
-    },
-    {
-      id: 'barber_02',
-      name: 'أحمد نادي',
-      area: 'مدينة نصر',
-      bio: 'متخصص في الـ Fade والقصات العصرية.',
-      avatar: '', avatarUrl: '', coverUrl: '',
-      rating: 4.7,
-      reviewsCount: 86,
-      isFeatured: true,
-      status: 'approved',
-      phone: '01022223333',
-      workDays: [0, 1, 2, 3, 4, 6],
-      workStart: 12,
-      workEnd: 22,
-      slotMinutes: 30,
-      hours: _seedHours([0, 1, 2, 3, 4, 6], 12, 22),
-      location: {
-        address: 'شارع عباس العقاد، مدينة نصر، القاهرة',
-        lat: '30.0566', lng: '31.3317',
-        mapUrl: 'https://maps.google.com/?q=30.0566,31.3317',
-        note: ''
-      },
-      team: [
-        { id: 'tmr_barber_02_owner', name: 'أحمد نادي', title: 'صاحب الصالون', photoUrl: '', isOwner: true, active: true, sortOrder: 0 },
-        { id: 'tmr_barber_02_tech01', name: 'زياد سمير', title: 'فني حلاقة', photoUrl: '', isOwner: false, active: true, sortOrder: 1 }
-      ],
-      cancelPolicy: 'الإلغاء مجاني قبل 6 ساعات.',
-      homeService: {
-        enabled: true,
-        areas: ['مدينة نصر', 'مصر الجديدة', 'التجمع'],
-        travelFee: 50,
-        extraFee: 20,
-        note: 'متاح خدمة منزلية بمناطق شرق القاهرة.'
-      },
-      services: [
-        { id: 's1', name: 'Skin Fade', durationMin: 40, price: 150, description: '', category: 'hair' },
-        { id: 's2', name: 'حلاقة كلاسيك', durationMin: 30, price: 110, description: '', category: 'hair' },
-        { id: 's3', name: 'ستايلينج', durationMin: 20, price: 70, description: 'تصفيف بالمنتجات', category: 'hair' }
-      ]
-    },
-    {
-      id: 'barber_03',
-      name: 'محمود سعيد',
-      area: 'الزمالك',
-      bio: 'صالون هادئ وخدمة سريعة بدون انتظار طويل.',
-      avatar: '', avatarUrl: '', coverUrl: '',
-      rating: 4.6,
-      reviewsCount: 54,
-      isFeatured: false,
-      status: 'approved',
-      phone: '01033334444',
-      workDays: [1, 2, 3, 4, 5, 6],
-      workStart: 11,
-      workEnd: 20,
-      slotMinutes: 30,
-      cancelPolicy: 'يمكن تعديل الموعد مرة واحدة مجاناً.',
-      homeService: {
-        enabled: false,
-        areas: [],
-        travelFee: 0,
-        extraFee: 0,
-        note: ''
-      },
-      services: [
-        { id: 's1', name: 'حلاقة شعر', durationMin: 30, price: 130, description: '', category: 'hair' },
-        { id: 's2', name: 'ذقن ملكي', durationMin: 25, price: 95, description: '', category: 'beard' },
-        { id: 's3', name: 'شعر + ذقن', durationMin: 50, price: 200, description: '', category: 'hair' }
-      ]
-    },
-    {
-      id: 'barber_04',
-      name: 'يوسف حسام',
-      area: 'التجمع',
-      bio: 'حلاق جديد — في انتظار موافقة الإدارة.',
-      avatar: '', avatarUrl: '', coverUrl: '',
-      rating: 0,
-      reviewsCount: 0,
-      isFeatured: false,
-      status: 'pending',
-      phone: '01044445555',
-      workDays: [0, 1, 2, 3, 4],
-      workStart: 10,
-      workEnd: 18,
-      slotMinutes: 30,
-      cancelPolicy: 'حسب الاتفاق.',
-      services: [
-        { id: 's1', name: 'حلاقة شعر', durationMin: 30, price: 100, description: '', category: 'hair' }
-      ]
-    }
+  // «قصها» بتتغذى من Supabase بس (barber_profiles) — مفيش قايمة تجريبية جاهزة.
+  // المحلات التجريبية (barber_01..barber_04) اتشالت من القاعدة ومن كاش الجهاز
+  // (شوف supabase/13-remove-demo-data.sql).
+  const SEED = [];
+
+  // معرّفات قديمة كانت تجريبية ولسه مخزّنة في كاش أجهزة فتحت الموقع قبل كده —
+  // بتنمسح من الكاش أول ما الصفحة تتفتح عشان ما ترجّعش محلات اتقفلت.
+  // (نفس اللي في supabase/13-remove-demo-data.sql — سيب بس صالون بشري)
+  const RETIRED_IDS = [
+    'barber_01', 'barber_02', 'barber_03', 'barber_04',
+    'srv_f7d9de9b32b946a0a72600d3f7d75c07'   // صالون قصها التجريبي
   ];
 
   let barbers = [];
@@ -322,6 +199,10 @@ const BarberStore = (() => {
       const raw = localStorage.getItem(STORAGE_BARBERS);
       barbers = raw ? JSON.parse(raw) : null;
     } catch { barbers = null; }
+    // كنّا بنخطّط محلات تجريبية في الكاش — بتتمسح أول ما الصفحة تتفتح
+    if (Array.isArray(barbers)) {
+      barbers = barbers.filter(b => b && RETIRED_IDS.indexOf(String(b.id)) === -1);
+    }
     if (!Array.isArray(barbers) || !barbers.length) {
       barbers = JSON.parse(JSON.stringify(SEED));
       persistBarbers();
@@ -351,8 +232,9 @@ const BarberStore = (() => {
       media = rawM ? JSON.parse(rawM) : [];
     } catch { media = []; }
     if (!Array.isArray(team)) team = [];
+    team = team.filter(m => m && RETIRED_IDS.indexOf(String(m.profileId)) === -1);
     if (!Array.isArray(media)) media = [];
-    // أول تشغيل: فريق المحلات التجريبية من الـSEED (لحد ما barber_team يرجّع بياناته)
+    // أول تشغيل: فريق من الـSEED المحلي (فاضي دلوقتي — barber_team هو المصدر)
     if (!team.length) {
       team = _seedTeamFromCatalog();
       persistTeam();
@@ -403,7 +285,7 @@ const BarberStore = (() => {
   // ================================================================
   // كتالوج الحلاقين من Supabase — جدول barber_profiles (قسم «قصها»)
   //   قبل كده القائمة كانت localStorage بس، فحلاق جديد من جهاز الأدمن
-  //   ما يوصلش للعميل. دلوقتي القاعدة هي المصدر، والـSEED احتياطي أوفلاين.
+  //   ما يوصلش للعميل. دلوقتي القاعدة هي المصدر الوحيد (الـSEED بقى فاضي).
   // ================================================================
   const BARBER_TABLE = 'barber_profiles';
 

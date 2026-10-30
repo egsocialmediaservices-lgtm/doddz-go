@@ -1,10 +1,10 @@
 /* ================================================================
-   المقدمة (Intro) — لوجو Doddz Go
+   المقدمة (Intro) — فيديو لوجو Doddz Go
    بتظهر كل ما الموقع يتفتح من أول وجديد (sessionStorage: doddz_intro_open)
-   وبتقفل نفسها لوحدها بعد ~1.6 ثانية — وأي ضغطة = دخول فوري.
+   والفيديو (images/doddz-intro.mp4 ≈ ٣.٨ ثانية) بيخلص لوحده ويدخل.
    --------------------------------------------------------------
-   خفيفة على الجهاز: مفيش فيديو، مفيش blur كبير، مفيش backdrop-filter،
-   ومفيش حركة لا نهائية — حركة دخول واحدة وسكوت.
+   مفيش زرار تخطي — الضغطة أو Escape بيدخلوا فورًا.
+   مفيش backdrop-filter ولا blur تقيل، فالأجهزة الضعيفة ما تتعثرش.
    ================================================================ */
 
 /* الصفحات اللي مش فيها مقدمة متتعملش فيها أي حاجة */
@@ -68,8 +68,8 @@ html.intro-on body { overflow: hidden !important; }
 }
 
 /* ── المسرح ───────────────────────────────────────────────────
-   اللوجو صورة شفافة (WebP/PNG) — مفيش فيديو ومفيش mix-blend،
-   فالرسم بيتمّ في طبقة واحدة وما يعلّش على الأجهزة الضعيفة. */
+   الفيديو فوق صورة اللوجو: الصورة بتفضل باينة لحد الفيديو يشتغل
+   (أو لو الفيديو فشل خالص) — فالافتحار ما يسيبش شاشة فاضية أبدًا. */
 .intro-stage {
   --sw: min(86vw, 600px);                 /* عرض شريط اللوجو */
   --sh: clamp(150px, 29vh, 264px);        /* ارتفاعه */
@@ -81,6 +81,13 @@ html.intro-on body { overflow: hidden !important; }
   display: flex;
   align-items: center;
   justify-content: center;
+}
+/* نسخة الفيديو: إطار 16:9 بيكبر قد ما viewport يسمح */
+.intro-stage-video {
+  width: min(92vw, 720px);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 72vh;
 }
 .intro-halo {
   position: absolute;
@@ -135,7 +142,24 @@ html.intro-on body { overflow: hidden !important; }
   height: auto;
   object-fit: contain;
   pointer-events: none;
+  transition: opacity .3s ease;
 }
+
+/* الفيديو: بياخد مكان اللوجو كله، وبيغطي الصورة أول ما يشتغل */
+.intro-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+#intro.is-video .intro-video   { opacity: 1; }
+#intro.is-video .intro-logo-img { opacity: 0; }
+/* على مسرح الفيديو الصورة بتبقى احتياطية — حجمها ثابت جوه الإطار */
+.intro-stage-video .intro-logo-img { width: 74%; }
 
 /* ── شريط التقدّم ────────────────────────────────────────────
    العناصر الوحيدَة تحت اللوجو: خط رفيع بيعدّي مع الفيديو. */
@@ -162,36 +186,6 @@ html[dir="ltr"] .intro-bar i { transform-origin: left center; }
 #intro.is-frozen .intro-bar { opacity: .4; }
 #intro.is-frozen .intro-bar i { transform: scaleX(1); }
 
-/* ── زرار التخطي ───────────────────────────────────────────── */
-.intro-skip {
-  position: absolute;
-  z-index: 5;
-  top: max(16px, env(safe-area-inset-top, 0px));
-  inset-inline-end: max(16px, env(safe-area-inset-right, 0px));
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(255, 255, 255, .14);
-  background: rgba(255, 255, 255, .07);
-  color: rgba(255, 255, 255, .68);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .01em;
-  padding: 9px 15px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color .2s, border-color .2s, background .2s, transform .2s;
-}
-.intro-skip svg { flex: 0 0 auto; opacity: .7; transition: transform .2s ease, opacity .2s; }
-.intro-skip:hover {
-  color: #fff;
-  border-color: rgba(103, 226, 240, .45);
-  background: rgba(103, 226, 240, .10);
-}
-.intro-skip:hover svg { transform: translateX(-3px); opacity: 1; }
-.intro-skip:focus-visible { outline: 1px solid rgba(103, 226, 240, .8); outline-offset: 3px; }
-
 /* ── حالات الحركة ──────────────────────────────────────────── */
 /* لحظة الدخول: اللوجو يقرب شوية والموقع يفتح — من غير blur تقيل
    (الفلتر على عنصر كبير بيخلّي الأجهزة الضعيفة تتعثر) */
@@ -202,8 +196,7 @@ html[dir="ltr"] .intro-bar i { transform-origin: left center; }
   transition: transform .46s cubic-bezier(.4, 0, .2, 1), opacity .46s ease;
 }
 #intro.is-entering .intro-halo { animation: none; opacity: 0; transition: opacity .4s; }
-#intro.is-entering .intro-bar,
-#intro.is-entering .intro-skip { opacity: 0; transition: opacity .25s; }
+#intro.is-entering .intro-bar { opacity: 0; transition: opacity .25s; }
 #intro.is-entering { background: #05070D; }
 #intro.hide {
   opacity: 0;
@@ -225,13 +218,15 @@ html[dir="ltr"] .intro-bar i { transform-origin: left center; }
 @media (max-width: 480px) {
   #intro { gap: 22px; }
   .intro-stage { --sw: min(92vw, 520px); --sh: clamp(150px, 33vh, 240px); }
-  .intro-skip { font-size: 11.5px; padding: 8px 13px; }
+  .intro-stage-video { width: 94vw; max-height: 60vh; }
 }
 /* النوافذ القصيرة (لاب توب صغير / landscape موبايل) */
 @media (max-height: 620px) {
   .intro-stage { --sh: clamp(112px, 32vh, 200px); }
+  .intro-stage-video { max-height: 62vh; }
 }
 /* الشاشات الكبيرة: اللوجو يبقى أكبر */
 @media (min-width: 1100px) and (min-height: 760px) {
   .intro-stage { --sw: min(72vw, 760px); --sh: clamp(210px, 33vh, 330px); }
+  .intro-stage-video { width: min(76vw, 840px); }
 }

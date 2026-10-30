@@ -31,47 +31,46 @@
   </script>
 
   <!-- ===== CSS — كل ملف مسؤول عن جزء واحد فقط ===== -->
-  <link rel="stylesheet" href="css/base.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/header.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/hero.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/promo.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/products.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/courses.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/banners.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/cart.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/checkout.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/account.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/admin.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/splash.css?v=20261029a"/>
+  <link rel="stylesheet" href="css/base.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/header.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/hero.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/promo.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/products.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/courses.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/banners.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/account.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/admin.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/splash.css?v=20261030a"/>
   <!-- هوية «Deep Teal Trust» — للرئيسية فقط، آخر ملف عشان تتجاوز القواعد القديمة -->
-  <link rel="stylesheet" href="css/home-redesign.css?v=20261029a"/>
-  <link rel="stylesheet" href="css/dt-pages.css?v=20261029a"/>
-  <script src="js/job-lock.js?v=20261029a"></script>
-  <script src="js/motion.js?v=20261029a" defer></script>
-  <script src="js/splash.js?v=20261029a" defer></script>
+  <link rel="stylesheet" href="css/home-redesign.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/dt-pages.css?v=20261030a"/>
+  <script src="js/job-lock.js?v=20261030a"></script>
+  <script src="js/motion.js?v=20261030a" defer></script>
+  <script src="js/splash.js?v=20261030a" defer></script>
   <style>.phase-later { display: none !important; }</style>
 </head>
 <body>
 
 <!-- ================================================================
-     المقدمة (Intro) — لوجو Doddz Go.
-     خفيفة: صورة اللوجو بس (مفيش فيديو)، بتظهر كل ما الموقع يتفتح
-     من أول وجديد، وبتقفل نفسها بعد ~1.6 ثانية أو بضغطة/Escape.
+     المقدمة (Intro) — فيديو لوجو Doddz Go.
+     بتظهر كل ما الموقع يتفتح من أول وجديد (تاب/متصفح جديد)،
+     والفيديو (images/doddz-intro.mp4 — ٣.٨ ثانية) بيخلص لوحده
+     ويدخل للموقع. مفيش زرار «تخطي» — ضغطة أو Escape كمان ويدخل فورًا.
      ================================================================ -->
 <div id="intro" role="dialog" aria-modal="true" aria-label="مقدمة Doddz Go">
-  <button type="button" class="intro-skip">
-    تخطي المقدمة
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>
-  </button>
-
-  <div class="intro-stage">
+  <div class="intro-stage intro-stage-video">
     <span class="intro-halo" aria-hidden="true"></span>
     <button type="button" class="intro-logo" aria-label="الدخول إلى موقع Doddz Go">
       <img class="intro-logo-img" src="images/doddz-logo-white.webp" alt="Doddz Go" width="1152" height="448" fetchpriority="high" decoding="sync"/>
+      <video class="intro-video" src="images/doddz-intro.mp4"
+             poster="images/doddz-logo-white.webp"
+             autoplay muted playsinline preload="auto" aria-hidden="true"></video>
     </button>
   </div>
 
@@ -238,22 +237,8 @@
 <!-- MAIN CONTENT -->
 <div class="content">
 
-  <!-- HERO LAYOUT -->
-  <div class="hero-layout">
-
-    <!-- Right Side Banners -->
-    <div class="side-banners">
-      <div class="side-banner sb-art" data-section="sell">
-        <span class="sb-icon"></span>
-        <span class="sb-title">إلكترونيات</span>
-        <span class="sb-sub">خصومات اليوم</span>
-      </div>
-      <div class="side-banner sb-design" data-section="beauty">
-        <span class="sb-icon"></span>
-        <span class="sb-title">جمال وعناية</span>
-        <span class="sb-sub">منتجات مختارة</span>
-      </div>
-    </div>
+  <!-- HERO LAYOUT — السلايدر كامل العرض (البلاطات نزلت تحته) -->
+  <div class="hero-layout hero-layout-full">
 
     <!-- Slider -->
     <div class="hero-slider" id="slider">
@@ -300,28 +285,75 @@
         </div>
       </div>
 
+      <!-- منتجات دودز جو — المنتجات جنب الخدمات -->
+      <div class="slide slide-products">
+        <div class="slide-media slide-art" aria-hidden="true">
+          <i data-icon="package" data-icon-size="168" class="sa-main"></i>
+          <i data-icon="cart" data-icon-size="62" class="sa-chip sa-chip-a"></i>
+          <i data-icon="truck" data-icon-size="62" class="sa-chip sa-chip-b"></i>
+        </div>
+        <div class="slide-overlay"></div>
+        <div class="slide-text">
+          <span class="slide-tag">منتجات</span>
+          <h2>كل اللي بتحتاجه… جنب الخدمات بالظبط</h2>
+          <p>إلكترونيات وأزياء ومنزل وجمال وعناية — منتجات معتمدة بأسعار واضحة وتوصيل لحد باب البيت.</p>
+          <button class="slide-btn" data-section="bestsellers">تصفّح المنتجات</button>
+        </div>
+      </div>
+
+      <!-- كسبني — التجار -->
+      <div class="slide slide-kasabni">
+        <div class="slide-media slide-art" aria-hidden="true">
+          <i data-icon="store" data-icon-size="168" class="sa-main"></i>
+          <i data-icon="bag" data-icon-size="62" class="sa-chip sa-chip-a"></i>
+          <i data-icon="percent" data-icon-size="62" class="sa-chip sa-chip-b"></i>
+        </div>
+        <div class="slide-overlay"></div>
+        <div class="slide-text">
+          <span class="slide-tag">كسبني</span>
+          <h2>تجار معتمدون… وعروض من أصحاب المتاجر</h2>
+          <p>متاجر على Doddz Go بمنتجات حقيقية وأسعار معلنة، وتواصل مباشر مع التاجر قبل الطلب.</p>
+          <button class="slide-btn" data-section="merchants">استكشف التجار</button>
+        </div>
+      </div>
+
       <div class="slider-dots">
         <button type="button" class="dot active" onclick="goToSlide(0)" aria-label="قصها"></button>
         <button type="button" class="dot" onclick="goToSlide(1)" aria-label="انامل"></button>
         <button type="button" class="dot" onclick="goToSlide(2)" aria-label="لمعها"></button>
-      </div>
-    </div>
-
-    <!-- Left Side Banners -->
-    <div class="side-banners">
-      <div class="side-banner sb-tech" data-section="tech">
-        <span class="sb-icon"></span>
-        <span class="sb-title">تكنولوجيا</span>
-        <span class="sb-sub">+210 منتج</span>
-      </div>
-      <div class="side-banner sb-dog" data-section="home">
-        <span class="sb-icon"></span>
-        <span class="sb-title">المنزل</span>
-        <span class="sb-sub">+320 منتج</span>
+        <button type="button" class="dot" onclick="goToSlide(3)" aria-label="منتجات"></button>
+        <button type="button" class="dot" onclick="goToSlide(4)" aria-label="كسبني"></button>
       </div>
     </div>
 
   </div><!-- /hero-layout -->
+
+  <!-- ============================================================
+       بلاطات الأقسام — كانت على جنبات السلايدر وبتنزل تحته دلوقتي
+       أي عنصر عليه data-section بيتوصّل أوتوماتيكًا في js/site.js
+       ============================================================ -->
+  <div class="hero-tiles" data-motion>
+    <div class="side-banner sb-art" data-section="electronics">
+      <span class="sb-icon"></span>
+      <span class="sb-title">إلكترونيات</span>
+      <span class="sb-sub">خصومات اليوم</span>
+    </div>
+    <div class="side-banner sb-design" data-section="beauty">
+      <span class="sb-icon"></span>
+      <span class="sb-title">جمال وعناية</span>
+      <span class="sb-sub">منتجات مختارة</span>
+    </div>
+    <div class="side-banner sb-tech" data-section="tech">
+      <span class="sb-icon"></span>
+      <span class="sb-title">تكنولوجيا</span>
+      <span class="sb-sub">+210 منتج</span>
+    </div>
+    <div class="side-banner sb-dog" data-section="home">
+      <span class="sb-icon"></span>
+      <span class="sb-title">المنزل</span>
+      <span class="sb-sub">+320 منتج</span>
+    </div>
+  </div>
 
   <!-- PROMO BAR -->
   <div class="promo-bar">
@@ -1925,27 +1957,27 @@
 <div class="adm-toast" id="adm-toast"></div>
 
 <!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
-<script src="js/icons.js?v=20261029a"></script>
+<script src="js/icons.js?v=20261030a"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261029a"></script>
-<script src="js/products-data.js?v=20261029a"></script>
-<script src="js/sections-data.js?v=20261029a"></script>
-<script src="js/barbers-data.js?v=20261029a"></script>
-<script src="js/media-upload.js?v=20261029a"></script>
-<script src="js/barbers-ui.js?v=20261029a"></script>
-<script src="js/sections-ui.js?v=20261029a"></script>
-<script src="js/cart.js?v=20261029a"></script>
-<script src="js/wishlist.js?v=20261029a"></script>
-<script src="js/account.js?v=20261029a"></script>
-<script src="js/admin.js?v=20261029a"></script>
-<script src="js/seller.js?v=20261029a"></script>
-<script src="js/seller-barber.js?v=20261029a"></script>
-<script src="js/i18n.js?v=20261029a"></script>
-<script src="js/site.js?v=20261029a"></script>
-<script src="js/search.js?v=20261029a"></script>
-<script src="js/slider.js?v=20261029a"></script>
+<script src="js/supabase-client.js?v=20261030a"></script>
+<script src="js/products-data.js?v=20261030a"></script>
+<script src="js/sections-data.js?v=20261030a"></script>
+<script src="js/barbers-data.js?v=20261030a"></script>
+<script src="js/media-upload.js?v=20261030a"></script>
+<script src="js/barbers-ui.js?v=20261030a"></script>
+<script src="js/sections-ui.js?v=20261030a"></script>
+<script src="js/cart.js?v=20261030a"></script>
+<script src="js/wishlist.js?v=20261030a"></script>
+<script src="js/account.js?v=20261030a"></script>
+<script src="js/admin.js?v=20261030a"></script>
+<script src="js/seller.js?v=20261030a"></script>
+<script src="js/seller-barber.js?v=20261030a"></script>
+<script src="js/i18n.js?v=20261030a"></script>
+<script src="js/site.js?v=20261030a"></script>
+<script src="js/search.js?v=20261030a"></script>
+<script src="js/slider.js?v=20261030a"></script>
 <!-- تقسيم صف «المنزل» لمجموعات فرعية حسب subcategory — عرض فقط، بعد رسم المنتجات -->
-<script src="js/home-subcategories.js?v=20261029a"></script>
+<script src="js/home-subcategories.js?v=20261030a"></script>
 
 </body>
 </html>

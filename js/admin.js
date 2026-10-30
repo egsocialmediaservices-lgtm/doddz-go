@@ -2295,7 +2295,6 @@
   const TECH_SYSTEM_LABELS = {
     fixed: 'مرتب ثابت', daily: 'يومية', percentage: 'نسبة من الشغل', flexible: 'أي نظام'
   };
-  const TECH_SHIFT_LABELS = { morning: 'صبجي', evening: 'مسجي', flexible: 'مرون' };
   let techAppRows = [];
 
   async function loadTechAppsAdmin() {
@@ -2381,7 +2380,7 @@
           ${techRow('الخبرة', techExpLabel(r.experience_years))}
           ${techRow('المرتب المتوقع', Number.isFinite(salary) && salary > 0 ? salary.toLocaleString('en') + ' جنيه' : '')}
           ${techRow('نظام الشغل', TECH_SYSTEM_LABELS[r.work_system] || '')}
-          ${techRow('الشيفت', TECH_SHIFT_LABELS[r.preferred_shift] || '')}
+          ${techRow('العدة واليونيفورم', r.has_tools_uniform === true ? 'نعم' : (r.has_tools_uniform === false ? 'لا' : ''))}
           ${techRow('متاح من', avail && !isNaN(avail.getTime()) ? avail.toLocaleDateString('ar-EG') : '')}
           ${techRow('السكن', r.address)}
           ${techRow('البريد', r.email)}
