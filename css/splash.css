@@ -82,13 +82,31 @@ html.intro-on body { overflow: hidden !important; }
   align-items: center;
   justify-content: center;
 }
-/* نسخة الفيديو: إطار 16:9 بيكبر قد ما viewport يسمح */
+/* نسخة الفيديو — القياس بالظبط (اتقاس من بكسل الملف نفسه):
+   `doddz-intro.mp4` مقاسه 576×1280 (طولي) وخلفيته سودا #000.
+   اللوجو جوّه الملف مش بيملأ الإطار: بياخد حزام أفقي في المنتصف
+   (محوره y=640)، وأكبر اتساع وصله أثناء الأنيميشن = عرض الملف كامل
+   x 0→574 وارتفاع 210px (y 536→746) — فالنافذة لازم تفضل بعرض
+   الفيديو بالظبط (أي قص أفقي بياكل من اللوجو وقت الحركة).
+   الحل:
+   1) نافذة العرض بنسبة الحزام (576:300) والفيديو بعرضها ومنتصفه على
+      منتصفها → اللوجو يطلع أكبر، من غير قص ولا تمديد.
+   2) `mix-blend-mode: screen` على المسرح: الأسود في الفيديو = لا شيء،
+      فالإطار الأسود اللي كان بيبان حدوده على الخلفية بيذوب فيها تمامًا
+      والتوهّج بيadd فوقها — نفس الأنيميشن بالحرف. */
 .intro-stage-video {
-  width: min(92vw, 720px);
+  --band-w: 576;
+  --band-h: 300;
+  /* 96vh = المسرح ما يعديش نص ارتفاع الشاشة */
+  width: min(92vw, 940px, 96vh);
   height: auto;
-  aspect-ratio: 16 / 9;
-  max-height: 72vh;
+  aspect-ratio: var(--band-w) / var(--band-h);
+  max-width: 92vw;
+  overflow: hidden;
 }
+/* الأداة: شاشة سودا → شفاف. بنفعّلها مع الفيديو بس، فالصورة
+   الاحتياطية (لوجو بخلفية شفافة)فضلت ترسم عادي لو الفيديو فشل. */
+#intro.is-video .intro-stage-video { mix-blend-mode: screen; }
 .intro-halo {
   position: absolute;
   inset: -34% -14%;
@@ -145,21 +163,42 @@ html.intro-on body { overflow: hidden !important; }
   transition: opacity .3s ease;
 }
 
-/* الفيديو: بياخد مكان اللوجو كله، وبيغطي الصورة أول ما يشتغل */
+/* الفيديو: بياخد مكان اللوجو كله، وبيغطي الصورة أول ما يشتغل.
+   العرض = عرض النافذة، والارتفاع من نسبة الملف نفسها (576:1280)
+   فاللوجو ما يتقصش وما يتمدّش، والترجمة الرأسية بتوسط الحزام. */
 .intro-video {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 576 / 1280;
+  transform: translateY(-50%);
   object-fit: contain;
   pointer-events: none;
   opacity: 0;
   transition: opacity .35s ease;
+  /* حواف عليا وسفلى بتذوب في الخلفية — محسوبة على نافذة المسرح
+     (--bh = نصف ارتفاع النافبة كنسبة من ارتفاع الفيديو = 1280).
+     دي شبكة أمان لو المتصفح ما دعمش mix-blend-mode. */
+  --bh: calc(var(--band-h) * 100% / 1280);        /* نصف النافذة */
+  --bf: calc(var(--band-h) * 6% / 1280);          /* سُمك الذوبان */
+  -webkit-mask-image: linear-gradient(to bottom,
+      transparent calc(50% - var(--bh)),
+      #000 calc(50% - var(--bh) + var(--bf)),
+      #000 calc(50% + var(--bh) - var(--bf)),
+      transparent calc(50% + var(--bh)));
+          mask-image: linear-gradient(to bottom,
+      transparent calc(50% - var(--bh)),
+      #000 calc(50% - var(--bh) + var(--bf)),
+      #000 calc(50% + var(--bh) - var(--bf)),
+      transparent calc(50% + var(--bh)));
 }
 #intro.is-video .intro-video   { opacity: 1; }
 #intro.is-video .intro-logo-img { opacity: 0; }
-/* على مسرح الفيديو الصورة بتبقى احتياطية — حجمها ثابت جوه الإطار */
-.intro-stage-video .intro-logo-img { width: 74%; }
+/* صورة اللوجو الاحتياطية على مسرح الفيديو: نفس حجم الحزام تقريبًا
+   (نسبة اللوجو 2.571:1 فالعرض 96% بيدي ارتفاع أقل من النافذة) */
+.intro-stage-video .intro-logo-img { width: 96%; }
 
 /* ── شريط التقدّم ────────────────────────────────────────────
    العناصر الوحيدَة تحت اللوجو: خط رفيع بيعدّي مع الفيديو. */
@@ -218,15 +257,19 @@ html[dir="ltr"] .intro-bar i { transform-origin: left center; }
 @media (max-width: 480px) {
   #intro { gap: 22px; }
   .intro-stage { --sw: min(92vw, 520px); --sh: clamp(150px, 33vh, 240px); }
-  .intro-stage-video { width: 94vw; max-height: 60vh; }
+  .intro-stage-video { width: min(94vw, 100vh); max-width: 94vw; }
 }
-/* النوافذ القصيرة (لاب توب صغير / landscape موبايل) */
+/* النوافذ القصيرة (لاب توب صغير / موبايل بالعرض) */
 @media (max-height: 620px) {
   .intro-stage { --sh: clamp(112px, 32vh, 200px); }
-  .intro-stage-video { max-height: 62vh; }
+  .intro-stage-video { width: min(92vw, 82vh); }
 }
 /* الشاشات الكبيرة: اللوجو يبقى أكبر */
 @media (min-width: 1100px) and (min-height: 760px) {
   .intro-stage { --sw: min(72vw, 760px); --sh: clamp(210px, 33vh, 330px); }
-  .intro-stage-video { width: min(76vw, 840px); }
+  .intro-stage-video { width: min(90vw, 1040px, 98vh); }
+}
+/* متصفحات ما بتدعمش mix-blend-mode → نسيب حدود نظيفة من غير دمج */
+@supports not (mix-blend-mode: screen) {
+  .intro-stage-video { border-radius: 26px; }
 }

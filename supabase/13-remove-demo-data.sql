@@ -13,7 +13,9 @@
 --   كسبني   : srv_18ab9ab2… (متجر كسبني التجريبي)
 --
 -- ومتعلقات كل نشاط: الحجوزات، حالة الحلاق (barber_status)، فريق المحل،
--- ألبوم الصور، طلبات العمالة، التقييمات، طلبات الانضمام، وصور Storage.
+-- ألبوم الصور، طلبات العمالة، التقييمات، طلبات الانضمام.
+-- (صور Storage: الملف بيطّلع قائمة باسم المجلدات بس — الحذف من الداشبورد،
+--  لأن Supabase بيمانع DELETE على جداول storage من SQL Editor.)
 --
 -- المنتجات: **ما بتمسحش** — اللي مربوط بنشاط تجريبي بيتفصل منه
 -- (provider_id = null) بس، ويفضل معروض على إنه منتج من Doddz Go.
@@ -184,20 +186,72 @@ alter table public.products enable trigger trg_enforce_seller_product_update;
 
 
 -- ════════════════════════════════════════════════════════════════
--- 4) صور الأنشطة في Storage (bucket: provider-media)
---    المسار: <معرف النشاط>/<نوع>/<اسم>.jpg
---    السطر ده بيشال سجلات الصور من الجدول. أحسن حاجة تمسح المجلدات
---    نفسها من واجهة Storage (Files → provider-media) عشان الملفات
---    فعلاً تتمسح من المساحة. السطر ده أمان زيادة وممكن يتخطى.
+-- 4) الأنشطة نفسها: حذف الصف من جدول القسم
+--    ⚠️ ده الجزء الأساسي — بدونه الأنشطة لسه موجودة في القاعدة
+--    (ده اللي حصل في التشغيل اللي فات: المتعلقات اتمسحت، بس صفوف
+--    الأنشطة نفسها ما اتحذفتش لأن مكنش فيها سطر حذف).
+--    التريجر الحارس على الجداول دي BEFORE INSERT OR UPDATE فقط،
+--    فالحذف مسموح. واللي عليه on delete cascade (فريق المحل
+--    وألبوم الصور) بيمشي مع الصف أوتوماتيك.
 -- ════════════════════════════════════════════════════════════════
-delete from storage.objects o
+do $$
+declare
+  r record;
+  n int;
+begin
+  for r in
+    select * from (values
+      ('barber_profiles',   'barbers'),
+      ('carwash_profiles',  'carwash'),
+      ('handmade_profiles', 'handmade'),
+      ('merchant_profiles', 'merchants')
+    ) as t(tbl, section)
+  loop
+    if to_regclass('public.' || r.tbl) is null then
+      raise notice 'الجدول % لسه مترفعش — اتخطّى', r.tbl;
+      continue;
+    end if;
+
+    execute format(
+      'delete from public.%I where id in (select id from public.demo_targets where section = %L)',
+      r.tbl, r.section);
+    get diagnostics n = row_count;
+    raise notice '%: اتمسح % نشاط', r.tbl, n;
+  end loop;
+end $$;
+
+-- صف profiles لسه مؤشر على نشاط اتشال: بنشيل المؤشر بس (الحساب نفسه ما بتمسحش من هنا)
+update public.profiles p
+   set provider_id = null
+  from public.demo_targets t
+ where p.provider_id = t.id;
+
+
+-- ════════════════════════════════════════════════════════════════
+-- 5) صور الأنشطة في Storage (bucket: provider-media)
+--    ⚠️ الحذف من storage.objects من SQL Editor **ممنوع** في Supabase
+--    (تريجر storage.protect_delete بيرمي 42501: «Direct deletion from
+--    storage tables is not allowed»). عشان كده الجزء ده **قراءة بس**:
+--    بيطلعلك قائمة المجلدات اللي تمسحيها من واجهة Storage.
+--    المسار: <معرف النشاط>/<نوع>/<اسم>.jpg
+-- ════════════════════════════════════════════════════════════════
+select o.bucket_id,
+       split_part(o.name, '/', 1) as folder_to_delete,
+       count(*)                   as images_count
+  from storage.objects o
  where o.bucket_id = 'provider-media'
    and exists (select 1 from public.demo_targets t
-                where o.name like t.id || '/%');
+                where o.name like t.id || '/%')
+ group by 1, 2
+ order by 2;
+
+-- ⚠️ الصور نفسها مش هتتمسح من هنا. امسحيها من الداشبورد:
+--    Storage → Files → provider-media → افتحي كل مجلد بالاسم اللي فوق
+--    → Select all → Delete. (ده بيستخدم Storage API وهو المسموح.)
 
 
 -- ════════════════════════════════════════════════════════════════
--- 5) حسابات الدخول (Authentication) — بحماية الأدمن وصالون بشري
+-- 6) حسابات الدخول (Authentication) — بحماية الأدمن وصالون بشري
 --    حذف auth.users بيمسح صف profiles معه بـ on delete cascade.
 -- ════════════════════════════════════════════════════════════════
 drop table if exists public.demo_users;
@@ -251,7 +305,7 @@ end $$;
 
 
 -- ════════════════════════════════════════════════════════════════
--- 6) التحقق النهائي — اللي يفضل
+-- 7) التحقق النهائي — اللي يفضل
 -- ════════════════════════════════════════════════════════════════
 select 'barbers'   as section, id, name, status, user_id from public.barber_profiles
 union all select 'carwash',   id, name, status, user_id from public.carwash_profiles

@@ -1,0 +1,355 @@
+/* ================================================================
+   hero-slider-v3.css — السلايدر الجديد بتاع التسع صور
+   ----------------------------------------------------------------
+   بيتحمّل بعد home-redesign.css وdt-pages.css عشان يتجاوز القواعد
+   القديمة بدون `!important` كتير. نطاقه `#slider` بس — باقي
+   الموقع ما بيتأثرش.
+
+   القرار التصميمي: الكرافتات التسع فيها العنوان والزرار جوه
+   الصورة نفسها، فالسلايدر ما بيحطش نص فوقها (كان بيغطي التصميم
+   وبيزوّد التشويش). النص الحقيقي وزرار الـCTA نزلوا في شريط
+   `.slider-caption` تحت الصورة وبيتحدّثوا مع كل سلايد.
+   ================================================================ */
+
+.hero-slider {
+  --hs-r: clamp(16px, 1.6vw, 26px);
+  --hs-ink: #03151C;
+  --hs-line: rgba(103, 226, 240, .20);
+  --hs-glow: 0 34px 74px -34px rgba(3, 21, 28, .60);
+
+  position: relative;
+  /* ── المقاس = مقاس السلايدر القديم ─────────────────────────────
+     عرض الكونتينر كامل (من غير تسطيح ولا تصغير متوسّط) + شريط
+     ثابت الارتفاع، زي ما كان في نسخة الـ5 سلايدات (`min-height:360px`
+     في css/hero.css).
+     460 مش 360: الكرافتات 1280×632 (نسبة 2.025) وإطار 360 على عرض
+     1240 معناه نسبة 3.44 — يعني قص 126px من فوق (لوجو DODDZ GO)
+     و126px من تحت (شريط اللينك). بـ460 الصورة بتبان كاملة بالـcontain
+     والجناب بتتملى من الطبقة الضبابية. */
+  width: 100%;
+  margin-inline: auto;
+  min-width: 0;
+  max-width: 100%;
+  height: 460px;
+  /* css/hero.css لسه حاطط min-height:360px على الإطار وعلى السلايد */
+  min-height: 0 !important;
+  max-height: none;
+  aspect-ratio: auto;
+  border-radius: var(--hs-r);
+  border: 1px solid var(--hs-line);
+  background: var(--hs-ink);
+  box-shadow: var(--hs-glow);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ── السلايدات (كلها <a> قابلة للدخول) ───────────────────────── */
+.hero-slider .slide {
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* !important: css/responsive.css لسه حاطط min-height:258px!important
+     على .slide.active من عصر النص اللي كان فوق الصورة */
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0;
+  border-radius: inherit;
+  background: var(--hs-ink);
+  color: inherit;
+  text-decoration: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  transition: opacity .68s ease, visibility .68s ease, transform .68s cubic-bezier(.22, .72, .2, 1);
+  will-change: opacity, transform;
+}
+.hero-slider .slide.is-idle      { opacity: 0; visibility: hidden; transform: translateX(2.2%) scale(1.008); }
+.hero-slider .slide.active,
+.hero-slider .slide.is-entering  { opacity: 1; visibility: visible; pointer-events: auto; transform: none; z-index: 2; }
+.hero-slider .slide.is-leaving   { opacity: 0; visibility: visible; z-index: 1; transform: translateX(-2.2%) scale(.996); }
+.hero-slider .slide:focus-visible {
+  outline: 2px solid var(--dt-300, #67E2F0);
+  outline-offset: -3px;
+}
+
+/* ── الوسائط: طبقة ضبابية تملأ الحواف + الصورة الحقيقية ────────
+   `.slide-fill`  = نفس الصورة، cover + blur (بتملأ البقع الجانبية
+                    لما الإطار يبقى أعرض من نسبة الصورة)
+   `.slide-shot`  = الصورة كاملة، contain — بلا قص ولا تمديد
+   ⚠️ css/hero.css حاطط على `.hero-slider .slide-media img` قواعد
+   `object-fit: cover` + `transform: scale(1.06)` (وكمان motion.css
+   بيحرّكها parallax) — ودي كانت بتقص الكرافت. عشان كده كل خاصية
+   حساسة هنا متكتب بـ !important وبتحديد أعلى. */
+.hero-slider .slide-media {
+  position: absolute !important;
+  inset: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--hs-ink);
+}
+.hero-slider .slide-media img {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  translate: -50% -50% !important;
+  margin: 0;
+  display: block;
+}
+/* الطبقة الضبابية: بتغطي الإطار كله (قص هنا مقصود — دهBACKGROUND مش الصورة) */
+.hero-slider .slide-media img.slide-fill {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  aspect-ratio: auto !important;
+  filter: blur(26px) saturate(1.15) brightness(.62);
+  opacity: .85;
+  z-index: 0;
+}
+/* الصورة الحقيقية: بتتملأ قد الإطار بالظبط (كل الصور 1280×632)،
+   والسقف 1.12× تكبير — فوقه بيبان تمديد/نعومة، فبنسيب الجناب
+   للطبقة الضبابية بدالها. */
+.hero-slider .slide-media img.slide-shot {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 1434px !important;     /* 1280 × 1.12 */
+  max-height: 708px !important;     /*  632 × 1.12 */
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  object-fit: contain !important;
+  transform: none !important;      /* بلا zoom ولا parallax على الصورة الواضحة */
+  animation: none !important;
+  filter: none !important;
+  opacity: 1;
+  z-index: 1;
+}
+
+/* حافة داخلية ناعمة تدمج الطبقة الضبابية مع الإطار */
+.hero-slider .slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05),
+              inset 0 -70px 90px -60px rgba(3, 21, 28, .55);
+  border-radius: inherit;
+}
+
+/* ── الأسهم ───────────────────────────────────────────────────
+   ⚠️ css/hero.css (آخر تعديلات السلايدر القديم) كان حاطط
+   `.hero-slider-nav, .slider-arrow { display:none !important }`
+   لأن النسخة القديمة كانت بلا أسهم. بترجع هنا بـ !important. */
+.hero-slider .slider-arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 4;
+  display: grid !important;
+  place-items: center;
+  width: clamp(38px, 4.2vw, 52px);
+  height: clamp(38px, 4.2vw, 52px);
+  padding: 0;
+  border: 1px solid rgba(240, 253, 255, .28);
+  border-radius: 50%;
+  background: rgba(3, 21, 28, .42);
+  color: #F0FDFF;
+  cursor: pointer;
+  opacity: 0;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity .25s ease, background .25s ease, transform .25s ease, border-color .25s ease;
+}
+.hero-slider .sa-prev { inset-inline-start: clamp(10px, 1.4vw, 20px); }
+.hero-slider .sa-next { inset-inline-end: clamp(10px, 1.4vw, 20px); }
+.hero-slider:hover .slider-arrow,
+.hero-slider:focus-within .slider-arrow { opacity: 1; }
+.hero-slider .slider-arrow:hover {
+  background: var(--dt-300, #67E2F0);
+  border-color: transparent;
+  color: var(--hs-ink);
+  transform: scale(1.06);
+}
+.hero-slider .slider-arrow:active { transform: scale(.96); }
+.hero-slider .slider-arrow:focus-visible {
+  opacity: 1;
+  outline: 2px solid #F0FDFF;
+  outline-offset: 3px;
+}
+.hero-slider .slider-arrow .ic { width: 20px; height: 20px; }
+
+/* ── النقاط ─────────────────────────────────────────────────── */
+.hero-slider .slider-dots {
+  position: absolute;
+  inset-inline: 0;
+  bottom: clamp(10px, 1.6vw, 18px);
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  pointer-events: none;
+}
+.hero-slider .dot {
+  pointer-events: auto;
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid rgba(240, 253, 255, .45);
+  border-radius: 99px;
+  background: rgba(240, 253, 255, .35);
+  cursor: pointer;
+  transition: width .32s cubic-bezier(.22, .72, .2, 1), background .32s ease, border-color .32s ease;
+}
+.hero-slider .dot:hover { background: rgba(240, 253, 255, .72); }
+.hero-slider .dot.active {
+  width: 30px;
+  background: var(--dt-300, #67E2F0);
+  border-color: transparent;
+  box-shadow: 0 0 0 4px rgba(103, 226, 240, .18);
+}
+.hero-slider .dot:focus-visible { outline: 2px solid #F0FDFF; outline-offset: 2px; }
+
+/* ── شريط الشرح تحت الصورة ──────────────────────────────────── */
+.slider-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 2vw, 28px);
+  width: 100%;
+  margin-top: clamp(10px, 1.4vw, 16px);
+  padding: clamp(12px, 1.6vw, 18px) clamp(14px, 2vw, 24px);
+  border: 1px solid rgba(14, 67, 86, .14);
+  border-radius: clamp(14px, 1.4vw, 20px);
+  background:
+    radial-gradient(120% 180% at 100% 0%, rgba(103, 226, 240, .16) 0%, rgba(103, 226, 240, 0) 58%),
+    linear-gradient(180deg, #FFFFFF 0%, #F1FAFD 100%);
+  box-shadow: 0 18px 40px -28px rgba(3, 21, 28, .38);
+}
+.slider-caption .sc-text { min-width: 0; }
+.slider-caption .sc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  padding: 4px 11px;
+  border-radius: 99px;
+  background: rgba(14, 116, 144, .10);
+  color: var(--dt-750, #0E4356);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.slider-caption .sc-title {
+  margin: 0;
+  color: var(--dt-950, #03151C);
+  font-size: clamp(17px, 1.9vw, 23px);
+  font-weight: 800;
+  line-height: 1.32;
+  letter-spacing: -0.3px;
+}
+.slider-caption .sc-sub {
+  margin: 5px 0 0;
+  color: rgba(3, 21, 28, .68);
+  font-size: clamp(12.5px, 1.15vw, 14.5px);
+  line-height: 1.62;
+}
+.slider-caption .sc-cta {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: var(--dt-750, #0E4356);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 14px 28px -14px rgba(3, 21, 28, .55);
+  transition: background .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+.slider-caption .sc-cta:hover {
+  background: var(--dt-300, #67E2F0);
+  color: var(--dt-950, #03151C);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px -14px rgba(103, 226, 240, .55);
+}
+.slider-caption .sc-cta:focus-visible { outline: 2px solid var(--dt-750, #0E4356); outline-offset: 3px; }
+/* لحظة التبديل: النص يدخل بنعومة */
+.slider-caption.is-swapping .sc-text,
+.slider-caption.is-swapping .sc-cta { opacity: 0; transform: translateY(6px); }
+.slider-caption .sc-text,
+.slider-caption .sc-cta { transition: opacity .28s ease, transform .28s ease; }
+
+/* ================================================================
+   الاستجابة
+   ================================================================ */
+/* تابلت وفوق المتوسط: نفس الشريط بس أقصر شوية (زي ما كان قديم) */
+@media (max-width: 1000px) {
+  .hero-slider { height: 400px; max-height: none; }
+  .hero-slider .slider-arrow { opacity: 1; }
+}
+
+/* الموبايل: الصورة كاملة بدون طبقة ضبابية (مفيش بقع جانبية أصلًا) */
+@media (max-width: 760px) {
+  .hero-slider {
+    height: auto;
+    aspect-ratio: 1280 / 632;
+    /* css/responsive.css و css/hero.css بيحبسوا الإطار بـ min-height قديم
+       (كان للنص اللي فوق الصورة) — بيلغيه هنا عشان الإطار يتلفّ الصورة بالظبط */
+    min-height: 0 !important;
+    max-height: none;
+    border-radius: 16px;
+  }
+  .hero-slider .slide-media img.slide-fill { display: none; }
+  .hero-slider .slide::after { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05); }
+  .hero-slider .slider-arrow { display: none !important; }   /* السحب بالإصبع كفاية */
+  .hero-slider .slider-dots { bottom: 8px; gap: 6px; }
+  .hero-slider .dot { width: 7px; height: 7px; min-width: 7px; }
+  .hero-slider .dot.active { width: 22px; }
+  .slider-caption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 14px;
+  }
+  .slider-caption .sc-cta { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 420px) {
+  .slider-caption .sc-title { font-size: 16.5px; }
+  .slider-caption .sc-sub { font-size: 12.5px; }
+}
+
+/* الشاشات العريضة جدًا: عرض الكونتينر مقفول عند 1240 أصلاً
+   (`--container`)، فالإطار بيفضل 460 زي سطح المكتب بالظبط —
+   مفيش أي حاجة هنا محتاجة تتغيّر. */
+@media (min-width: 1500px) {
+  .hero-slider { height: 460px; width: 100%; max-height: none; aspect-ratio: auto; }
+}
+
+/* تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slider .slide,
+  .hero-slider .slide-shot,
+  .hero-slider .dot,
+  .slider-caption .sc-text,
+  .slider-caption .sc-cta { transition: none !important; }
+  html.mo-on .hero-slider .slide.active .slide-fill,
+  html.mo-on .hero-slider .slide.is-entering .slide-fill { animation: none !important; }
+  .hero-slider .slide.is-idle,
+  .hero-slider .slide.is-leaving { transform: none; }
+}
+
+/* الوضع الإنجليزي */
+body.lang-en .slider-caption .sc-title { letter-spacing: 0; }

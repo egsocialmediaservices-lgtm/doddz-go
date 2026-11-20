@@ -1,0 +1,456 @@
+/* ================================================================
+   DODDZ GO — Premium UI layer
+   ----------------------------------------------------------------
+   طبقة تحسين أخيرة (بتتحمّل آخر ملف CSS في كل صفحة). مفيش فيها أي
+   منطق: سلة / مفضلة / حساب / Supabase / الأدمن — ما اتلمستش خالص.
+   كل القواعد إما بتعدّل شكل عناصر موجودة أو بتلوّنها من التوكنات.
+
+   الملف مقسوم نصّين:
+   1) «مشترك»   — الهيدر + شريط الأقسام + الفوتر + الوصول.
+                  بيتطبّق على كل الصفحات (نفس الـmarkup فيهم).
+   2) «الرئيسية» — كل قواعدها مبتدية بـ body[data-page="home"]
+                  فباقي الصفحات ما بتتأثرش بيها.
+   ================================================================ */
+
+:root {
+  /* ── إيقاع المسافات: مقياس واحد لكل الصفحة ── */
+  --pu-band: clamp(22px, 2.6vw, 34px);   /* ما بين بلوكات الرئيسية */
+  --pu-gap: 16px;                        /* ما بين الكروت */
+  --pu-gap-sm: 10px;
+
+  /* ── حواف ونعومة ── */
+  --pu-r-card: 18px;
+  --pu-r-soft: 12px;
+  --pu-ease: cubic-bezier(.22, .68, .32, 1);
+  --pu-t: .22s var(--pu-ease);
+
+  /* ── حلقة التركيز (وصول) ── */
+  --pu-ring: 0 0 0 3px rgba(34, 184, 207, .30);
+
+  /* ── قياس كارت المنتج — بيتغيّر per مقاس الشاشة ── */
+  --pu-card-w: 214px;
+  --pu-img-h: 182px;
+}
+
+/* ================================================================
+   1) الْمُشْتَرَك (كل الصفحات)
+   ================================================================ */
+
+/* ---------- الوصول: حلقة تركيز واضحة على أي عنصر تفاعلي ---------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 2px solid var(--dt-400, #22B8CF);
+  outline-offset: 2px;
+  box-shadow: var(--pu-ring);
+}
+
+/* ---------- الهيدر: محاذاة وثبات القياسات ---------- */
+.header-main {
+  gap: clamp(10px, 1.5vw, 20px);
+  align-items: center;
+}
+.logo-link { display: flex; align-items: center; flex: 0 0 auto; }
+.site-logo { height: 38px; width: auto; }
+
+/* عدسة بحث جوه الصندوق — الحقل يبقى مفهوم من أول نظرة */
+.search-bar { position: relative; min-width: 0; }
+.search-bar::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 16px; height: 16px;
+  margin-inline-start: 14px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366808F' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20.2 20.2l-4.4-4.4'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: .9;
+}
+.search-bar input { padding-inline-start: 10px; font-size: 14px; }
+.search-bar input::placeholder { color: #8AA0AE; font-weight: 600; }
+
+/* الأزرار الأربعة: عرض موحّد وفاصل خفيف بينها */
+.header-actions { gap: 4px; align-items: center; }
+.hdr-btn { min-width: 86px; padding: 7px 12px; }
+.hdr-btn + .hdr-btn { box-shadow: inset 1px 0 0 rgba(255, 255, 255, .07); }
+.hdr-btn .label { font-size: 12.5px; }
+.hdr-btn .sub { font-size: 11px; }
+.hdr-btn:active { transform: scale(.985); }
+
+/* ---------- شريط الأقسام: تمرير أنضف ---------- */
+.nav-inner {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(14, 116, 144, .35) transparent;
+}
+.nav-inner::-webkit-scrollbar { height: 4px; }
+.nav-inner::-webkit-scrollbar-thumb { background: rgba(14, 116, 144, .3); border-radius: 99px; }
+.nav-item { white-space: nowrap; }
+
+/* ---------- الفوتر: الأيقونات وبيانات التواصل كانوا من غير تنسيق ---------- */
+.footer-brand { min-width: 0; }
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.footer-social-link {
+  width: 36px; height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  color: rgba(216, 243, 250, .78);
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(103, 226, 240, .16);
+  transition: color var(--pu-t), background var(--pu-t), border-color var(--pu-t), transform var(--pu-t);
+}
+.footer-social-link svg { width: 16px; height: 16px; }
+@media (hover: hover) {
+  .footer-social-link:hover {
+    color: var(--dt-950, #03151C);
+    background: var(--dt-300, #67E2F0);
+    border-color: var(--dt-300, #67E2F0);
+    transform: translateY(-2px);
+  }
+}
+
+.footer-col h4 { position: relative; padding-bottom: 10px; }
+.footer-col h4::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 26px; height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--dt-300, #67E2F0), rgba(103, 226, 240, 0));
+}
+.footer-col a { display: inline-block; transition: color var(--pu-t), transform var(--pu-t); }
+@media (hover: hover) {
+  .footer-col a:hover { transform: translateX(-3px); }   /* RTL: الريحة للشمال */
+}
+html[dir="ltr"] .footer-col a:hover { transform: translateX(3px); }
+
+/* قائمة «تواصل معنا»: أيقونة على رأس كل سطر */
+.footer-contact { list-style: none; }
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(216, 243, 250, .66);
+  line-height: 1.5;
+}
+.footer-contact li svg {
+  flex: 0 0 auto;
+  width: 15px; height: 15px;
+  margin-top: 2px;
+  color: var(--dt-400, #22B8CF);
+}
+.footer-contact a { color: rgba(216, 243, 250, .78); }
+.footer-contact a:hover { color: var(--dt-300, #67E2F0) !important; }
+/* الأرقام تتقرأ صح في الاتجاهين */
+.footer-contact a[href^="tel:"] { direction: ltr; unicode-bidi: isolate; }
+
+/* الشريط السفلي: الحق على ناحية والروابط على الناحية التانية */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  text-align: start;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 16px 20px;
+}
+.footer-bottom-links { display: inline-flex; gap: 18px; }
+.footer-bottom-links a {
+  color: rgba(216, 243, 250, .6);
+  font-weight: 700;
+  transition: color var(--pu-t);
+}
+.footer-bottom-links a:hover { color: var(--dt-300, #67E2F0); }
+
+@media (max-width: 620px) {
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .footer-social-link { width: 40px; height: 40px; }   /* هدف لمس مريح */
+
+  /* الفوتر على الموبايل: بدل ما الأعمدة تتراص واحد تحت التاني
+     (كان بيوصل لارتفاع مترين)، اللوجو فوق بعرض كامل، وبعدين
+     «الأقسام» جنب «خدمة العملاء»، و«تواصل معنا» تحتهم.
+     (!important ضروري: css/responsive.css بيثبت عمود واحد بـ !important) */
+  .footer-top {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px 18px !important;
+    padding: 26px 14px 22px !important;
+  }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-brand p { font-size: 12.5px; line-height: 1.7; }
+  .footer-col:nth-of-type(4) { grid-column: 1 / -1; }
+  .footer-col h4 { font-size: 13px; }
+  .footer-col li { margin-bottom: 8px; }
+  .footer-col a { font-size: 12.5px; }
+}
+
+/* ================================================================
+   2) الرَّئِيسِيَة — كل القواعد مبتدية بـ body[data-page="home"]
+   ================================================================ */
+
+/* ---------- إيقاع عام: مسافة واحدة بين كل بلوكات المحتوى ----------
+   flex + gap (مش margin) عشان الأقسام اللي بتختفي لما تبقى فاضية
+   ما تسيبش فراغ زيادة وراّها. */
+body[data-page="home"] .content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pu-band);
+  padding-block: 26px 64px;
+}
+body[data-page="home"] .hero-layout,
+body[data-page="home"] .hero-tiles,
+body[data-page="home"] .promo-bar,
+body[data-page="home"] .cat-tiles,
+body[data-page="home"] .activity-hub,
+body[data-page="home"] .big-banners,
+body[data-page="home"] .section-row { margin-bottom: 0; }
+
+/* ---------- الهيرو: السلايدر + شريط الشرح كوحدة واحدة ---------- */
+body[data-page="home"] .slider-caption { margin-top: 14px; }
+
+/* بلاطات الأقسام تحت الهيرو: ارتفاع موحّد وسلوك زر حقيقي */
+body[data-page="home"] .hero-tiles { gap: var(--pu-gap); }
+body[data-page="home"] .hero-tiles .side-banner {
+  min-height: 104px;
+  border-radius: var(--pu-r-card) !important;
+  transition: transform var(--pu-t), box-shadow var(--pu-t), border-color var(--pu-t);
+}
+body[data-page="home"] .side-banner { cursor: pointer; }
+body[data-page="home"] .side-banner:focus-visible { outline: 2px solid var(--dt-500); outline-offset: 3px; }
+
+/* ---------- «تسوّق حسب القسم»: كروت موحّدة + سهم عند الوقوف ---------- */
+body[data-page="home"] .cat-tiles-title { font-size: clamp(19px, 2vw, 22px); }
+body[data-page="home"] .cat-tiles-grid { gap: var(--pu-gap); }
+body[data-page="home"] .cat-tile {
+  position: relative;
+  min-height: 122px;
+  padding: 16px 10px 14px;
+  border-radius: var(--pu-r-card);
+}
+body[data-page="home"] .cat-tile .ct-icon {
+  width: 46px; height: 46px;
+  border-radius: 15px;
+  transition: background var(--pu-t), color var(--pu-t), transform var(--pu-t);
+}
+body[data-page="home"] .cat-tile .ct-icon svg { width: 23px; height: 23px; }
+/* سهم صغير بيأكد إن البلاطة قابلة للضغط */
+body[data-page="home"] .cat-tile::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 11px;
+  top: 12px;
+  width: 7px; height: 7px;
+  border-inline-end: 2px solid var(--dt-500);
+  border-block-end: 2px solid var(--dt-500);
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity var(--pu-t), transform var(--pu-t);
+}
+@media (hover: hover) {
+  body[data-page="home"] .cat-tile:hover { transform: translateY(-4px); }
+  body[data-page="home"] .cat-tile:hover::after { opacity: 1; transform: rotate(45deg) translate(-2px, 2px); }
+  body[data-page="home"] .cat-tile:hover .ct-icon { transform: scale(1.06); }
+}
+html[dir="ltr"] body[data-page="home"] .cat-tile::after { transform: rotate(-45deg); }
+html[dir="ltr"] body[data-page="home"] .cat-tile:hover::after { transform: rotate(-45deg) translate(-2px, 2px); }
+body[data-page="home"] .cat-tile:active { transform: translateY(-1px) scale(.99); }
+
+/* ---------- شريط الثقة ---------- */
+body[data-page="home"] .promo-bar { gap: var(--pu-gap); }
+body[data-page="home"] .promo-item { border-radius: var(--pu-r-card) !important; }
+
+/* ---------- الأقسام الأربعة: كل نشاط ليه هوية لونيه ثابتة ---------- */
+body[data-page="home"] .activity-hub {
+  padding: clamp(16px, 2vw, 26px);
+  border-radius: 26px;
+}
+body[data-page="home"] .activity-hub .section-row { padding: 20px !important; }
+body[data-page="home"] .activity-hub .row-header { margin-bottom: 16px !important; }
+body[data-page="home"] .activity-hub .row-title { font-size: 18.5px !important; }
+
+body[data-page="home"] .section-row[data-activity] {
+  position: relative;
+  border-radius: var(--pu-r-card) !important;
+}
+/* شريط رفيع أعلى البلاطة بلون النشاط — بيفرّق قصها/لمعها/كسبني/انامل بصريًا */
+body[data-page="home"] .section-row[data-activity]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, var(--act), transparent);
+  background: linear-gradient(90deg, var(--act), color-mix(in srgb, var(--act) 40%, #ffffff) 68%, transparent);
+  opacity: .95;
+}
+body[data-page="home"] .section-row[data-activity="barbers"]   { --act: #0E7490; }
+body[data-page="home"] .section-row[data-activity="carwash"]   { --act: #0891B2; }
+body[data-page="home"] .section-row[data-activity="merchants"] { --act: #22B8CF; }
+body[data-page="home"] .section-row[data-activity="handmade"]  { --act: #155E75; }
+
+/* رقائق الاختيار في رأس المجمّع */
+body[data-page="home"] .hub-chip {
+  border-radius: var(--pu-r-soft);
+  padding: 9px 15px;
+  transition: background var(--pu-t), color var(--pu-t), border-color var(--pu-t), transform var(--pu-t);
+}
+@media (hover: hover) {
+  body[data-page="home"] .hub-chip:hover { transform: translateY(-1px); }
+}
+
+/* ---------- كروت المنتجات: نفس القياس على كل الشاشة ---------- */
+body[data-page="home"] .products-scroll {
+  gap: var(--pu-gap);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(14, 116, 144, .32) transparent;
+}
+body[data-page="home"] .products-scroll::-webkit-scrollbar { height: 6px; }
+body[data-page="home"] .products-scroll::-webkit-scrollbar-thumb {
+  background: rgba(14, 116, 144, .3);
+  border-radius: 99px;
+}
+body[data-page="home"] .pcard {
+  width: var(--pu-card-w);
+  border-radius: var(--pu-r-card) !important;
+  transition: transform var(--pu-t), box-shadow var(--pu-t), border-color var(--pu-t);
+}
+body[data-page="home"] .pcard-img { height: var(--pu-img-h) !important; }
+body[data-page="home"] .pcard-body { padding: 14px !important; gap: 5px; }
+body[data-page="home"] .pcard-price { gap: 7px; }
+
+/* شارة الخصم/الجديد: نفس الارتفاع ونفس الحافة في كل الكروت */
+body[data-page="home"] .pcard-badge {
+  top: 10px;
+  inset-inline-end: 10px;
+  inset-inline-start: auto;
+  font-size: 10.5px;
+  padding: 5px 10px;
+  letter-spacing: 0;
+  box-shadow: 0 6px 14px rgba(3, 21, 28, .18);
+}
+body[data-page="home"] .pcard-fav {
+  top: 10px;
+  inset-inline-start: 10px;
+  inset-inline-end: auto;
+  width: 36px; height: 36px;   /* ≥ هدف اللمس */
+  transition: background var(--pu-t), color var(--pu-t), transform var(--pu-t), border-color var(--pu-t);
+}
+body[data-page="home"] .pcard-btn,
+body[data-page="home"] .pcard-btn-cart {
+  border-radius: var(--pu-r-soft) !important;
+  min-height: 40px;
+  transition: background var(--pu-t), box-shadow var(--pu-t), transform var(--pu-t);
+}
+@media (hover: hover) {
+  body[data-page="home"] .pcard:hover { transform: translateY(-5px); }
+  body[data-page="home"] .pcard:hover .pcard-btn { filter: brightness(1.06); }
+  body[data-page="home"] .pcard-fav:hover { transform: scale(1.08); }
+}
+body[data-page="home"] .pcard:active { transform: translateY(-1px) scale(.995); }
+body[data-page="home"] .pcard:focus-visible { outline: 2px solid var(--dt-500); outline-offset: 3px; }
+
+/* شريط البحث داخل الصفحة: نفس حواف الكروت */
+body[data-page="home"] .search-results-grid { gap: var(--pu-gap); }
+
+/* ---------- البنرات الكبيرة ---------- */
+body[data-page="home"] .big-banners { gap: var(--pu-gap); }
+body[data-page="home"] .big-banner { border-radius: 22px !important; }
+
+/* ================================================================
+   3) الْمقَاسَات — كل مقاس ليه قياساته، مش تصميم مصغّر
+   ================================================================ */
+
+/* شاشة كبيرة جدًا: الكونتينر يتوسّع والكروت تكبر معاه */
+@media (min-width: 1600px) {
+  :root { --container: 1440px; }
+  body[data-page="home"] {
+    --pu-card-w: 232px;
+    --pu-img-h: 196px;
+  }
+  body[data-page="home"] .cat-tile { min-height: 132px; }
+}
+
+/* سطح مكتب 1280–1599 */
+@media (min-width: 1280px) and (max-width: 1599px) {
+  body[data-page="home"] { --pu-card-w: 220px; }
+}
+
+/* لابتوب 1024–1279: مسافات أضيق شوية */
+@media (max-width: 1279px) {
+  body[data-page="home"] {
+    --pu-band: 24px;
+    --pu-card-w: 204px;
+    --pu-img-h: 174px;
+  }
+}
+
+/* تابلت */
+@media (max-width: 1023px) {
+  body[data-page="home"] { --pu-card-w: 198px; --pu-img-h: 170px; }
+  body[data-page="home"] .activity-hub .section-row { padding: 16px !important; }
+  body[data-page="home"] .hero-tiles .side-banner { min-height: 92px; }
+}
+@media (max-width: 900px) {
+  body[data-page="home"] .content { gap: 20px; }
+  body[data-page="home"] .hero-tiles { gap: 12px; }
+}
+
+/* موبايل: كروت أعرض وعدد أقل في الصف */
+@media (max-width: 767px) {
+  body[data-page="home"] {
+    --pu-gap: 12px;
+    --pu-card-w: 172px;
+    --pu-img-h: 148px;
+  }
+  body[data-page="home"] .content { padding-block: 18px 44px; }
+  body[data-page="home"] .cat-tile { min-height: 112px; }
+  body[data-page="home"] .cat-tile .ct-icon { width: 42px; height: 42px; }
+  body[data-page="home"] .activity-hub .row-title { font-size: 17px !important; }
+  .hdr-btn { min-width: 64px; }
+  .site-logo { height: 34px; }
+}
+@media (max-width: 479px) {
+  body[data-page="home"] {
+    --pu-card-w: 158px;
+    --pu-img-h: 138px;
+  }
+  body[data-page="home"] .slider-caption { margin-top: 12px; }
+  body[data-page="home"] .hero-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body[data-page="home"] .pcard-body { padding: 12px !important; }
+  body[data-page="home"] .pcard-btn,
+  body[data-page="home"] .pcard-btn-cart { min-height: 42px; }
+  .search-bar::before { margin-inline-start: 11px; width: 15px; height: 15px; }
+}
+@media (max-width: 359px) {
+  body[data-page="home"] { --pu-card-w: 142px; --pu-img-h: 126px; }
+}
+
+/* ---------- تقليل الحركة ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body[data-page="home"] .pcard,
+  body[data-page="home"] .cat-tile,
+  body[data-page="home"] .side-banner,
+  body[data-page="home"] .hub-chip,
+  body[data-page="home"] .pcard-fav,
+  .footer-social-link,
+  .footer-col a { transition: none !important; }
+  body[data-page="home"] .pcard:hover,
+  body[data-page="home"] .cat-tile:hover,
+  body[data-page="home"] .side-banner:hover { transform: none !important; }
+}
+
+/* ---------- الإنجليزية: وزن أخف وشوية مسافات ---------- */
+body[data-page="home"].lang-en .cat-tile .ct-name { font-size: 12.4px; }

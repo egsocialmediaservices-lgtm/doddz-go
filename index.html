@@ -31,31 +31,35 @@
   </script>
 
   <!-- ===== CSS — كل ملف مسؤول عن جزء واحد فقط ===== -->
-  <link rel="stylesheet" href="css/base.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/header.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/hero.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/promo.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/products.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/courses.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/banners.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/footer.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/cart.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/checkout.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/account.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/admin.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/responsive.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/barber.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/motion.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/splash.css?v=20261030a"/>
+  <link rel="stylesheet" href="css/base.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/header.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/hero.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/promo.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/products.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/courses.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/banners.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/footer.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/cart.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/checkout.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/account.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/admin.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/responsive.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/barber.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/motion.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/splash.css?v=20261121a"/>
   <!-- هوية «Deep Teal Trust» — للرئيسية فقط، آخر ملف عشان تتجاوز القواعد القديمة -->
-  <link rel="stylesheet" href="css/home-redesign.css?v=20261030a"/>
-  <link rel="stylesheet" href="css/dt-pages.css?v=20261030a"/>
-  <script src="js/job-lock.js?v=20261030a"></script>
-  <script src="js/motion.js?v=20261030a" defer></script>
-  <script src="js/splash.js?v=20261030a" defer></script>
+  <link rel="stylesheet" href="css/home-redesign.css?v=20261121a"/>
+  <link rel="stylesheet" href="css/dt-pages.css?v=20261121a"/>
+  <!-- السلايدر الجديد (9 صور) + شريط الشرح — آخر ملف عشان يتجاوز hero.css القديمة -->
+  <link rel="stylesheet" href="css/hero-slider-v3.css?v=20261121a"/>
+  <!-- طبقة تحسين الهوية: الهيدر/الكروت/الفوتر — الرئيسية -->
+  <link rel="stylesheet" href="css/premium-ui.css?v=20261121a"/>
+  <script src="js/job-lock.js?v=20261121a"></script>
+  <script src="js/motion.js?v=20261121a" defer></script>
+  <script src="js/splash.js?v=20261121a" defer></script>
   <style>.phase-later { display: none !important; }</style>
 </head>
-<body>
+<body data-page="home">
 
 <!-- ================================================================
      المقدمة (Intro) — فيديو لوجو Doddz Go.
@@ -240,90 +244,148 @@
   <!-- HERO LAYOUT — السلايدر كامل العرض (البلاطات نزلت تحته) -->
   <div class="hero-layout hero-layout-full">
 
-    <!-- Slider -->
-    <div class="hero-slider" id="slider">
+    <!-- Slider — 9 سلايدات صور (كل كرافت فيه كلامه وزراره جوه الصورة)
+         النص الحقيقي وزرار الـCTA تحت في `.slider-caption` وبيتحدّث
+         مع كل سلايد من `js/slider.js` (data-cap-*). -->
+    <div class="hero-slider" id="slider" aria-roledescription="carousel" aria-label="إعلانات Doddz Go">
 
-      <!-- قصها -->
-      <div class="slide active slide-qasaha">
-        <div class="slide-media">
-          <img src="images/hero/qasaha.webp" alt="قصها" width="1200" height="600" loading="eager"/>
-        </div>
-        <div class="slide-overlay"></div>
-        <div class="slide-text">
-          <span class="slide-tag">قصها</span>
-          <h2>حلاقة باحتراف… موعدك في مكانك</h2>
-          <p>اكتشف حلاقين معتمدين، احجز في الصالون أو اطلب خدمة منزلية بأسعار واضحة.</p>
-          <button class="slide-btn" data-section="barbers">استكشف قصها</button>
-        </div>
-      </div>
+      <!-- 1) قصها -->
+      <a class="slide active s-qasaha" href="#section-barbers" data-section="barbers"
+         data-cap-tag="قصها" data-cap-title="تجربة حلاقة ولا أروع"
+         data-cap-sub="احجز موعدك في أرقى صالونات الحلاقة المعتمدة — قص شعر، تحديد ذقن، وتنظيف بشرة."
+         data-cap-cta="احجز الآن"
+         aria-label="قصها — احجز موعدك في صالون حلاقة معتمد">
+        <span class="slide-media">
+          <img class="slide-fill" src="images/hero/hero-qasaha-booking.jpg" alt="" width="1280" height="632" loading="eager" fetchpriority="high" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" src="images/hero/hero-qasaha-booking.jpg" alt="قصها — احجز موعدك في أرقى صالونات الحلاقة" width="1280" height="632" loading="eager" fetchpriority="high" decoding="async"/>
+        </span>
+      </a>
 
-      <!-- انامل -->
-      <div class="slide slide-anamel">
-        <div class="slide-media">
-          <img src="images/hero/anamel.webp" alt="انامل" width="1200" height="600" loading="lazy"/>
-        </div>
-        <div class="slide-overlay"></div>
-        <div class="slide-text">
-          <span class="slide-tag">انامل</span>
-          <h2>شغل يدوي أصيل من صنّاع موهوبين</h2>
-          <p>منتجات هند ميد فريدة — دعم للصنّاع المحليين وتجربة شراء موثوقة.</p>
-          <button class="slide-btn" data-section="handmade">تصفح انامل</button>
-        </div>
-      </div>
+      <!-- 2) منتجات -->
+      <a class="slide s-products" href="#section-bestsellers" data-section="bestsellers"
+         data-cap-tag="منتجات" data-cap-title="كل اللي بتحتاجه في مكان واحد"
+         data-cap-sub="إلكترونيات وأزياء ومنزل وعناية — أسعار واضحة وتوصيل لحد باب البيت."
+         data-cap-cta="تصفّح المنتجات"
+         aria-label="منتجات Doddz Go — تصفّح الأكثر مبيعًا">
+        <span class="slide-media">
+          <img class="slide-fill" src="images/hero/hero-products.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" src="images/hero/hero-products.jpg" alt="منتجات دودز جو — إلكترونيات وأزياء ومنزل وعناية" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
 
-      <!-- لمعها -->
-      <div class="slide slide-lamaaha">
-        <div class="slide-media">
-          <img src="images/hero/lamaaha.webp" alt="لمعها" width="1200" height="600" loading="lazy"/>
-        </div>
-        <div class="slide-overlay"></div>
-        <div class="slide-text">
-          <span class="slide-tag">لمعها</span>
-          <h2>سيارتك تلمع… خدمة نظافة باحتراف</h2>
-          <p>مغاسل معتمدة وتنظيف عميق — احجز بسهولة وخلي عربيتك في أفضل شكل.</p>
-          <button class="slide-btn" data-section="carwash">استكشف لمعها</button>
-        </div>
-      </div>
+      <!-- 3) لمعها -->
+      <a class="slide s-lamaaha" href="#section-carwash" data-section="carwash"
+         data-cap-tag="لمعها" data-cap-title="سيارتك تلمع… خدمة نظافة باحتراف"
+         data-cap-sub="مغاسل معتمدة وتنظيف عميق — احجز بسهولة وخلي عربيتك في أفضل شكل."
+         data-cap-cta="استكشف لمعها"
+         aria-label="لمعها — مغاسل سيارات معتمدة">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-lamaaha-exterior.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-lamaaha-exterior.jpg" alt="لمعها — خدمة غسيل ونظافة احترافية قبل وبعد" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
 
-      <!-- منتجات دودز جو — المنتجات جنب الخدمات -->
-      <div class="slide slide-products">
-        <div class="slide-media slide-art" aria-hidden="true">
-          <i data-icon="package" data-icon-size="168" class="sa-main"></i>
-          <i data-icon="cart" data-icon-size="62" class="sa-chip sa-chip-a"></i>
-          <i data-icon="truck" data-icon-size="62" class="sa-chip sa-chip-b"></i>
-        </div>
-        <div class="slide-overlay"></div>
-        <div class="slide-text">
-          <span class="slide-tag">منتجات</span>
-          <h2>كل اللي بتحتاجه… جنب الخدمات بالظبط</h2>
-          <p>إلكترونيات وأزياء ومنزل وجمال وعناية — منتجات معتمدة بأسعار واضحة وتوصيل لحد باب البيت.</p>
-          <button class="slide-btn" data-section="bestsellers">تصفّح المنتجات</button>
-        </div>
-      </div>
+      <!-- 4) كسبني -->
+      <a class="slide s-kasabni" href="#section-merchants" data-section="merchants"
+         data-cap-tag="كسبني" data-cap-title="تجار معتمدون… وعروض من أصحاب المتاجر"
+         data-cap-sub="أسعار معلنة وتواصل مباشر مع التاجر قبل الطلب — سوقك الموثوق."
+         data-cap-cta="استكشف التجار"
+         aria-label="كسبني — متاجر التجار المعتمدين">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-kasabni-merchants.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-kasabni-merchants.jpg" alt="كسبني — تجار معتمدون وعروض وأرباح" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
 
-      <!-- كسبني — التجار -->
-      <div class="slide slide-kasabni">
-        <div class="slide-media slide-art" aria-hidden="true">
-          <i data-icon="store" data-icon-size="168" class="sa-main"></i>
-          <i data-icon="bag" data-icon-size="62" class="sa-chip sa-chip-a"></i>
-          <i data-icon="percent" data-icon-size="62" class="sa-chip sa-chip-b"></i>
-        </div>
-        <div class="slide-overlay"></div>
-        <div class="slide-text">
-          <span class="slide-tag">كسبني</span>
-          <h2>تجار معتمدون… وعروض من أصحاب المتاجر</h2>
-          <p>متاجر على Doddz Go بمنتجات حقيقية وأسعار معلنة، وتواصل مباشر مع التاجر قبل الطلب.</p>
-          <button class="slide-btn" data-section="merchants">استكشف التجار</button>
-        </div>
-      </div>
+      <!-- 5) انامل -->
+      <a class="slide s-anamel" href="#section-handmade" data-section="handmade"
+         data-cap-tag="انامل" data-cap-title="كنوز من الإبداع اليدوي والريزن"
+         data-cap-sub="شغل يدوي أصيل من صنّاع موهوبين — كل قطعة تحكي قصة."
+         data-cap-cta="تصفح انامل"
+         aria-label="انامل — شغل هند ميد من صنّاع محليين">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-anamel-handmade.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-anamel-handmade.jpg" alt="انامل — منتجات هند ميد وريزن" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
 
-      <div class="slider-dots">
+      <!-- 6) العروض -->
+      <a class="slide s-offers" href="#section-new" data-section="new"
+         data-cap-tag="عروض" data-cap-title="خصومات تصل إلى 50%"
+         data-cap-sub="تسوّق الآن واحصل على أفضل العروض — شحن سريع وضمان واسترجاع سهل."
+         data-cap-cta="شوف العروض"
+         aria-label="عروض وخصومات Doddz Go">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-offers-50.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-offers-50.jpg" alt="عروض وخصومات تصل إلى 50 بالمائة على أقسام دودز جو" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
+
+      <!-- 7) قصها — خدمات الصالون -->
+      <a class="slide s-qasaha2" href="#section-barbers" data-section="barbers"
+         data-cap-tag="قصها" data-cap-title="قصها باحترافية"
+         data-cap-sub="احجز الحلاق المناسب في الصالون أو اطلب خدمة منزلية بأسعار واضحة."
+         data-cap-cta="استكشف الحلاقين"
+         aria-label="قصها — استكشف الحلاقين المعتمدين">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-qasaha-services.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-qasaha-services.jpg" alt="قصها — قص شعر احترافي وتحديد ذقن وعناية بالبشرة" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
+
+      <!-- 8) لمعها — الداخل -->
+      <a class="slide s-lamaaha2" href="#section-carwash" data-section="carwash"
+         data-cap-tag="لمعها" data-cap-title="نظافة من الداخل… تجربة قيادة جديدة"
+         data-cap-sub="تنظيف عميق وتعقيم وتعطير بمواد آمنة على سيارتك."
+         data-cap-cta="احجز لمعها"
+         aria-label="لمعها — تنظيف داخلي عميق">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-lamaaha-interior.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-lamaaha-interior.jpg" alt="لمعها — تنظيف داخلي وتلميع" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
+
+      <!-- 9) كل الأقسام -->
+      <a class="slide s-all" href="#section-electronics" data-section="electronics"
+         data-cap-tag="كل الأقسام" data-cap-title="كل الأقسام… في مكان واحد"
+         data-cap-sub="أدوات ومستلزمات منزل وعناية شخصية وأطفال ورياضة — تصفح أقسام دودز جو."
+         data-cap-cta="تسوّق حسب القسم"
+         aria-label="أقسام Doddz Go — تسوّق حسب القسم">
+        <span class="slide-media">
+          <img class="slide-fill" data-src="images/hero/hero-all-categories.jpg" alt="" width="1280" height="632" loading="eager" decoding="async" aria-hidden="true"/>
+          <img class="slide-shot" data-src="images/hero/hero-all-categories.jpg" alt="أقسام دودز جو — إلكترونيات وأدوات ومنزل وعناية وأطفال ورياضة" width="1280" height="632" loading="eager" decoding="async"/>
+        </span>
+      </a>
+
+      <!-- أسهم التنقّل -->
+      <button type="button" class="slider-arrow sa-prev" onclick="prevSlide()" aria-label="السلايد السابق">
+        <i data-icon="chevronRight" data-icon-size="20"></i>
+      </button>
+      <button type="button" class="slider-arrow sa-next" onclick="nextSlide()" aria-label="السلايد التالي">
+        <i data-icon="chevronLeft" data-icon-size="20"></i>
+      </button>
+
+      <div class="slider-dots" role="tablist" aria-label="اختيار السلايد">
         <button type="button" class="dot active" onclick="goToSlide(0)" aria-label="قصها"></button>
-        <button type="button" class="dot" onclick="goToSlide(1)" aria-label="انامل"></button>
+        <button type="button" class="dot" onclick="goToSlide(1)" aria-label="منتجات"></button>
         <button type="button" class="dot" onclick="goToSlide(2)" aria-label="لمعها"></button>
-        <button type="button" class="dot" onclick="goToSlide(3)" aria-label="منتجات"></button>
-        <button type="button" class="dot" onclick="goToSlide(4)" aria-label="كسبني"></button>
+        <button type="button" class="dot" onclick="goToSlide(3)" aria-label="كسبني"></button>
+        <button type="button" class="dot" onclick="goToSlide(4)" aria-label="انامل"></button>
+        <button type="button" class="dot" onclick="goToSlide(5)" aria-label="عروض"></button>
+        <button type="button" class="dot" onclick="goToSlide(6)" aria-label="قصها — خدمات الصالون"></button>
+        <button type="button" class="dot" onclick="goToSlide(7)" aria-label="لمعها — الداخل"></button>
+        <button type="button" class="dot" onclick="goToSlide(8)" aria-label="كل الأقسام"></button>
       </div>
+    </div>
+
+    <!-- شرح السلايد الحالي — نص حقيقي (SEO + قراءة) خارج الصورة، بيتحدّث أوتوماتيكيًا -->
+    <div class="slider-caption" id="slider-caption">
+      <div class="sc-text">
+        <span class="sc-tag">قصها</span>
+        <h2 class="sc-title">تجربة حلاقة ولا أروع</h2>
+        <p class="sc-sub">احجز موعدك في أرقى صالونات الحلاقة المعتمدة — قص شعر، تحديد ذقن، وتنظيف بشرة.</p>
+      </div>
+      <a class="sc-cta" href="#section-barbers" data-section="barbers"><span class="sc-cta-label">احجز الآن</span> <i data-icon="arrowLeft" data-icon-size="15"></i></a>
     </div>
 
   </div><!-- /hero-layout -->
@@ -1957,27 +2019,27 @@
 <div class="adm-toast" id="adm-toast"></div>
 
 <!-- ===== JS — كل ملف مسؤول عن جزء واحد، بالترتيب الصح ===== -->
-<script src="js/icons.js?v=20261030a"></script>
+<script src="js/icons.js?v=20261121a"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20261030a"></script>
-<script src="js/products-data.js?v=20261030a"></script>
-<script src="js/sections-data.js?v=20261030a"></script>
-<script src="js/barbers-data.js?v=20261030a"></script>
-<script src="js/media-upload.js?v=20261030a"></script>
-<script src="js/barbers-ui.js?v=20261030a"></script>
-<script src="js/sections-ui.js?v=20261030a"></script>
-<script src="js/cart.js?v=20261030a"></script>
-<script src="js/wishlist.js?v=20261030a"></script>
-<script src="js/account.js?v=20261030a"></script>
-<script src="js/admin.js?v=20261030a"></script>
-<script src="js/seller.js?v=20261030a"></script>
-<script src="js/seller-barber.js?v=20261030a"></script>
-<script src="js/i18n.js?v=20261030a"></script>
-<script src="js/site.js?v=20261030a"></script>
-<script src="js/search.js?v=20261030a"></script>
-<script src="js/slider.js?v=20261030a"></script>
+<script src="js/supabase-client.js?v=20261121a"></script>
+<script src="js/products-data.js?v=20261121a"></script>
+<script src="js/sections-data.js?v=20261121a"></script>
+<script src="js/barbers-data.js?v=20261121a"></script>
+<script src="js/media-upload.js?v=20261121a"></script>
+<script src="js/barbers-ui.js?v=20261121a"></script>
+<script src="js/sections-ui.js?v=20261121a"></script>
+<script src="js/cart.js?v=20261121a"></script>
+<script src="js/wishlist.js?v=20261121a"></script>
+<script src="js/account.js?v=20261121a"></script>
+<script src="js/admin.js?v=20261121a"></script>
+<script src="js/seller.js?v=20261121a"></script>
+<script src="js/seller-barber.js?v=20261121a"></script>
+<script src="js/i18n.js?v=20261121a"></script>
+<script src="js/site.js?v=20261121a"></script>
+<script src="js/search.js?v=20261121a"></script>
+<script src="js/slider.js?v=20261121a"></script>
 <!-- تقسيم صف «المنزل» لمجموعات فرعية حسب subcategory — عرض فقط، بعد رسم المنتجات -->
-<script src="js/home-subcategories.js?v=20261030a"></script>
+<script src="js/home-subcategories.js?v=20261121a"></script>
 
 </body>
 </html>
